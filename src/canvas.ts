@@ -3,7 +3,10 @@
 import { IO } from 'fp-ts/lib/IO'
 import { Option, none, some } from 'fp-ts/lib/Option'
 
-// tryLoadImage
+export type ImageSource =
+  | HTMLImageElement
+  | HTMLCanvasElement
+  | HTMLVideoElement
 
 export function unsafeGetCanvasElementById(elementId: string): HTMLCanvasElement {
   return document.getElementById(elementId) as HTMLCanvasElement
@@ -40,14 +43,14 @@ export function getHeight(canvas: HTMLCanvasElement): IO<number> {
 }
 
 /** Set the canvas width in pixels */
-export function setWidth(width: number, canvas: HTMLCanvasElement): IO<void> {
+export function setWidth(canvas: HTMLCanvasElement, width: number): IO<void> {
   return new IO(() => {
     canvas.width = width
   })
 }
 
 /** Set the canvas height in pixels */
-export function setHeight(height: number, canvas: HTMLCanvasElement): IO<void> {
+export function setHeight(canvas: HTMLCanvasElement, height: number): IO<void> {
   return new IO(() => {
     canvas.height = height
   })
@@ -67,15 +70,18 @@ export function getDimensions(canvas: HTMLCanvasElement): IO<Dimensions> {
 }
 
 /** Set the canvas dimensions in pixels */
-export function setDimensions(dimensions: Dimensions, canvas: HTMLCanvasElement): IO<void> {
-  return setWidth(dimensions.width, canvas)
-    .chain(() => setHeight(dimensions.height, canvas))
+export function setDimensions(canvas: HTMLCanvasElement, dimensions: Dimensions): IO<void> {
+  return setWidth(canvas, dimensions.width)
+    .chain(() => setHeight(canvas, dimensions.height))
 }
 
-// canvasToDataURL
+/** Create a data URL for the current canvas contents */
+export function toDataURL(canvas: HTMLCanvasElement): IO<string> {
+  return new IO(() => canvas.toDataURL())
+}
 
 /** Set the current line width */
-export function setLineWidth(width: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setLineWidth(ctx: CanvasRenderingContext2D, width: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.lineWidth = width
     return ctx
@@ -83,7 +89,7 @@ export function setLineWidth(width: number, ctx: CanvasRenderingContext2D): IO<C
 }
 
 /** Set the current fill style/color */
-export function setFillStyle(style: string, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setFillStyle(ctx: CanvasRenderingContext2D, style: string): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.fillStyle = style
     return ctx
@@ -91,7 +97,7 @@ export function setFillStyle(style: string, ctx: CanvasRenderingContext2D): IO<C
 }
 
 /** Set the current stroke style/color */
-export function setStrokeStyle(style: string, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setStrokeStyle(ctx: CanvasRenderingContext2D, style: string): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.strokeStyle = style
     return ctx
@@ -99,7 +105,7 @@ export function setStrokeStyle(style: string, ctx: CanvasRenderingContext2D): IO
 }
 
 /** Set the current shadow color */
-export function setShadowColor(style: string, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setShadowColor(ctx: CanvasRenderingContext2D, style: string): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.shadowColor = style
     return ctx
@@ -107,7 +113,7 @@ export function setShadowColor(style: string, ctx: CanvasRenderingContext2D): IO
 }
 
 /** Set the current shadow blur radius */
-export function setShadowBlur(blur: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setShadowBlur(ctx: CanvasRenderingContext2D, blur: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.shadowBlur = blur
     return ctx
@@ -115,7 +121,7 @@ export function setShadowBlur(blur: number, ctx: CanvasRenderingContext2D): IO<C
 }
 
 /** Set the current shadow x-offset */
-export function setShadowOffsetX(offsetX: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setShadowOffsetX(ctx: CanvasRenderingContext2D, offsetX: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.shadowOffsetX = offsetX
     return ctx
@@ -123,7 +129,7 @@ export function setShadowOffsetX(offsetX: number, ctx: CanvasRenderingContext2D)
 }
 
 /** Set the current shadow y-offset */
-export function setShadowOffsetY(offsetY: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setShadowOffsetY(ctx: CanvasRenderingContext2D, offsetY: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.shadowOffsetY = offsetY
     return ctx
@@ -131,7 +137,7 @@ export function setShadowOffsetY(offsetY: number, ctx: CanvasRenderingContext2D)
 }
 
 /** Set the current miter limit */
-export function setMiterLimit(limit: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setMiterLimit(ctx: CanvasRenderingContext2D, limit: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.miterLimit = limit
     return ctx
@@ -145,7 +151,7 @@ export type LineCap =
   | 'butt'
 
 /** Set the current line cap type */
-export function setLineCap(cap: LineCap, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setLineCap(ctx: CanvasRenderingContext2D, cap: LineCap): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.lineCap = cap
     return ctx
@@ -159,7 +165,7 @@ export type LineJoin =
   | 'miter'
 
 /** Set the current line join type */
-export function setLineJoin(join: LineJoin, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setLineJoin(ctx: CanvasRenderingContext2D, join: LineJoin): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.lineJoin = join
     return ctx
@@ -167,7 +173,7 @@ export function setLineJoin(join: LineJoin, ctx: CanvasRenderingContext2D): IO<C
 }
 
 /** Enumerates the different types of composite operations and blend modes */
-export type CompositeOperation =
+export type Composite =
   | 'source-over'
   | 'source-in'
   | 'source-out'
@@ -196,7 +202,7 @@ export type CompositeOperation =
   | 'luminosity'
 
 /** Set the current composite operation */
-export function setGlobalCompositeOperation(operation: CompositeOperation, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setGlobalCompositeOperation(ctx: CanvasRenderingContext2D, operation: Composite): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.globalCompositeOperation = operation
     return ctx
@@ -204,7 +210,7 @@ export function setGlobalCompositeOperation(operation: CompositeOperation, ctx: 
 }
 
 /** Set the current global alpha level */
-export function setGlobalAlpha(alpha: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setGlobalAlpha(ctx: CanvasRenderingContext2D, alpha: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.globalAlpha = alpha
     return ctx
@@ -244,7 +250,7 @@ export function clip(ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D
 }
 
 // Move the path to the specified coordinates, drawing a line segment
-export function lineTo(x: number, y: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function lineTo(ctx: CanvasRenderingContext2D, x: number, y: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.lineTo(x, y)
     return ctx
@@ -252,7 +258,7 @@ export function lineTo(x: number, y: number, ctx: CanvasRenderingContext2D): IO<
 }
 
 /** Move the path to the specified coordinates, without drawing a line segment */
-export function moveTo(x: number, y: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function moveTo(ctx: CanvasRenderingContext2D, x: number, y: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.moveTo(x, y)
     return ctx
@@ -268,14 +274,14 @@ export function closePath(ctx: CanvasRenderingContext2D): IO<CanvasRenderingCont
 }
 
 /** A convenience function for drawing a stroked path */
-export function strokePath<A>(path: IO<A>, ctx: CanvasRenderingContext2D): IO<A> {
+export function strokePath<A>(ctx: CanvasRenderingContext2D, path: IO<A>): IO<A> {
   return beginPath(ctx)
     .chain(() => path)
     .chain(a => stroke(ctx).map(() => a))
 }
 
 /** A convenience function for drawing a filled path */
-export function fillPath<A>(path: IO<A>, ctx: CanvasRenderingContext2D): IO<A> {
+export function fillPath<A>(ctx: CanvasRenderingContext2D, path: IO<A>): IO<A> {
   return beginPath(ctx)
     .chain(() => path)
     .chain(a => fill(ctx).map(() => a))
@@ -296,7 +302,7 @@ export type Arc = {
 }
 
 /** Render an arc object */
-export function arc(a: Arc, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function arc(ctx: CanvasRenderingContext2D, a: Arc): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.arc(a.x, a.y, a.radius, a.start, a.end)
     return ctx
@@ -316,7 +322,7 @@ export type Rectangle = {
 }
 
 /** Render a rectangle */
-export function rect(r: Rectangle, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function rect(ctx: CanvasRenderingContext2D, r: Rectangle): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.rect(r.x, r.y, r.width, r.height)
     return ctx
@@ -324,7 +330,7 @@ export function rect(r: Rectangle, ctx: CanvasRenderingContext2D): IO<CanvasRend
 }
 
 /** Fill a rectangle */
-export function fillRect(r: Rectangle, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function fillRect(ctx: CanvasRenderingContext2D, r: Rectangle): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.fillRect(r.x, r.y, r.width, r.height)
     return ctx
@@ -332,7 +338,7 @@ export function fillRect(r: Rectangle, ctx: CanvasRenderingContext2D): IO<Canvas
 }
 
 /** Stroke a rectangle */
-export function strokeRect(r: Rectangle, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function strokeRect(ctx: CanvasRenderingContext2D, r: Rectangle): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.strokeRect(r.x, r.y, r.width, r.height)
     return ctx
@@ -340,7 +346,7 @@ export function strokeRect(r: Rectangle, ctx: CanvasRenderingContext2D): IO<Canv
 }
 
 /** Clear a rectangle */
-export function clearRect(r: Rectangle, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function clearRect(ctx: CanvasRenderingContext2D, r: Rectangle): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.clearRect(r.x, r.y, r.width, r.height)
     return ctx
@@ -357,7 +363,7 @@ export type ScaleTransform = {
 }
 
 /** Apply a scaling transform */
-export function scale(t: ScaleTransform, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function scale(ctx: CanvasRenderingContext2D, t: ScaleTransform): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.scale(t.scaleX, t.scaleY)
     return ctx
@@ -365,7 +371,7 @@ export function scale(t: ScaleTransform, ctx: CanvasRenderingContext2D): IO<Canv
 }
 
 /** Apply a rotation */
-export function rotate(angle: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function rotate(ctx: CanvasRenderingContext2D, angle: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.rotate(angle)
     return ctx
@@ -382,7 +388,7 @@ export type TranslateTransform = {
 }
 
 /** Apply a translation */
-export function translate(t: TranslateTransform, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function translate(ctx: CanvasRenderingContext2D, t: TranslateTransform): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.translate(t.translateX, t.translateY)
     return ctx
@@ -400,7 +406,7 @@ export type Transform = {
 }
 
 /** Apply a general transformation */
-export function transform(t: Transform, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function transform(ctx: CanvasRenderingContext2D, t: Transform): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.transform(t.m11, t.m12, t.m21, t.m22, t.m31, t.m32)
     return ctx
@@ -420,7 +426,7 @@ export function getTextAlign(ctx: CanvasRenderingContext2D): IO<TextAlign> {
 }
 
 /** Set the current text alignment */
-export function setTextAlign(textAlign: TextAlign, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setTextAlign(ctx: CanvasRenderingContext2D, textAlign: TextAlign): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.textAlign = textAlign
     return ctx
@@ -441,7 +447,7 @@ export function getFont(ctx: CanvasRenderingContext2D): IO<string> {
 }
 
 /** Set the current font */
-export function setFont(font: string, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function setFont(ctx: CanvasRenderingContext2D, font: string): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.font = font
     return ctx
@@ -449,7 +455,7 @@ export function setFont(font: string, ctx: CanvasRenderingContext2D): IO<CanvasR
 }
 
 /** Fill some text */
-export function fillText(text: string, x: number, y: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function fillText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.fillText(text, x, y)
     return ctx
@@ -457,7 +463,7 @@ export function fillText(text: string, x: number, y: number, ctx: CanvasRenderin
 }
 
 /** Stroke some text */
-export function strokeText(text: string, x: number, y: number, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function strokeText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.strokeText(text, x, y)
     return ctx
@@ -465,7 +471,7 @@ export function strokeText(text: string, x: number, y: number, ctx: CanvasRender
 }
 
 /** Measure some text */
-export function measureText(text: string, ctx: CanvasRenderingContext2D): IO<CanvasRenderingContext2D> {
+export function measureText(ctx: CanvasRenderingContext2D, text: string): IO<CanvasRenderingContext2D> {
   return new IO(() => {
     ctx.measureText(text)
     return ctx
@@ -495,40 +501,170 @@ export function withContext<A>(ctx: CanvasRenderingContext2D, action: IO<A>): IO
     .chain(a => restore(ctx).map(() => a))
 }
 
-// getImageData
+/** Get image data for a portion of the canvas */
+export function getImageData(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number): IO<ImageData> {
+  return new IO(() => ctx.getImageData(x, y, w, h))
+}
 
-// putImageDataFull
+/** Set image data for a portion of the canvas */
+export function putImageData(ctx: CanvasRenderingContext2D, imageData: ImageData, dx: number, dy: number): IO<CanvasRenderingContext2D> {
+  return new IO(() => {
+    ctx.putImageData(imageData, dx, dy)
+    return ctx
+  })
+}
 
-// putImageData
+/** Set image data for a portion of the canvas */
+export function putImageDataFull(ctx: CanvasRenderingContext2D, imageData: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number): IO<CanvasRenderingContext2D> {
+  return new IO(() => {
+    ctx.putImageData(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight)
+    return ctx
+  })
+}
 
-// createImageData
+/** Create an image data object */
+export function createImageData(ctx: CanvasRenderingContext2D, sw: number, sh: number): IO<ImageData> {
+  return new IO(() => ctx.createImageData(sw, sh))
+}
 
-// createImageDataCopy
+/** Create a copy of an image data object */
+export function createImageDataCopy(ctx: CanvasRenderingContext2D, imageData: ImageData): IO<ImageData> {
+  return new IO(() => ctx.createImageData(imageData))
+}
 
-// imageDataWidth
+export function drawImage(ctx: CanvasRenderingContext2D, imageSource: ImageSource, offsetX: number, offsetY: number): IO<CanvasRenderingContext2D> {
+  return new IO(() => {
+    ctx.drawImage(imageSource, offsetX, offsetY)
+    return ctx
+  })
+}
 
-// imageDataHeight
+export function drawImageScale(ctx: CanvasRenderingContext2D, imageSource: ImageSource, offsetX: number, offsetY: number, width: number, height: number): IO<CanvasRenderingContext2D> {
+  return new IO(() => {
+    ctx.drawImage(imageSource, offsetX, offsetY, width, height)
+    return ctx
+  })
+}
 
-// imageDataBuffer
+export function drawImageFull(ctx: CanvasRenderingContext2D, imageSource: ImageSource, offsetX: number, offsetY: number, width: number, height: number, canvasOffsetX: number, canvasOffsetY: number, canvasImageWidth: number, canvasImageHeight: number): IO<CanvasRenderingContext2D> {
+  return new IO(() => {
+    ctx.drawImage(imageSource, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight)
+    return ctx
+  })
+}
 
-// drawImage
+export type PatternRepeat =
+  | 'repeat'
+  | 'repeat-x'
+  | 'repeat-y'
+  | 'no-repeat'
 
-// drawImageScale
+/** Create a new canvas pattern (repeatable image) */
+export function createPattern(ctx: CanvasRenderingContext2D, imageSource: ImageSource, repetition: PatternRepeat): IO<CanvasPattern> {
+  return new IO(() => ctx.createPattern(imageSource, repetition))
+}
 
-// drawImageFull
+/** Set the Context2D fillstyle to the CanvasPattern */
+export function setPatternFillStyle(ctx: CanvasRenderingContext2D, pattern: CanvasPattern): IO<CanvasRenderingContext2D> {
+  return new IO(() => {
+    ctx.fillStyle = pattern
+    return ctx
+  })
+}
 
-// createPattern
+/**
+ * A type representing a linear gradient
+ * -  Starting point coordinates: (`x0`, `y0`)
+ * -  Ending point coordinates: (`x1`, `y1`)
+ */
+export type LinearGradient = {
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number
+}
 
-// setPatternFillStyle
+/** Create a linear CanvasGradient */
+export function createLinearGradient(ctx: CanvasRenderingContext2D, gradient: LinearGradient): IO<CanvasGradient> {
+  return new IO(() => ctx.createLinearGradient(gradient.x0, gradient.y0, gradient.x1, gradient.y1))
+}
 
-// createLinearGradient
+/**
+ * A type representing a radial gradient.
+ * -  Starting circle center coordinates: (`x0`, `y0`)
+ * -  Starting circle radius: `r0`
+ * -  Ending circle center coordinates: (`x1`, `y1`)
+ * -  Ending circle radius: `r1`
+ */
+export type RadialGradient = {
+  x0: number,
+  y0: number,
+  r0: number,
+  x1: number,
+  y1: number,
+  r1: number
+}
 
-// createRadialGradient
+/** Create a radial CanvasGradient */
+export function createRadialGradient(ctx: CanvasRenderingContext2D, gradient: RadialGradient): IO<CanvasGradient> {
+  return new IO(() => ctx.createRadialGradient(gradient.x0, gradient.y0, gradient.r0, gradient.x1, gradient.y1, gradient.r1))
+}
 
-// addColorStop
+/** Add a single color stop to a CanvasGradient */
+export function addColorStop(ctx: CanvasRenderingContext2D, offset: number, color: string, gradient: CanvasGradient): IO<CanvasGradient> {
+  return new IO(() => {
+    gradient.addColorStop(offset, color)
+    return gradient
+  })
+}
 
-// setGradientFillStyle
+/** Set the Context2D fillstyle to the CanvasGradient */
+export function setGradientFillStyle(ctx: CanvasRenderingContext2D, gradient: CanvasGradient): IO<CanvasRenderingContext2D> {
+  return new IO(() => {
+    ctx.fillStyle = gradient
+    return ctx
+  })
+}
 
-// quadraticCurveTo
+/**
+ * A type representing a quadratic Bézier curve
+ * - Bézier control point: (`cpx`, `cpy`)
+ * - Ending point coordinates: (`x`, `y`)
+ */
+export type QuadraticCurve = {
+  cpx: number,
+  cpy: number,
+  x: number,
+  y: number
+}
 
-// bezierCurveTo
+/** Draw a quadratic Bézier curve */
+export function quadraticCurveTo(ctx: CanvasRenderingContext2D, curve: QuadraticCurve): IO<CanvasRenderingContext2D> {
+  return new IO(() => {
+    ctx.quadraticCurveTo(curve.cpx, curve.cpy, curve.x, curve.y)
+    return ctx
+  })
+}
+
+/**
+ * A type representing a cubic Bézier curve
+ * - First Bézier control point: (`cp1x`, `cp1y`)
+ * - Second Bézier control point: (`cp2x`, `cp2y`)
+ * - Ending point: (`x`, `y`)
+ */
+export type BezierCurve = {
+  cp1x: number,
+  cp1y: number,
+  cp2x: number,
+  cp2y: number,
+  x: number,
+  y: number
+}
+
+/** Draw a cubic Bézier curve */
+export function bezierCurveTo(ctx: CanvasRenderingContext2D, curve: BezierCurve): IO<CanvasRenderingContext2D> {
+  return new IO(() => {
+    ctx.bezierCurveTo(curve.cp1x, curve.cp1y, curve.cp2x, curve.cp2y, curve.x, curve.y)
+    return ctx
+  })
+}
