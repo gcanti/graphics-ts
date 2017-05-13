@@ -1,7 +1,7 @@
 {
   "name": "graphics-ts",
   "version": "0.0.1",
-  "description": "A porting of purescript-{canvas, drawing} featuring fp-ts",
+  "description": "A porting of purescript-{canvas, free-canvas, drawing} featuring fp-ts",
   "files": [
     "lib",
     "lib-jsnext"
