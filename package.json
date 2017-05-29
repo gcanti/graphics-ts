@@ -1,10 +1,9 @@
 {
   "name": "graphics-ts",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A porting of purescript-{canvas, free-canvas, drawing} featuring fp-ts",
   "files": [
-    "lib",
-    "lib-jsnext"
+    "lib"
   ],
   "main": "lib/index.js",
   "jsnext:main": "lib-jsnext/index.js",
@@ -14,8 +13,8 @@
     "typings-checker": "typings-checker --allow-expect-error --project typings-checker/tsconfig.json typings-checker/index.ts",
     "mocha": "mocha -r ts-node/register test/*.ts",
     "test": "npm run lint && npm run typings-checker && npm run mocha",
-    "clean": "rm -rf lib/* && rm -rf lib-jsnext/*",
-    "build": "npm run clean && tsc && tsc -m es6 --outDir lib-jsnext",
+    "clean": "rm -rf lib/*",
+    "build": "npm run clean && tsc",
     "start": "webpack --watch --progress --config example/webpack.config.js"
   },
   "repository": {
@@ -29,7 +28,8 @@
   },
   "homepage": "https://github.com/gcanti/graphics-ts",
   "dependencies": {
-    "fp-ts": "^0.2.7"
+    "fp-ts": "^0.3.0",
+    "typescript": "^2.3.3"
   },
   "devDependencies": {
     "@types/mocha": "2.2.38",
