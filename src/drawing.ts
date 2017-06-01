@@ -41,6 +41,10 @@ export class Rectangle {
   ) {}
 }
 
+export function rectangle(x: number, y: number, width: number, height: number): Rectangle {
+  return new Rectangle(x, y, width, height)
+}
+
 /** A circular arc consisting of the numbers center-x, center-y, start angle, end angle and radius */
 export class Arc {
   readonly _tag = 'Arc'
@@ -53,12 +57,20 @@ export class Arc {
   ) {}
 }
 
+export function arc(x: number, y: number, radius: number, start: number, end: number): Arc {
+  return new Arc(x, y, radius, start, end)
+}
+
 /** A composite shape */
 export class Composite {
   readonly _tag = 'Composite'
   constructor(
     public readonly shapes: Array<Shape>
   ) {}
+}
+
+export function composite(shapes: Array<Shape>): Composite {
+  return new Composite(shapes)
 }
 
 /** Create a path */
