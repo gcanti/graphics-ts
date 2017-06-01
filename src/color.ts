@@ -28,3 +28,5 @@ export function toCss(color: Color): string {
 }
 
 export const black = hsl(0, 0, 0)
+
+export const white = hsl(360, 100, 100)

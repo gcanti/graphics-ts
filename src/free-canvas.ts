@@ -2,10 +2,6 @@ import * as free from 'fp-ts/lib/Free'
 import * as canvas from './canvas'
 import * as identity from 'fp-ts/lib/Identity'
 
-export const URI = 'Canvas'
-
-export type URI = typeof URI
-
 export type ImageSource =
   | HTMLImageElement
   | HTMLCanvasElement
@@ -13,8 +9,6 @@ export type ImageSource =
 
 export class SetLineWidth {
   readonly _tag = 'SetLineWidth'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly width: number
   ) { }
@@ -22,8 +16,6 @@ export class SetLineWidth {
 
 export class SetFillStyle {
   readonly _tag = 'SetFillStyle'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly style: string
   ) { }
@@ -31,8 +23,6 @@ export class SetFillStyle {
 
 export class SetStrokeStyle {
   readonly _tag = 'SetStrokeStyle'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly style: string
   ) { }
@@ -40,8 +30,6 @@ export class SetStrokeStyle {
 
 export class SetShadowColor {
   readonly _tag = 'SetShadowColor'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly color: string
   ) { }
@@ -49,8 +37,6 @@ export class SetShadowColor {
 
 export class SetShadowBlur {
   readonly _tag = 'SetShadowBlur'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly blur: number
   ) { }
@@ -58,8 +44,6 @@ export class SetShadowBlur {
 
 export class SetShadowOffsetX {
   readonly _tag = 'SetShadowOffsetX'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly offsetX: number
   ) { }
@@ -67,8 +51,6 @@ export class SetShadowOffsetX {
 
 export class SetShadowOffsetY {
   readonly _tag = 'SetShadowOffsetY'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly offsetY: number
   ) { }
@@ -76,8 +58,6 @@ export class SetShadowOffsetY {
 
 export class SetLineCap {
   readonly _tag = 'SetLineCap'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly cap: canvas.LineCap
   ) { }
@@ -85,8 +65,6 @@ export class SetLineCap {
 
 export class SetComposite {
   readonly _tag = 'SetComposite'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly composite: canvas.Composite
   ) { }
@@ -94,8 +72,6 @@ export class SetComposite {
 
 export class SetAlpha {
   readonly _tag = 'SetAlpha'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly alpha: number
   ) { }
@@ -103,32 +79,22 @@ export class SetAlpha {
 
 export class BeginPath {
   readonly _tag = 'BeginPath'
-  readonly _A: void
-  readonly _URI = URI
 }
 
 export class Stroke {
   readonly _tag = 'Stroke'
-  readonly _A: void
-  readonly _URI = URI
 }
 
 export class Fill {
   readonly _tag = 'Fill'
-  readonly _A: void
-  readonly _URI = URI
 }
 
 export class Clip {
   readonly _tag = 'Clip'
-  readonly _A: void
-  readonly _URI = URI
 }
 
 export class LineTo {
   readonly _tag = 'LineTo'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number
@@ -137,8 +103,6 @@ export class LineTo {
 
 export class MoveTo {
   readonly _tag = 'MoveTo'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number
@@ -147,14 +111,10 @@ export class MoveTo {
 
 export class ClosePath {
   readonly _tag = 'ClosePath'
-  readonly _A: void
-  readonly _URI = URI
 }
 
 export class Arc {
   readonly _tag = 'Arc'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -166,8 +126,6 @@ export class Arc {
 
 export class Rect {
   readonly _tag = 'Rect'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -178,8 +136,6 @@ export class Rect {
 
 export class FillRect {
   readonly _tag = 'FillRect'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -190,8 +146,6 @@ export class FillRect {
 
 export class StrokeRect {
   readonly _tag = 'StrokeRect'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -202,8 +156,6 @@ export class StrokeRect {
 
 export class ClearRect {
   readonly _tag = 'ClearRect'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -214,8 +166,6 @@ export class ClearRect {
 
 export class Scale {
   readonly _tag = 'Scale'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number
@@ -224,8 +174,6 @@ export class Scale {
 
 export class Rotate {
   readonly _tag = 'Rotate'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly angle: number
   ) { }
@@ -233,8 +181,6 @@ export class Rotate {
 
 export class Translate {
   readonly _tag = 'Translate'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number
@@ -243,8 +189,6 @@ export class Translate {
 
 export class Transform {
   readonly _tag = 'Transform'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly m11: number,
     public readonly m12: number,
@@ -258,13 +202,10 @@ export class Transform {
 export class GetTextAlign {
   readonly _tag = 'GetTextAlign'
   readonly _A: canvas.TextAlign
-  readonly _URI = URI
 }
 
 export class SetTextAlign {
   readonly _tag = 'SetTextAlign'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly textAlign: canvas.TextAlign
   ) { }
@@ -273,13 +214,10 @@ export class SetTextAlign {
 export class GetFont {
   readonly _tag = 'GetFont'
   readonly _A: string
-  readonly _URI = URI
 }
 
 export class SetFont {
   readonly _tag = 'SetFont'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly font: string
   ) { }
@@ -287,8 +225,6 @@ export class SetFont {
 
 export class FillText {
   readonly _tag = 'FillText'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly text: string,
     public readonly x: number,
@@ -298,8 +234,6 @@ export class FillText {
 
 export class StrokeText {
   readonly _tag = 'StrokeText'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly text: string,
     public readonly x: number,
@@ -310,7 +244,6 @@ export class StrokeText {
 export class MeasureText {
   readonly _tag = 'MeasureText'
   readonly _A: canvas.TextMetrics
-  readonly _URI = URI
   constructor(
     public readonly text: string
   ) { }
@@ -318,20 +251,15 @@ export class MeasureText {
 
 export class Save {
   readonly _tag = 'Save'
-  readonly _A: void
-  readonly _URI = URI
 }
 
 export class Restore {
   readonly _tag = 'Restore'
-  readonly _A: void
-  readonly _URI = URI
 }
 
 export class GetImageData {
   readonly _tag = 'GetImageData'
   readonly _A: ImageData
-  readonly _URI = URI
   constructor(
     public readonly sx: number,
     public readonly sy: number,
@@ -342,8 +270,6 @@ export class GetImageData {
 
 export class PutImageData {
   readonly _tag = 'PutImageData'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly imageData: ImageData,
     public readonly dx: number,
@@ -353,8 +279,6 @@ export class PutImageData {
 
 export class PutImageDataFull {
   readonly _tag = 'PutImageDataFull'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly imageData: ImageData,
     public readonly dx: number,
@@ -369,7 +293,6 @@ export class PutImageDataFull {
 export class CreateImageData {
   readonly _tag = 'CreateImageData'
   readonly _A: ImageData
-  readonly _URI = URI
   constructor(
     public readonly imageData: number | ImageData,
     public readonly sh: number
@@ -379,7 +302,6 @@ export class CreateImageData {
 export class CreateImageDataCopy {
   readonly _tag = 'CreateImageDataCopy'
   readonly _A: ImageData
-  readonly _URI = URI
   constructor(
     public readonly imageData: ImageData
   ) { }
@@ -387,8 +309,6 @@ export class CreateImageDataCopy {
 
 export class DrawImage {
   readonly _tag = 'DrawImage'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly imageSource: canvas.ImageSource,
     public readonly offsetX: number,
@@ -398,8 +318,6 @@ export class DrawImage {
 
 export class DrawImageScale {
   readonly _tag = 'DrawImageScale'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly imageSource: canvas.ImageSource,
     public readonly offsetX: number,
@@ -411,8 +329,6 @@ export class DrawImageScale {
 
 export class DrawImageFull {
   readonly _tag = 'DrawImageFull'
-  readonly _A: void
-  readonly _URI = URI
   constructor(
     public readonly imageSource: canvas.ImageSource,
     public readonly offsetX: number,
@@ -424,12 +340,6 @@ export class DrawImageFull {
     public readonly canvasImageWidth: number,
     public readonly canvasImageHeight: number
   ) { }
-}
-
-declare module 'fp-ts/lib/HKT' {
-  interface HKT<A> {
-    Canvas: Canvas
-  }
 }
 
 export type Canvas =
@@ -477,54 +387,54 @@ export type Canvas =
   | DrawImageScale
   | DrawImageFull
 
-export const setLineWidth = (width: number) => free.liftADT(new SetLineWidth(width))
-export const setFillStyle = (style: string) => free.liftADT(new SetFillStyle(style))
-export const setStrokeStyle = (style: string) => free.liftADT(new SetStrokeStyle(style))
-export const setShadowColor = (color: string) => free.liftADT(new SetShadowColor(color))
-export const setShadowBlur = (blur: number) => free.liftADT(new SetShadowBlur(blur))
-export const setShadowOffsetX = (offsetX: number) => free.liftADT(new SetShadowOffsetX(offsetX))
-export const setShadowOffsetY = (offsetY: number) => free.liftADT(new SetShadowOffsetY(offsetY))
-export const setLineCap = (cap: canvas.LineCap) => free.liftADT(new SetLineCap(cap))
-export const setComposite = (compisite: canvas.Composite) => free.liftADT(new SetComposite(compisite))
-export const setAlpha = (alpha: number) => free.liftADT(new SetAlpha(alpha))
-export const beginPath = () => free.liftADT(new BeginPath())
-export const stroke = () => free.liftADT(new Stroke())
-export const fill = () => free.liftADT(new Fill())
-export const clip = () => free.liftADT(new Clip())
-export const lineTo = (x: number, y: number) => free.liftADT(new LineTo(x, y))
-export const moveTo = (x: number, y: number) => free.liftADT(new MoveTo(x, y))
-export const closePath = () => free.liftADT(new ClosePath())
-export const arc = (x: number, y: number, radius: number, start: number, end: number) => free.liftADT(new Arc(x, y, radius, start, end))
-export const rect = (x: number, y: number, width: number, height: number) => free.liftADT(new Rect(x, y, width, height))
-export const fillRect = (x: number, y: number, width: number, height: number) => free.liftADT(new FillRect(x, y, width, height))
-export const strokeRect = (x: number, y: number, width: number, height: number) => free.liftADT(new StrokeRect(x, y, width, height))
-export const clearRect = (x: number, y: number, width: number, height: number) => free.liftADT(new ClearRect(x, y, width, height))
-export const scale = (x: number, y: number) => free.liftADT(new Scale(x, y))
-export const rotate = (angle: number) => free.liftADT(new Rotate(angle))
-export const translate = (x: number, y: number) => free.liftADT(new Translate(x, y))
-export const transform = (m11: number, m12: number, m21: number, m22: number, m31: number, m32: number) => free.liftADT(new Transform(m11, m12, m21, m22, m31, m32))
-export const getTextAlign = () => free.liftADT(new GetTextAlign())
-export const setTextAlign = (textAlign: canvas.TextAlign) => free.liftADT(new SetTextAlign(textAlign))
-export const getFont = () => free.liftADT(new GetFont())
-export const setFont = (font: string) => free.liftADT(new SetFont(font))
-export const fillText = (text: string, x: number, y: number) => free.liftADT(new FillText(text, x, y))
-export const strokeText = (text: string, x: number, y: number) => free.liftADT(new StrokeText(text, x, y))
-export const measureText = (text: string) => free.liftADT(new MeasureText(text))
-export const save = () => free.liftADT(new Save())
-export const restore = () => free.liftADT(new Restore())
-export const getImageData = (sx: number, sy: number, sw: number, sh: number) => free.liftADT(new GetImageData(sx, sy, sw, sh))
-export const putImageData = (imageData: ImageData, dx: number, dy: number) => free.liftADT(new PutImageData(imageData, dx, dy))
-export const putImageDataFull = (imageData: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number) => free.liftADT(new PutImageDataFull(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight))
-export const createImageData = (imageData: number | ImageData, sh: number) => free.liftADT(new CreateImageData(imageData, sh))
-export const createImageDataCopy = (imageData: ImageData) => free.liftADT(new CreateImageDataCopy(imageData))
-export const drawImage = (imageSource: ImageSource, offsetX: number, offsetY: number) => free.liftADT(new DrawImage(imageSource, offsetX, offsetY))
-export const drawImageScale = (imageSource: ImageSource, offsetX: number, offsetY: number, width: number, height: number) => free.liftADT(new DrawImageScale(imageSource, offsetX, offsetY, width, height))
-export const drawImageFull = (imageSource: ImageSource, offsetX: number, offsetY: number, width: number, height: number, canvasOffsetX: number, canvasOffsetY: number, canvasImageWidth: number, canvasImageHeight: number) => free.liftADT(new DrawImageFull(imageSource, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight))
+export const setLineWidth = (width: number) => free.liftF<Canvas, void>(new SetLineWidth(width))
+export const setFillStyle = (style: string) => free.liftF<Canvas, void>(new SetFillStyle(style))
+export const setStrokeStyle = (style: string) => free.liftF<Canvas, void>(new SetStrokeStyle(style))
+export const setShadowColor = (color: string) => free.liftF<Canvas, void>(new SetShadowColor(color))
+export const setShadowBlur = (blur: number) => free.liftF<Canvas, void>(new SetShadowBlur(blur))
+export const setShadowOffsetX = (offsetX: number) => free.liftF<Canvas, void>(new SetShadowOffsetX(offsetX))
+export const setShadowOffsetY = (offsetY: number) => free.liftF<Canvas, void>(new SetShadowOffsetY(offsetY))
+export const setLineCap = (cap: canvas.LineCap) => free.liftF<Canvas, void>(new SetLineCap(cap))
+export const setComposite = (compisite: canvas.Composite) => free.liftF<Canvas, void>(new SetComposite(compisite))
+export const setAlpha = (alpha: number) => free.liftF<Canvas, void>(new SetAlpha(alpha))
+export const beginPath = () => free.liftF<Canvas, void>(new BeginPath())
+export const stroke = () => free.liftF<Canvas, void>(new Stroke())
+export const fill = () => free.liftF<Canvas, void>(new Fill())
+export const clip = () => free.liftF<Canvas, void>(new Clip())
+export const lineTo = (x: number, y: number) => free.liftF<Canvas, void>(new LineTo(x, y))
+export const moveTo = (x: number, y: number) => free.liftF<Canvas, void>(new MoveTo(x, y))
+export const closePath = () => free.liftF<Canvas, void>(new ClosePath())
+export const arc = (x: number, y: number, radius: number, start: number, end: number) => free.liftF<Canvas, void>(new Arc(x, y, radius, start, end))
+export const rect = (x: number, y: number, width: number, height: number) => free.liftF<Canvas, void>(new Rect(x, y, width, height))
+export const fillRect = (x: number, y: number, width: number, height: number) => free.liftF<Canvas, void>(new FillRect(x, y, width, height))
+export const strokeRect = (x: number, y: number, width: number, height: number) => free.liftF<Canvas, void>(new StrokeRect(x, y, width, height))
+export const clearRect = (x: number, y: number, width: number, height: number) => free.liftF<Canvas, void>(new ClearRect(x, y, width, height))
+export const scale = (x: number, y: number) => free.liftF<Canvas, void>(new Scale(x, y))
+export const rotate = (angle: number) => free.liftF<Canvas, void>(new Rotate(angle))
+export const translate = (x: number, y: number) => free.liftF<Canvas, void>(new Translate(x, y))
+export const transform = (m11: number, m12: number, m21: number, m22: number, m31: number, m32: number) => free.liftF<Canvas, void>(new Transform(m11, m12, m21, m22, m31, m32))
+export const getTextAlign = () => free.liftF<Canvas, canvas.TextAlign>(new GetTextAlign())
+export const setTextAlign = (textAlign: canvas.TextAlign) => free.liftF<Canvas, void>(new SetTextAlign(textAlign))
+export const getFont = () => free.liftF<Canvas, string>(new GetFont())
+export const setFont = (font: string) => free.liftF<Canvas, void>(new SetFont(font))
+export const fillText = (text: string, x: number, y: number) => free.liftF<Canvas, void>(new FillText(text, x, y))
+export const strokeText = (text: string, x: number, y: number) => free.liftF<Canvas, void>(new StrokeText(text, x, y))
+export const measureText = (text: string) => free.liftF<Canvas, canvas.TextMetrics>(new MeasureText(text))
+export const save = () => free.liftF<Canvas, void>(new Save())
+export const restore = () => free.liftF<Canvas, void>(new Restore())
+export const getImageData = (sx: number, sy: number, sw: number, sh: number) => free.liftF<Canvas, ImageData>(new GetImageData(sx, sy, sw, sh))
+export const putImageData = (imageData: ImageData, dx: number, dy: number) => free.liftF<Canvas, void>(new PutImageData(imageData, dx, dy))
+export const putImageDataFull = (imageData: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number) => free.liftF<Canvas, void>(new PutImageDataFull(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight))
+export const createImageData = (imageData: number | ImageData, sh: number) => free.liftF<Canvas, ImageData>(new CreateImageData(imageData, sh))
+export const createImageDataCopy = (imageData: ImageData) => free.liftF<Canvas, ImageData>(new CreateImageDataCopy(imageData))
+export const drawImage = (imageSource: ImageSource, offsetX: number, offsetY: number) => free.liftF<Canvas, void>(new DrawImage(imageSource, offsetX, offsetY))
+export const drawImageScale = (imageSource: ImageSource, offsetX: number, offsetY: number, width: number, height: number) => free.liftF<Canvas, void>(new DrawImageScale(imageSource, offsetX, offsetY, width, height))
+export const drawImageFull = (imageSource: ImageSource, offsetX: number, offsetY: number, width: number, height: number, canvasOffsetX: number, canvasOffsetY: number, canvasImageWidth: number, canvasImageHeight: number) => free.liftF<Canvas, void>(new DrawImageFull(imageSource, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight))
 
 const undef = identity.of(undefined)
 
-function getInterpretCanvas(ctx: CanvasRenderingContext2D): (fa: Canvas) => identity.Identity<free.TypeOf<typeof fa>> {
-  return function interpretCanvas(fa: Canvas): identity.Identity<free.TypeOf<typeof fa>> {
+function getInterpretCanvas(ctx: CanvasRenderingContext2D): (fa: Canvas) => identity.Identity<TextMetrics | string | void> {
+  return function interpretCanvas(fa: Canvas): identity.Identity<TextMetrics | string | void> {
     switch (fa._tag) {
       case 'BeginPath' :
         ctx.beginPath()
@@ -661,7 +571,7 @@ export function withContext<A>(drawning: Drawing<A>): Drawing<A> {
     .chain(a => restore().map(() => a))
 }
 
-export type Drawing<A> = free.Free<URI, A>
+export type Drawing<A> = free.Free<Canvas, A>
 
 export function run<A>(drawing: Drawing<A>, ctx: CanvasRenderingContext2D): A {
   return drawing.foldMap(identity, (fa: Canvas) => getInterpretCanvas(ctx)(fa)).value

@@ -1,9 +1,9 @@
 // adapted from https://github.com/purescript-contrib/purescript-drawing
 
 import { HKT, HKTS } from 'fp-ts/lib/HKT'
-import { StaticFoldable, toArray } from 'fp-ts/lib/Foldable'
+import { Foldable, toArray } from 'fp-ts/lib/Foldable'
 import { Option, some, none } from 'fp-ts/lib/Option'
-import { StaticMonoid } from 'fp-ts/lib/Monoid'
+import { Monoid } from 'fp-ts/lib/Monoid'
 import { IO } from 'fp-ts/lib/IO'
 import * as canvas from './canvas'
 import { Color, toCss } from './color'
@@ -41,6 +41,10 @@ export class Rectangle {
   ) {}
 }
 
+export function rectangle(x: number, y: number, width: number, height: number): Rectangle {
+  return new Rectangle(x, y, width, height)
+}
+
 /** A circular arc consisting of the numbers center-x, center-y, start angle, end angle and radius */
 export class Arc {
   readonly _tag = 'Arc'
@@ -53,6 +57,10 @@ export class Arc {
   ) {}
 }
 
+export function arc(x: number, y: number, radius: number, start: number, end: number): Arc {
+  return new Arc(x, y, radius, start, end)
+}
+
 /** A composite shape */
 export class Composite {
   readonly _tag = 'Composite'
@@ -61,14 +69,18 @@ export class Composite {
   ) {}
 }
 
+export function composite(shapes: Array<Shape>): Composite {
+  return new Composite(shapes)
+}
+
 /** Create a path */
-export function path<F extends HKTS>(foldable: StaticFoldable<F>, points: HKT<Point>[F]): Shape {
-  return new Path(false, toArray<F, Point>(foldable, points))
+export function path<F extends HKTS>(foldable: Foldable<F>, points: HKT<Point>[F]): Shape {
+  return new Path(false, toArray<F>(foldable)<Point>(points))
 }
 
 /** Create a closed path */
-export function closed<F extends HKTS>(foldable: StaticFoldable<F>, points: HKT<Point>[F]): Shape {
-  return new Path(true, toArray<F, Point>(foldable, points))
+export function closed<F extends HKTS>(foldable: Foldable<F>, points: HKT<Point>[F]): Shape {
+  return new Path(true, toArray<F>(foldable)<Point>(points))
 }
 
 /** Create a circle from the left, top and radius parameters */
@@ -85,7 +97,7 @@ export class FillStyle {
 
 const emptyFillStyle = new FillStyle(none)
 
-export const monoidFillStyle: StaticMonoid<FillStyle> = {
+export const monoidFillStyle: Monoid<FillStyle> = {
   empty: () => emptyFillStyle,
   concat: (x, y) => x.concat(y)
 }
@@ -109,7 +121,7 @@ export class OutlineStyle {
 
 const emptyOutileStyle = new OutlineStyle(none, none)
 
-export const monoidOutlineStyle: StaticMonoid<OutlineStyle> = {
+export const monoidOutlineStyle: Monoid<OutlineStyle> = {
   empty: () => emptyOutileStyle,
   concat: (x, y) => x.concat(y)
 }
@@ -139,7 +151,7 @@ export class Shadow {
 
 const emptyShadow = new Shadow(none, none, none)
 
-export const monoidShadow: StaticMonoid<Shadow> = {
+export const monoidShadow: Monoid<Shadow> = {
   empty: () => emptyShadow,
   concat: (x, y) => x.concat(y)
 }
@@ -279,7 +291,7 @@ export function withShadow(shadow: Shadow, drawing: Drawing): Drawing {
   return new WithShadow(shadow, drawing)
 }
 
-export const monoidDrawing: StaticMonoid<Drawing> = {
+export const monoidDrawing: Monoid<Drawing> = {
   empty: () => new Many([]),
   concat: (x, y) => {
     if (x._tag === 'Many') {
