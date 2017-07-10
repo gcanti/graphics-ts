@@ -2,283 +2,335 @@ import * as free from 'fp-ts/lib/Free'
 import * as canvas from './canvas'
 import * as identity from 'fp-ts/lib/Identity'
 
-export type ImageSource =
-  | HTMLImageElement
-  | HTMLCanvasElement
-  | HTMLVideoElement
+export type ImageSource = HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
 
-export class SetLineWidth {
-  readonly _tag = 'SetLineWidth'
-  constructor(
-    public readonly width: number
-  ) { }
+export const URI = 'Canvas'
+
+export type URI = typeof URI
+
+export class SetLineWidth<A> {
+  readonly _tag: 'SetLineWidth' = 'SetLineWidth'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly width: number, public readonly more: A) {}
 }
 
-export class SetFillStyle {
-  readonly _tag = 'SetFillStyle'
-  constructor(
-    public readonly style: string
-  ) { }
+export class SetFillStyle<A> {
+  readonly _tag: 'SetFillStyle' = 'SetFillStyle'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly style: string, public readonly more: A) {}
 }
 
-export class SetStrokeStyle {
-  readonly _tag = 'SetStrokeStyle'
-  constructor(
-    public readonly style: string
-  ) { }
+export class SetStrokeStyle<A> {
+  readonly _tag: 'SetStrokeStyle' = 'SetStrokeStyle'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly style: string, public readonly more: A) {}
 }
 
-export class SetShadowColor {
-  readonly _tag = 'SetShadowColor'
-  constructor(
-    public readonly color: string
-  ) { }
+export class SetShadowColor<A> {
+  readonly _tag: 'SetShadowColor' = 'SetShadowColor'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly color: string, public readonly more: A) {}
 }
 
-export class SetShadowBlur {
-  readonly _tag = 'SetShadowBlur'
-  constructor(
-    public readonly blur: number
-  ) { }
+export class SetShadowBlur<A> {
+  readonly _tag: 'SetShadowBlur' = 'SetShadowBlur'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly blur: number, public readonly more: A) {}
 }
 
-export class SetShadowOffsetX {
-  readonly _tag = 'SetShadowOffsetX'
-  constructor(
-    public readonly offsetX: number
-  ) { }
+export class SetShadowOffsetX<A> {
+  readonly _tag: 'SetShadowOffsetX' = 'SetShadowOffsetX'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly offsetX: number, public readonly more: A) {}
 }
 
-export class SetShadowOffsetY {
-  readonly _tag = 'SetShadowOffsetY'
-  constructor(
-    public readonly offsetY: number
-  ) { }
+export class SetShadowOffsetY<A> {
+  readonly _tag: 'SetShadowOffsetY' = 'SetShadowOffsetY'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly offsetY: number, public readonly more: A) {}
 }
 
-export class SetLineCap {
-  readonly _tag = 'SetLineCap'
-  constructor(
-    public readonly cap: canvas.LineCap
-  ) { }
+export class SetLineCap<A> {
+  readonly _tag: 'SetLineCap' = 'SetLineCap'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly cap: canvas.LineCap, public readonly more: A) {}
 }
 
-export class SetComposite {
-  readonly _tag = 'SetComposite'
-  constructor(
-    public readonly composite: canvas.Composite
-  ) { }
+export class SetComposite<A> {
+  readonly _tag: 'SetComposite' = 'SetComposite'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly composite: canvas.Composite, public readonly more: A) {}
 }
 
-export class SetAlpha {
-  readonly _tag = 'SetAlpha'
-  constructor(
-    public readonly alpha: number
-  ) { }
+export class SetAlpha<A> {
+  readonly _tag: 'SetAlpha' = 'SetAlpha'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly alpha: number, public readonly more: A) {}
 }
 
-export class BeginPath {
-  readonly _tag = 'BeginPath'
+export class BeginPath<A> {
+  readonly _tag: 'BeginPath' = 'BeginPath'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly more: A) {}
 }
 
-export class Stroke {
-  readonly _tag = 'Stroke'
+export class Stroke<A> {
+  readonly _tag: 'Stroke' = 'Stroke'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly more: A) {}
 }
 
-export class Fill {
-  readonly _tag = 'Fill'
+export class Fill<A> {
+  readonly _tag: 'Fill' = 'Fill'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly more: A) {}
 }
 
-export class Clip {
-  readonly _tag = 'Clip'
+export class Clip<A> {
+  readonly _tag: 'Clip' = 'Clip'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly more: A) {}
 }
 
-export class LineTo {
-  readonly _tag = 'LineTo'
-  constructor(
-    public readonly x: number,
-    public readonly y: number
-  ) { }
+export class LineTo<A> {
+  readonly _tag: 'LineTo' = 'LineTo'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly x: number, public readonly y: number, public readonly more: A) {}
 }
 
-export class MoveTo {
-  readonly _tag = 'MoveTo'
-  constructor(
-    public readonly x: number,
-    public readonly y: number
-  ) { }
+export class MoveTo<A> {
+  readonly _tag: 'MoveTo' = 'MoveTo'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly x: number, public readonly y: number, public readonly more: A) {}
 }
 
-export class ClosePath {
-  readonly _tag = 'ClosePath'
+export class ClosePath<A> {
+  readonly _tag: 'ClosePath' = 'ClosePath'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly more: A) {}
 }
 
-export class Arc {
-  readonly _tag = 'Arc'
+export class Arc<A> {
+  readonly _tag: 'Arc' = 'Arc'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
     public readonly radius: number,
     public readonly start: number,
-    public readonly end: number
-  ) { }
+    public readonly end: number,
+    public readonly more: A
+  ) {}
 }
 
-export class Rect {
-  readonly _tag = 'Rect'
+export class Rect<A> {
+  readonly _tag: 'Rect' = 'Rect'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
     public readonly width: number,
-    public readonly height: number
-  ) { }
+    public readonly height: number,
+    public readonly more: A
+  ) {}
 }
 
-export class FillRect {
-  readonly _tag = 'FillRect'
+export class FillRect<A> {
+  readonly _tag: 'FillRect' = 'FillRect'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
     public readonly width: number,
-    public readonly height: number
-  ) { }
+    public readonly height: number,
+    public readonly more: A
+  ) {}
 }
 
-export class StrokeRect {
-  readonly _tag = 'StrokeRect'
+export class StrokeRect<A> {
+  readonly _tag: 'StrokeRect' = 'StrokeRect'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
     public readonly width: number,
-    public readonly height: number
-  ) { }
+    public readonly height: number,
+    public readonly more: A
+  ) {}
 }
 
-export class ClearRect {
-  readonly _tag = 'ClearRect'
+export class ClearRect<A> {
+  readonly _tag: 'ClearRect' = 'ClearRect'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
     public readonly width: number,
-    public readonly height: number
-  ) { }
+    public readonly height: number,
+    public readonly more: A
+  ) {}
 }
 
-export class Scale {
-  readonly _tag = 'Scale'
-  constructor(
-    public readonly x: number,
-    public readonly y: number
-  ) { }
+export class Scale<A> {
+  readonly _tag: 'Scale' = 'Scale'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly x: number, public readonly y: number, public readonly more: A) {}
 }
 
-export class Rotate {
-  readonly _tag = 'Rotate'
-  constructor(
-    public readonly angle: number
-  ) { }
+export class Rotate<A> {
+  readonly _tag: 'Rotate' = 'Rotate'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly angle: number, public readonly more: A) {}
 }
 
-export class Translate {
-  readonly _tag = 'Translate'
-  constructor(
-    public readonly x: number,
-    public readonly y: number
-  ) { }
+export class Translate<A> {
+  readonly _tag: 'Translate' = 'Translate'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly x: number, public readonly y: number, public readonly more: A) {}
 }
 
-export class Transform {
-  readonly _tag = 'Transform'
+export class Transform<A> {
+  readonly _tag: 'Transform' = 'Transform'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly m11: number,
     public readonly m12: number,
     public readonly m21: number,
     public readonly m22: number,
     public readonly m31: number,
-    public readonly m32: number
-  ) { }
+    public readonly m32: number,
+    public readonly more: A
+  ) {}
 }
 
-export class GetTextAlign {
-  readonly _tag = 'GetTextAlign'
-  readonly _A: canvas.TextAlign
+export class GetTextAlign<A> {
+  readonly _tag: 'GetTextAlign' = 'GetTextAlign'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly more: (textAlign: canvas.TextAlign) => A) {}
 }
 
-export class SetTextAlign {
-  readonly _tag = 'SetTextAlign'
-  constructor(
-    public readonly textAlign: canvas.TextAlign
-  ) { }
+export class SetTextAlign<A> {
+  readonly _tag: 'SetTextAlign' = 'SetTextAlign'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly textAlign: canvas.TextAlign, public readonly more: A) {}
 }
 
-export class GetFont {
-  readonly _tag = 'GetFont'
-  readonly _A: string
+export class GetFont<A> {
+  readonly _tag: 'GetFont' = 'GetFont'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly more: (font: string) => A) {}
 }
 
-export class SetFont {
-  readonly _tag = 'SetFont'
-  constructor(
-    public readonly font: string
-  ) { }
+export class SetFont<A> {
+  readonly _tag: 'SetFont' = 'SetFont'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly font: string, public readonly more: A) {}
 }
 
-export class FillText {
-  readonly _tag = 'FillText'
-  constructor(
-    public readonly text: string,
-    public readonly x: number,
-    public readonly y: number
-  ) { }
-}
-
-export class StrokeText {
-  readonly _tag = 'StrokeText'
+export class FillText<A> {
+  readonly _tag: 'FillText' = 'FillText'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly text: string,
     public readonly x: number,
-    public readonly y: number
-  ) { }
+    public readonly y: number,
+    public readonly more: A
+  ) {}
 }
 
-export class MeasureText {
-  readonly _tag = 'MeasureText'
-  readonly _A: canvas.TextMetrics
+export class StrokeText<A> {
+  readonly _tag: 'StrokeText' = 'StrokeText'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
-    public readonly text: string
-  ) { }
+    public readonly text: string,
+    public readonly x: number,
+    public readonly y: number,
+    public readonly more: A
+  ) {}
 }
 
-export class Save {
-  readonly _tag = 'Save'
+export class MeasureText<A> {
+  readonly _tag: 'MeasureText' = 'MeasureText'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly text: string, public readonly more: (textMetrics: canvas.TextMetrics) => A) {}
 }
 
-export class Restore {
-  readonly _tag = 'Restore'
+export class Save<A> {
+  readonly _tag: 'Save' = 'Save'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly more: A) {}
 }
 
-export class GetImageData {
-  readonly _tag = 'GetImageData'
-  readonly _A: ImageData
+export class Restore<A> {
+  readonly _tag: 'Restore' = 'Restore'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly more: A) {}
+}
+
+export class GetImageData<A> {
+  readonly _tag: 'GetImageData' = 'GetImageData'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly sx: number,
     public readonly sy: number,
     public readonly sw: number,
-    public readonly sh: number
-  ) { }
+    public readonly sh: number,
+    public readonly more: (imageData: ImageData) => A
+  ) {}
 }
 
-export class PutImageData {
-  readonly _tag = 'PutImageData'
+export class PutImageData<A> {
+  readonly _tag: 'PutImageData' = 'PutImageData'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly imageData: ImageData,
     public readonly dx: number,
-    public readonly dy: number
-  ) { }
+    public readonly dy: number,
+    public readonly more: A
+  ) {}
 }
 
-export class PutImageDataFull {
-  readonly _tag = 'PutImageDataFull'
+export class PutImageDataFull<A> {
+  readonly _tag: 'PutImageDataFull' = 'PutImageDataFull'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly imageData: ImageData,
     public readonly dx: number,
@@ -286,49 +338,59 @@ export class PutImageDataFull {
     public readonly dirtyX: number,
     public readonly dirtyY: number,
     public readonly dirtyWidth: number,
-    public readonly dirtyHeight: number
-  ) { }
+    public readonly dirtyHeight: number,
+    public readonly more: A
+  ) {}
 }
 
-export class CreateImageData {
-  readonly _tag = 'CreateImageData'
-  readonly _A: ImageData
+export class CreateImageData<A> {
+  readonly _tag: 'CreateImageData' = 'CreateImageData'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly imageData: number | ImageData,
-    public readonly sh: number
-  ) { }
+    public readonly sh: number,
+    public readonly more: (imageData: ImageData) => A
+  ) {}
 }
 
-export class CreateImageDataCopy {
-  readonly _tag = 'CreateImageDataCopy'
-  readonly _A: ImageData
-  constructor(
-    public readonly imageData: ImageData
-  ) { }
+export class CreateImageDataCopy<A> {
+  readonly _tag: 'CreateImageDataCopy' = 'CreateImageDataCopy'
+  readonly _A: A
+  readonly _URI = URI
+  constructor(public readonly imageData: ImageData, public readonly more: (imageData: ImageData) => A) {}
 }
 
-export class DrawImage {
-  readonly _tag = 'DrawImage'
+export class DrawImage<A> {
+  readonly _tag: 'DrawImage' = 'DrawImage'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly imageSource: canvas.ImageSource,
     public readonly offsetX: number,
-    public readonly offsetY: number
-  ) { }
+    public readonly offsetY: number,
+    public readonly more: A
+  ) {}
 }
 
-export class DrawImageScale {
-  readonly _tag = 'DrawImageScale'
+export class DrawImageScale<A> {
+  readonly _tag: 'DrawImageScale' = 'DrawImageScale'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly imageSource: canvas.ImageSource,
     public readonly offsetX: number,
     public readonly offsetY: number,
     public readonly width: number,
-    public readonly height: number
-  ) { }
+    public readonly height: number,
+    public readonly more: A
+  ) {}
 }
 
-export class DrawImageFull {
-  readonly _tag = 'DrawImageFull'
+export class DrawImageFull<A> {
+  readonly _tag: 'DrawImageFull' = 'DrawImageFull'
+  readonly _A: A
+  readonly _URI = URI
   constructor(
     public readonly imageSource: canvas.ImageSource,
     public readonly offsetX: number,
@@ -338,241 +400,337 @@ export class DrawImageFull {
     public readonly canvasOffsetX: number,
     public readonly canvasOffsetY: number,
     public readonly canvasImageWidth: number,
-    public readonly canvasImageHeight: number
-  ) { }
+    public readonly canvasImageHeight: number,
+    public readonly more: A
+  ) {}
 }
 
-export type Canvas =
-  | SetLineWidth
-  | SetFillStyle
-  | SetStrokeStyle
-  | SetShadowColor
-  | SetShadowBlur
-  | SetShadowOffsetX
-  | SetShadowOffsetY
-  | SetLineCap
-  | SetComposite
-  | SetAlpha
-  | BeginPath
-  | Stroke
-  | Fill
-  | Clip
-  | LineTo
-  | MoveTo
-  | ClosePath
-  | Arc
-  | Rect
-  | FillRect
-  | StrokeRect
-  | ClearRect
-  | Scale
-  | Rotate
-  | Translate
-  | Transform
-  | GetTextAlign
-  | SetTextAlign
-  | GetFont
-  | SetFont
-  | FillText
-  | StrokeText
-  | MeasureText
-  | Save
-  | Restore
-  | GetImageData
-  | PutImageData
-  | PutImageDataFull
-  | CreateImageData
-  | CreateImageDataCopy
-  | DrawImage
-  | DrawImageScale
-  | DrawImageFull
+export type Canvas<A> =
+  | SetLineWidth<A>
+  | SetFillStyle<A>
+  | SetStrokeStyle<A>
+  | SetShadowColor<A>
+  | SetShadowBlur<A>
+  | SetShadowOffsetX<A>
+  | SetShadowOffsetY<A>
+  | SetLineCap<A>
+  | SetComposite<A>
+  | SetAlpha<A>
+  | BeginPath<A>
+  | Stroke<A>
+  | Fill<A>
+  | Clip<A>
+  | LineTo<A>
+  | MoveTo<A>
+  | ClosePath<A>
+  | Arc<A>
+  | Rect<A>
+  | FillRect<A>
+  | StrokeRect<A>
+  | ClearRect<A>
+  | Scale<A>
+  | Rotate<A>
+  | Translate<A>
+  | Transform<A>
+  | GetTextAlign<A>
+  | SetTextAlign<A>
+  | GetFont<A>
+  | SetFont<A>
+  | FillText<A>
+  | StrokeText<A>
+  | MeasureText<A>
+  | Save<A>
+  | Restore<A>
+  | GetImageData<A>
+  | PutImageData<A>
+  | PutImageDataFull<A>
+  | CreateImageData<A>
+  | CreateImageDataCopy<A>
+  | DrawImage<A>
+  | DrawImageScale<A>
+  | DrawImageFull<A>
 
-export const setLineWidth = (width: number) => free.liftF<Canvas, void>(new SetLineWidth(width))
-export const setFillStyle = (style: string) => free.liftF<Canvas, void>(new SetFillStyle(style))
-export const setStrokeStyle = (style: string) => free.liftF<Canvas, void>(new SetStrokeStyle(style))
-export const setShadowColor = (color: string) => free.liftF<Canvas, void>(new SetShadowColor(color))
-export const setShadowBlur = (blur: number) => free.liftF<Canvas, void>(new SetShadowBlur(blur))
-export const setShadowOffsetX = (offsetX: number) => free.liftF<Canvas, void>(new SetShadowOffsetX(offsetX))
-export const setShadowOffsetY = (offsetY: number) => free.liftF<Canvas, void>(new SetShadowOffsetY(offsetY))
-export const setLineCap = (cap: canvas.LineCap) => free.liftF<Canvas, void>(new SetLineCap(cap))
-export const setComposite = (compisite: canvas.Composite) => free.liftF<Canvas, void>(new SetComposite(compisite))
-export const setAlpha = (alpha: number) => free.liftF<Canvas, void>(new SetAlpha(alpha))
-export const beginPath = () => free.liftF<Canvas, void>(new BeginPath())
-export const stroke = () => free.liftF<Canvas, void>(new Stroke())
-export const fill = () => free.liftF<Canvas, void>(new Fill())
-export const clip = () => free.liftF<Canvas, void>(new Clip())
-export const lineTo = (x: number, y: number) => free.liftF<Canvas, void>(new LineTo(x, y))
-export const moveTo = (x: number, y: number) => free.liftF<Canvas, void>(new MoveTo(x, y))
-export const closePath = () => free.liftF<Canvas, void>(new ClosePath())
-export const arc = (x: number, y: number, radius: number, start: number, end: number) => free.liftF<Canvas, void>(new Arc(x, y, radius, start, end))
-export const rect = (x: number, y: number, width: number, height: number) => free.liftF<Canvas, void>(new Rect(x, y, width, height))
-export const fillRect = (x: number, y: number, width: number, height: number) => free.liftF<Canvas, void>(new FillRect(x, y, width, height))
-export const strokeRect = (x: number, y: number, width: number, height: number) => free.liftF<Canvas, void>(new StrokeRect(x, y, width, height))
-export const clearRect = (x: number, y: number, width: number, height: number) => free.liftF<Canvas, void>(new ClearRect(x, y, width, height))
-export const scale = (x: number, y: number) => free.liftF<Canvas, void>(new Scale(x, y))
-export const rotate = (angle: number) => free.liftF<Canvas, void>(new Rotate(angle))
-export const translate = (x: number, y: number) => free.liftF<Canvas, void>(new Translate(x, y))
-export const transform = (m11: number, m12: number, m21: number, m22: number, m31: number, m32: number) => free.liftF<Canvas, void>(new Transform(m11, m12, m21, m22, m31, m32))
-export const getTextAlign = () => free.liftF<Canvas, canvas.TextAlign>(new GetTextAlign())
-export const setTextAlign = (textAlign: canvas.TextAlign) => free.liftF<Canvas, void>(new SetTextAlign(textAlign))
-export const getFont = () => free.liftF<Canvas, string>(new GetFont())
-export const setFont = (font: string) => free.liftF<Canvas, void>(new SetFont(font))
-export const fillText = (text: string, x: number, y: number) => free.liftF<Canvas, void>(new FillText(text, x, y))
-export const strokeText = (text: string, x: number, y: number) => free.liftF<Canvas, void>(new StrokeText(text, x, y))
-export const measureText = (text: string) => free.liftF<Canvas, canvas.TextMetrics>(new MeasureText(text))
-export const save = () => free.liftF<Canvas, void>(new Save())
-export const restore = () => free.liftF<Canvas, void>(new Restore())
-export const getImageData = (sx: number, sy: number, sw: number, sh: number) => free.liftF<Canvas, ImageData>(new GetImageData(sx, sy, sw, sh))
-export const putImageData = (imageData: ImageData, dx: number, dy: number) => free.liftF<Canvas, void>(new PutImageData(imageData, dx, dy))
-export const putImageDataFull = (imageData: ImageData, dx: number, dy: number, dirtyX: number, dirtyY: number, dirtyWidth: number, dirtyHeight: number) => free.liftF<Canvas, void>(new PutImageDataFull(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight))
-export const createImageData = (imageData: number | ImageData, sh: number) => free.liftF<Canvas, ImageData>(new CreateImageData(imageData, sh))
-export const createImageDataCopy = (imageData: ImageData) => free.liftF<Canvas, ImageData>(new CreateImageDataCopy(imageData))
-export const drawImage = (imageSource: ImageSource, offsetX: number, offsetY: number) => free.liftF<Canvas, void>(new DrawImage(imageSource, offsetX, offsetY))
-export const drawImageScale = (imageSource: ImageSource, offsetX: number, offsetY: number, width: number, height: number) => free.liftF<Canvas, void>(new DrawImageScale(imageSource, offsetX, offsetY, width, height))
-export const drawImageFull = (imageSource: ImageSource, offsetX: number, offsetY: number, width: number, height: number, canvasOffsetX: number, canvasOffsetY: number, canvasImageWidth: number, canvasImageHeight: number) => free.liftF<Canvas, void>(new DrawImageFull(imageSource, offsetX, offsetY, width, height, canvasOffsetX, canvasOffsetY, canvasImageWidth, canvasImageHeight))
+export const setLineWidth = (width: number) => free.liftF(new SetLineWidth(width, undefined))
 
-const undef = identity.of(undefined)
+export const setFillStyle = (style: string) => free.liftF(new SetFillStyle(style, undefined))
 
-function getInterpretCanvas(ctx: CanvasRenderingContext2D): (fa: Canvas) => identity.Identity<TextMetrics | string | void> {
-  return function interpretCanvas(fa: Canvas): identity.Identity<TextMetrics | string | void> {
+export const setStrokeStyle = (style: string) => free.liftF(new SetStrokeStyle(style, undefined))
+
+export const setShadowColor = (color: string) => free.liftF(new SetShadowColor(color, undefined))
+
+export const setShadowBlur = (blur: number) => free.liftF(new SetShadowBlur(blur, undefined))
+
+export const setShadowOffsetX = (offsetX: number) => free.liftF(new SetShadowOffsetX(offsetX, undefined))
+
+export const setShadowOffsetY = (offsetY: number) => free.liftF(new SetShadowOffsetY(offsetY, undefined))
+
+export const setLineCap = (cap: canvas.LineCap) => free.liftF(new SetLineCap(cap, undefined))
+
+export const setComposite = (compisite: canvas.Composite) => free.liftF(new SetComposite(compisite, undefined))
+
+export const setAlpha = (alpha: number) => free.liftF(new SetAlpha(alpha, undefined))
+
+export const beginPath = () => free.liftF(new BeginPath(undefined))
+
+export const stroke = () => free.liftF(new Stroke(undefined))
+
+export const fill = () => free.liftF(new Fill(undefined))
+
+export const clip = () => free.liftF(new Clip(undefined))
+
+export const lineTo = (x: number, y: number) => free.liftF(new LineTo(x, y, undefined))
+
+export const moveTo = (x: number, y: number) => free.liftF(new MoveTo(x, y, undefined))
+
+export const closePath = () => free.liftF(new ClosePath(undefined))
+
+export const arc = (x: number, y: number, radius: number, start: number, end: number) =>
+  free.liftF(new Arc(x, y, radius, start, end, undefined))
+
+export const rect = (x: number, y: number, width: number, height: number) =>
+  free.liftF(new Rect(x, y, width, height, undefined))
+
+export const fillRect = (x: number, y: number, width: number, height: number) =>
+  free.liftF(new FillRect(x, y, width, height, undefined))
+
+export const strokeRect = (x: number, y: number, width: number, height: number) =>
+  free.liftF(new StrokeRect(x, y, width, height, undefined))
+
+export const clearRect = (x: number, y: number, width: number, height: number) =>
+  free.liftF(new ClearRect(x, y, width, height, undefined))
+
+export const scale = (x: number, y: number) => free.liftF(new Scale(x, y, undefined))
+
+export const rotate = (angle: number) => free.liftF(new Rotate(angle, undefined))
+
+export const translate = (x: number, y: number) => free.liftF(new Translate(x, y, undefined))
+
+export const transform = (m11: number, m12: number, m21: number, m22: number, m31: number, m32: number) =>
+  free.liftF(new Transform(m11, m12, m21, m22, m31, m32, undefined))
+
+export const getTextAlign = () => free.liftF(new GetTextAlign(a => a))
+
+export const setTextAlign = (textAlign: canvas.TextAlign) => free.liftF(new SetTextAlign(textAlign, undefined))
+
+export const getFont = () => free.liftF(new GetFont(a => a))
+
+export const setFont = (font: string) => free.liftF(new SetFont(font, undefined))
+
+export const fillText = (text: string, x: number, y: number) => free.liftF(new FillText(text, x, y, undefined))
+
+export const strokeText = (text: string, x: number, y: number) => free.liftF(new StrokeText(text, x, y, undefined))
+
+export const measureText = (text: string) => free.liftF(new MeasureText(text, a => a))
+
+export const save = () => free.liftF(new Save(undefined))
+
+export const restore = () => free.liftF(new Restore(undefined))
+
+export const getImageData = (sx: number, sy: number, sw: number, sh: number) =>
+  free.liftF(new GetImageData(sx, sy, sw, sh, a => a))
+
+export const putImageData = (imageData: ImageData, dx: number, dy: number) =>
+  free.liftF(new PutImageData(imageData, dx, dy, undefined))
+
+export const putImageDataFull = (
+  imageData: ImageData,
+  dx: number,
+  dy: number,
+  dirtyX: number,
+  dirtyY: number,
+  dirtyWidth: number,
+  dirtyHeight: number
+) => free.liftF(new PutImageDataFull(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight, undefined))
+
+export const createImageData = (imageData: number | ImageData, sh: number) =>
+  free.liftF(new CreateImageData(imageData, sh, a => a))
+
+export const createImageDataCopy = (imageData: ImageData) => free.liftF(new CreateImageDataCopy(imageData, a => a))
+
+export const drawImage = (imageSource: ImageSource, offsetX: number, offsetY: number) =>
+  free.liftF(new DrawImage(imageSource, offsetX, offsetY, undefined))
+
+export const drawImageScale = (
+  imageSource: ImageSource,
+  offsetX: number,
+  offsetY: number,
+  width: number,
+  height: number
+) => free.liftF(new DrawImageScale(imageSource, offsetX, offsetY, width, height, undefined))
+
+export const drawImageFull = (
+  imageSource: ImageSource,
+  offsetX: number,
+  offsetY: number,
+  width: number,
+  height: number,
+  canvasOffsetX: number,
+  canvasOffsetY: number,
+  canvasImageWidth: number,
+  canvasImageHeight: number
+) =>
+  free.liftF(
+    new DrawImageFull(
+      imageSource,
+      offsetX,
+      offsetY,
+      width,
+      height,
+      canvasOffsetX,
+      canvasOffsetY,
+      canvasImageWidth,
+      canvasImageHeight,
+      undefined
+    )
+  )
+
+function getInterpretCanvas(ctx: CanvasRenderingContext2D): <A>(fa: Canvas<A>) => identity.Identity<A> {
+  return function interpretCanvas<A>(fa: Canvas<A>): identity.Identity<A> {
     switch (fa._tag) {
-      case 'BeginPath' :
+      case 'BeginPath':
         ctx.beginPath()
-        return undef
-      case 'ClosePath' :
+        return identity.of(fa.more)
+      case 'ClosePath':
         ctx.closePath()
-        return undef
-      case 'Fill' :
+        return identity.of(fa.more)
+      case 'Fill':
         ctx.fill()
-        return undef
-      case 'FillRect' :
+        return identity.of(fa.more)
+      case 'FillRect':
         ctx.fillRect(fa.x, fa.y, fa.width, fa.height)
-        return undef
-      case 'MoveTo' :
+        return identity.of(fa.more)
+      case 'MoveTo':
         ctx.moveTo(fa.x, fa.y)
-        return undef
-      case 'LineTo' :
+        return identity.of(fa.more)
+      case 'LineTo':
         ctx.lineTo(fa.x, fa.y)
-        return undef
-      case 'Restore' :
+        return identity.of(fa.more)
+      case 'Restore':
         ctx.restore()
-        return undef
-      case 'Rotate' :
+        return identity.of(fa.more)
+      case 'Rotate':
         ctx.rotate(fa.angle)
-        return undef
-      case 'Save' :
+        return identity.of(fa.more)
+      case 'Save':
         ctx.save()
-        return undef
-      case 'Scale' :
+        return identity.of(fa.more)
+      case 'Scale':
         ctx.scale(fa.x, fa.y)
-        return undef
-      case 'SetFillStyle' :
+        return identity.of(fa.more)
+      case 'SetFillStyle':
         ctx.fillStyle = fa.style
-        return undef
-      case 'SetLineWidth' :
+        return identity.of(fa.more)
+      case 'SetLineWidth':
         ctx.lineWidth = fa.width
-        return undef
-      case 'SetShadowBlur' :
+        return identity.of(fa.more)
+      case 'SetShadowBlur':
         ctx.shadowBlur = fa.blur
-        return undef
-      case 'SetShadowColor' :
+        return identity.of(fa.more)
+      case 'SetShadowColor':
         ctx.shadowColor = fa.color
-        return undef
-      case 'SetShadowOffsetX' :
+        return identity.of(fa.more)
+      case 'SetShadowOffsetX':
         ctx.shadowOffsetX = fa.offsetX
-        return undef
-      case 'SetShadowOffsetY' :
+        return identity.of(fa.more)
+      case 'SetShadowOffsetY':
         ctx.shadowOffsetY = fa.offsetY
-        return undef
-      case 'StrokeText' :
+        return identity.of(fa.more)
+      case 'StrokeText':
         ctx.strokeText(fa.text, fa.x, fa.y)
-        return undef
-      case 'Translate' :
+        return identity.of(fa.more)
+      case 'Translate':
         ctx.translate(fa.x, fa.y)
-        return undef
-      case 'SetStrokeStyle' :
+        return identity.of(fa.more)
+      case 'SetStrokeStyle':
         ctx.strokeStyle = fa.style
-        return undef
-      case 'SetLineCap' :
+        return identity.of(fa.more)
+      case 'SetLineCap':
         ctx.lineCap = fa.cap
-        return undef
-      case 'SetComposite' :
+        return identity.of(fa.more)
+      case 'SetComposite':
         ctx.globalCompositeOperation = fa.composite
-        return undef
-      case 'SetAlpha' :
+        return identity.of(fa.more)
+      case 'SetAlpha':
         ctx.globalAlpha = fa.alpha
-        return undef
-      case 'Stroke' :
+        return identity.of(fa.more)
+      case 'Stroke':
         ctx.stroke()
-        return undef
-      case 'Clip' :
+        return identity.of(fa.more)
+      case 'Clip':
         ctx.clip()
-        return undef
-      case 'Arc' :
+        return identity.of(fa.more)
+      case 'Arc':
         ctx.arc(fa.x, fa.y, fa.radius, fa.start, fa.end)
-        return undef
-      case 'Rect' :
+        return identity.of(fa.more)
+      case 'Rect':
         ctx.rect(fa.x, fa.y, fa.width, fa.height)
-        return undef
-      case 'StrokeRect' :
+        return identity.of(fa.more)
+      case 'StrokeRect':
         ctx.strokeRect(fa.x, fa.y, fa.width, fa.height)
-        return undef
-      case 'ClearRect' :
+        return identity.of(fa.more)
+      case 'ClearRect':
         ctx.clearRect(fa.x, fa.y, fa.width, fa.height)
-        return undef
-      case 'Transform' :
+        return identity.of(fa.more)
+      case 'Transform':
         ctx.transform(fa.m11, fa.m12, fa.m21, fa.m22, fa.m31, fa.m32)
-        return undef
-      case 'GetTextAlign' :
-        return identity.of(ctx.textAlign)
-      case 'SetTextAlign' :
+        return identity.of(fa.more)
+      case 'GetTextAlign':
+        return identity.of(fa.more(ctx.textAlign as canvas.TextAlign))
+      case 'SetTextAlign':
         ctx.textAlign = fa.textAlign
-        return undef
-      case 'GetFont' :
-        return identity.of(ctx.font)
-      case 'SetFont' :
+        return identity.of(fa.more)
+      case 'GetFont':
+        return identity.of(fa.more(ctx.font))
+      case 'SetFont':
         ctx.font = fa.font
-        return undef
-      case 'FillText' :
+        return identity.of(fa.more)
+      case 'FillText':
         ctx.fillText(fa.text, fa.x, fa.y)
-        return undef
-      case 'MeasureText' :
-        return identity.of(ctx.measureText(fa.text))
-      case 'GetImageData' :
-        return identity.of(ctx.getImageData(fa.sx, fa.sy, fa.sw, fa.sh))
-      case 'PutImageData' :
+        return identity.of(fa.more)
+      case 'MeasureText':
+        return identity.of(fa.more(ctx.measureText(fa.text)))
+      case 'GetImageData':
+        return identity.of(fa.more(ctx.getImageData(fa.sx, fa.sy, fa.sw, fa.sh)))
+      case 'PutImageData':
         ctx.putImageData(fa.imageData, fa.dx, fa.dy)
-        return undef
-      case 'PutImageDataFull' :
+        return identity.of(fa.more)
+      case 'PutImageDataFull':
         ctx.putImageData(fa.imageData, fa.dx, fa.dy, fa.dirtyX, fa.dirtyY, fa.dirtyWidth, fa.dirtyHeight)
-        return undef
-      case 'CreateImageData' :
-        ctx.createImageData(fa.imageData, fa.sh)
-        return undef
-      case 'CreateImageDataCopy' :
-        return identity.of(ctx.createImageData(fa.imageData))
-      case 'DrawImage' :
+        return identity.of(fa.more)
+      case 'CreateImageData':
+        return identity.of(fa.more(ctx.createImageData(fa.imageData, fa.sh)))
+      case 'CreateImageDataCopy':
+        return identity.of(fa.more(ctx.createImageData(fa.imageData)))
+      case 'DrawImage':
         ctx.drawImage(fa.imageSource, fa.offsetX, fa.offsetY)
-        return undef
-      case 'DrawImageScale' :
+        return identity.of(fa.more)
+      case 'DrawImageScale':
         ctx.drawImage(fa.imageSource, fa.offsetX, fa.offsetY, fa.width, fa.height)
-        return undef
-      case 'DrawImageFull' :
-        ctx.drawImage(fa.imageSource, fa.offsetX, fa.offsetY, fa.width, fa.height, fa.canvasOffsetX, fa.canvasOffsetY, fa.canvasImageWidth, fa.canvasImageHeight)
-        return undef
+        return identity.of(fa.more)
+      case 'DrawImageFull':
+        ctx.drawImage(
+          fa.imageSource,
+          fa.offsetX,
+          fa.offsetY,
+          fa.width,
+          fa.height,
+          fa.canvasOffsetX,
+          fa.canvasOffsetY,
+          fa.canvasImageWidth,
+          fa.canvasImageHeight
+        )
+        return identity.of(fa.more)
     }
   }
 }
 
 /** A convenience function: run the action, preserving the existing context */
 export function withContext<A>(drawning: Drawing<A>): Drawing<A> {
-  return save()
-    .chain(() => drawning)
-    .chain(a => restore().map(() => a))
+  return save().chain(() => drawning).chain(a => restore().map(() => a))
 }
 
-export type Drawing<A> = free.Free<Canvas, A>
+export type Drawing<A> = free.Free<URI, A>
 
 export function run<A>(drawing: Drawing<A>, ctx: CanvasRenderingContext2D): A {
-  return drawing.foldMap(identity, (fa: Canvas) => getInterpretCanvas(ctx)(fa)).value
+  return drawing.foldFree(identity, getInterpretCanvas(ctx)).value
 }

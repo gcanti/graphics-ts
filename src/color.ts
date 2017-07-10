@@ -1,9 +1,9 @@
 // adpated from https://github.com/sharkdp/purescript-colors
 
 export type Color = {
-  h: number,
-  s: number,
-  l: number,
+  h: number
+  s: number
+  l: number
   a: number
 }
 
@@ -22,9 +22,7 @@ export function toCss(color: Color): string {
   const saturation = toString(s * 100.0) + '%'
   const lightness = toString(l * 100.0) + '%'
   const alpha = String(a)
-  return a === 1 ?
-    `hsl(${hue}, ${saturation}, ${lightness})` :
-    `hsla(${hue}, ${saturation}, ${lightness}, ${alpha})`
+  return a === 1 ? `hsl(${hue}, ${saturation}, ${lightness})` : `hsla(${hue}, ${saturation}, ${lightness}, ${alpha})`
 }
 
 export const black = hsl(0, 0, 0)

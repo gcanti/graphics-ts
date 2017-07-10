@@ -1,6 +1,6 @@
 // adapted from https://github.com/purescript-contrib/purescript-drawing
 
-import { HKT, HKTS } from 'fp-ts/lib/HKT'
+import { HKT } from 'fp-ts/lib/HKT'
 import { Foldable, toArray } from 'fp-ts/lib/Foldable'
 import { Option, some, none } from 'fp-ts/lib/Option'
 import { Monoid } from 'fp-ts/lib/Monoid'
@@ -11,23 +11,16 @@ import * as array from 'fp-ts/lib/Array'
 import { Font } from './font'
 
 export type Point = {
-  x: number,
+  x: number
   y: number
 }
 
-export type Shape =
-  | Path
-  | Rectangle
-  | Arc
-  | Composite
+export type Shape = Path | Rectangle | Arc | Composite
 
 /** A path is a list of points joined by line segments */
 export class Path {
   readonly _tag = 'Path'
-  constructor(
-    public readonly closed: boolean,
-    public readonly points: Array<Point>
-  ) {}
+  constructor(public readonly closed: boolean, public readonly points: Array<Point>) {}
 }
 
 /** A rectangle consisting of the numbers left, top, width and height */
@@ -64,9 +57,7 @@ export function arc(x: number, y: number, radius: number, start: number, end: nu
 /** A composite shape */
 export class Composite {
   readonly _tag = 'Composite'
-  constructor(
-    public readonly shapes: Array<Shape>
-  ) {}
+  constructor(public readonly shapes: Array<Shape>) {}
 }
 
 export function composite(shapes: Array<Shape>): Composite {
@@ -74,12 +65,12 @@ export function composite(shapes: Array<Shape>): Composite {
 }
 
 /** Create a path */
-export function path<F extends HKTS>(foldable: Foldable<F>, points: HKT<Point>[F]): Shape {
+export function path<F>(foldable: Foldable<F>, points: HKT<F, Point>): Shape {
   return new Path(false, toArray<F>(foldable)<Point>(points))
 }
 
 /** Create a closed path */
-export function closed<F extends HKTS>(foldable: Foldable<F>, points: HKT<Point>[F]): Shape {
+export function closed<F>(foldable: Foldable<F>, points: HKT<F, Point>): Shape {
   return new Path(true, toArray<F>(foldable)<Point>(points))
 }
 
@@ -107,15 +98,9 @@ export function fillColor(color: Color): FillStyle {
 }
 
 export class OutlineStyle {
-  constructor(
-    public readonly color: Option<Color>,
-    public readonly lineWidth: Option<number>
-  ) {}
+  constructor(public readonly color: Option<Color>, public readonly lineWidth: Option<number>) {}
   concat(y: OutlineStyle): OutlineStyle {
-    return new OutlineStyle(
-      this.color.alt(y.color),
-      this.lineWidth.alt(y.lineWidth)
-    )
+    return new OutlineStyle(this.color.alt(y.color), this.lineWidth.alt(y.lineWidth))
   }
 }
 
@@ -138,14 +123,10 @@ export class Shadow {
   constructor(
     public readonly color: Option<Color>,
     public readonly blur: Option<number>,
-    public readonly offset: Option<{ x: number, y: number }>
+    public readonly offset: Option<{ x: number; y: number }>
   ) {}
   concat(y: Shadow): Shadow {
-    return new Shadow(
-      this.color.alt(y.color),
-      this.blur.alt(y.blur),
-      this.offset.alt(y.offset)
-    )
+    return new Shadow(this.color.alt(y.color), this.blur.alt(y.blur), this.offset.alt(y.offset))
   }
 }
 
@@ -168,23 +149,11 @@ export function shadowOffset(x: number, y: number): Shadow {
   return new Shadow(none, none, some({ x, y }))
 }
 
-export type Drawing =
-  | Fill
-  | Outline
-  | Text
-  | Many
-  | Scale
-  | Translate
-  | Rotate
-  | Clipped
-  | WithShadow
+export type Drawing = Fill | Outline | Text | Many | Scale | Translate | Rotate | Clipped | WithShadow
 
 export class Fill {
   readonly _tag = 'Fill'
-  constructor(
-    public readonly shape: Shape,
-    public readonly style: FillStyle
-  ) {}
+  constructor(public readonly shape: Shape, public readonly style: FillStyle) {}
 }
 
 export function fill(shape: Shape, style: FillStyle): Drawing {
@@ -193,10 +162,7 @@ export function fill(shape: Shape, style: FillStyle): Drawing {
 
 export class Outline {
   readonly _tag = 'Outline'
-  constructor(
-    public readonly shape: Shape,
-    public readonly style: OutlineStyle
-  ) {}
+  constructor(public readonly shape: Shape, public readonly style: OutlineStyle) {}
 }
 
 export function outline(shape: Shape, style: OutlineStyle): Drawing {
@@ -220,9 +186,7 @@ export function text(font: Font, x: number, y: number, style: FillStyle, text: s
 
 export class Many {
   readonly _tag = 'Many'
-  constructor(
-    public readonly drawings: Array<Drawing>
-  ) {}
+  constructor(public readonly drawings: Array<Drawing>) {}
 }
 
 export function many(drawings: Array<Drawing>): Drawing {
@@ -231,11 +195,7 @@ export function many(drawings: Array<Drawing>): Drawing {
 
 export class Scale {
   readonly _tag = 'Scale'
-  constructor(
-    public readonly scaleX: number,
-    public readonly scaleY: number,
-    public readonly drawing: Drawing
-  ) {}
+  constructor(public readonly scaleX: number, public readonly scaleY: number, public readonly drawing: Drawing) {}
 }
 
 export function scale(scaleX: number, scaleY: number, drawing: Drawing): Drawing {
@@ -257,10 +217,7 @@ export function translate(translateX: number, translateY: number, drawing: Drawi
 
 export class Rotate {
   readonly _tag = 'Rotate'
-  constructor(
-    public readonly angle: number,
-    public readonly drawing: Drawing
-  ) {}
+  constructor(public readonly angle: number, public readonly drawing: Drawing) {}
 }
 
 export function rotate(angle: number, drawing: Drawing): Drawing {
@@ -269,10 +226,7 @@ export function rotate(angle: number, drawing: Drawing): Drawing {
 
 export class Clipped {
   readonly _tag = 'Clipped'
-  constructor(
-    public readonly shape: Shape,
-    public readonly drawing: Drawing
-  ) {}
+  constructor(public readonly shape: Shape, public readonly drawing: Drawing) {}
 }
 
 export function clipped(shape: Shape, drawing: Drawing): Drawing {
@@ -281,10 +235,7 @@ export function clipped(shape: Shape, drawing: Drawing): Drawing {
 
 export class WithShadow {
   readonly _tag = 'WithShadow'
-  constructor(
-    public readonly shadow: Shadow,
-    public readonly drawing: Drawing
-  ) {}
+  constructor(public readonly shadow: Shadow, public readonly drawing: Drawing) {}
 }
 
 export function withShadow(shadow: Shadow, drawing: Drawing): Drawing {
@@ -306,33 +257,37 @@ export const monoidDrawing: Monoid<Drawing> = {
 
 /** Render a `Drawing` to a canvas */
 export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void> {
-
   function go(drawing: Drawing): IO<void> {
     switch (drawing._tag) {
-      case 'Fill' :
-        return canvas.withContext(ctx, applyFillStyle(drawing.style)
-          .chain(() => {
+      case 'Fill':
+        return canvas.withContext(
+          ctx,
+          applyFillStyle(drawing.style).chain(() => {
             return canvas.fillPath(ctx, renderShape(drawing.shape))
-          }))
-      case 'Outline' :
-        return canvas.withContext(ctx, applyOutlineStyle(drawing.style)
-          .chain(() => canvas.strokePath(ctx, renderShape(drawing.shape))))
-      case 'Many' :
+          })
+        )
+      case 'Outline':
+        return canvas.withContext(
+          ctx,
+          applyOutlineStyle(drawing.style).chain(() => canvas.strokePath(ctx, renderShape(drawing.shape)))
+        )
+      case 'Many':
         return new IO(() => {
           drawing.drawings.forEach(drawing => go(drawing).run())
         })
-      case 'Scale' :
+      case 'Scale':
         return canvas.withContext(ctx, canvas.scale(ctx, drawing).chain(() => go(drawing.drawing)))
-      case 'Translate' :
+      case 'Translate':
         return canvas.withContext(ctx, canvas.translate(ctx, drawing).chain(() => go(drawing.drawing)))
-      case 'Rotate' :
+      case 'Rotate':
         return canvas.withContext(ctx, canvas.rotate(ctx, drawing.angle).chain(() => go(drawing.drawing)))
-      case 'Clipped' :
+      case 'Clipped':
         return canvas.withContext(ctx, renderShape(drawing.shape).chain(() => go(drawing.drawing)))
-      case 'WithShadow' :
+      case 'WithShadow':
         return canvas.withContext(ctx, applyShadow(drawing.shadow).chain(() => go(drawing.drawing)))
-      case 'Text' :
-        return canvas.withContext(ctx, canvas.setFont(ctx, drawing.font.toString()))
+      case 'Text':
+        return canvas
+          .withContext(ctx, canvas.setFont(ctx, drawing.font.toString()))
           .chain(() => applyFillStyle(drawing.style))
           .chain(() => canvas.fillText(ctx, drawing.text, drawing.x, drawing.y))
           .map(() => undefined)
@@ -365,7 +320,7 @@ export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void
 
   function renderShape(shape: Shape): IO<void> {
     switch (shape._tag) {
-      case 'Path' :
+      case 'Path':
         return array.fold(
           () => IO.of(undefined),
           (p, tail) => {
@@ -379,11 +334,11 @@ export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void
           },
           shape.points
         )
-      case 'Rectangle' :
+      case 'Rectangle':
         return canvas.rect(ctx, shape).map(() => undefined)
-      case 'Arc' :
+      case 'Arc':
         return canvas.arc(ctx, shape).map(() => undefined)
-      case 'Composite' :
+      case 'Composite':
         return new IO(() => shape.shapes.forEach(shape => renderShape(shape).run()))
     }
   }
