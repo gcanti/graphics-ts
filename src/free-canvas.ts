@@ -732,5 +732,5 @@ export function withContext<A>(drawning: Drawing<A>): Drawing<A> {
 export type Drawing<A> = free.Free<URI, A>
 
 export function run<A>(drawing: Drawing<A>, ctx: CanvasRenderingContext2D): A {
-  return drawing.foldFree(identity, getInterpretCanvas(ctx)).value
+  return drawing.foldFree(identity)(getInterpretCanvas(ctx)).value
 }

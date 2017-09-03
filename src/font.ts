@@ -14,7 +14,7 @@ export class FontOptions {
     public readonly weight: Option<string>
   ) {}
   toString() {
-    return intercalateOptions(some(' '), [this.style, this.variant, this.weight])
+    return intercalateOptions(some(' '))([this.style, this.variant, this.weight])
   }
 }
 

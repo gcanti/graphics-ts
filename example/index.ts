@@ -54,7 +54,7 @@ export function ioSnowflake() {
         return rotate(Math.PI / 2.5 * (i + 0.5), translate(0, Math.cos(Math.PI / 5) * (1 + s), next))
       })
     )
-    return fold(monoidDrawing, drawings)
+    return fold(monoidDrawing)(drawings)
   }
 
   return render(drawing, ctx)

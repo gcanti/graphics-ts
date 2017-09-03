@@ -5,6 +5,7 @@ import { Foldable, toArray } from 'fp-ts/lib/Foldable'
 import { Option, some, none } from 'fp-ts/lib/Option'
 import { Monoid } from 'fp-ts/lib/Monoid'
 import { IO } from 'fp-ts/lib/IO'
+import * as io from 'fp-ts/lib/IO'
 import * as canvas from './canvas'
 import { Color, toCss } from './color'
 import * as array from 'fp-ts/lib/Array'
@@ -90,7 +91,7 @@ const emptyFillStyle = new FillStyle(none)
 
 export const monoidFillStyle: Monoid<FillStyle> = {
   empty: () => emptyFillStyle,
-  concat: (x, y) => x.concat(y)
+  concat: x => y => x.concat(y)
 }
 
 export function fillColor(color: Color): FillStyle {
@@ -108,7 +109,7 @@ const emptyOutileStyle = new OutlineStyle(none, none)
 
 export const monoidOutlineStyle: Monoid<OutlineStyle> = {
   empty: () => emptyOutileStyle,
-  concat: (x, y) => x.concat(y)
+  concat: x => y => x.concat(y)
 }
 
 export function outlineColor(color: Color): OutlineStyle {
@@ -134,7 +135,7 @@ const emptyShadow = new Shadow(none, none, none)
 
 export const monoidShadow: Monoid<Shadow> = {
   empty: () => emptyShadow,
-  concat: (x, y) => x.concat(y)
+  concat: x => y => x.concat(y)
 }
 
 export function shadowColor(color: Color): Shadow {
@@ -244,7 +245,7 @@ export function withShadow(shadow: Shadow, drawing: Drawing): Drawing {
 
 export const monoidDrawing: Monoid<Drawing> = {
   empty: () => new Many([]),
-  concat: (x, y) => {
+  concat: x => y => {
     if (x._tag === 'Many') {
       return new Many(x.drawings.concat(y))
     }
@@ -322,7 +323,7 @@ export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void
     switch (shape._tag) {
       case 'Path':
         return array.fold(
-          () => IO.of(undefined),
+          () => io.of(undefined),
           (p, tail) => {
             return new IO(() => {
               canvas.moveTo(ctx, p.x, p.y).run()
