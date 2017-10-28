@@ -1,6 +1,7 @@
 import * as free from 'fp-ts/lib/Free'
 import * as canvas from './canvas'
 import * as identity from 'fp-ts/lib/Identity'
+import { HKT } from 'fp-ts/lib/HKT'
 
 export type ImageSource = HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
 
@@ -584,8 +585,9 @@ export const drawImageFull = (
     )
   )
 
-function getInterpretCanvas(ctx: CanvasRenderingContext2D): <A>(fa: Canvas<A>) => identity.Identity<A> {
-  return function interpretCanvas<A>(fa: Canvas<A>): identity.Identity<A> {
+function getInterpretCanvas(ctx: CanvasRenderingContext2D): <A>(hktfa: HKT<URI, A>) => identity.Identity<A> {
+  return function interpretCanvas<A>(hktfa: HKT<URI, A>): identity.Identity<A> {
+    const fa = hktfa as Canvas<A>
     switch (fa._tag) {
       case 'BeginPath':
         ctx.beginPath()
