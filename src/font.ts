@@ -1,5 +1,5 @@
 import { Option, getMonoid, some } from 'fp-ts/lib/Option'
-import * as array from 'fp-ts/lib/Array'
+import { array } from 'fp-ts/lib/Array'
 import { monoidString } from 'fp-ts/lib/Monoid'
 import { intercalate } from 'fp-ts/lib/Foldable'
 

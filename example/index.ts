@@ -16,8 +16,10 @@ import {
 } from '../src/drawing'
 import { unsafeGetCanvasElementById, unsafeGetContext2D } from '../src/canvas'
 import { hsla, black } from '../src/color'
-import * as array from 'fp-ts/lib/Array'
+import { array } from 'fp-ts/lib/Array'
 import { fold } from 'fp-ts/lib/Monoid'
+
+const closedArray = closed(array)
 
 export function ioSnowflake() {
   const canvas = unsafeGetCanvasElementById('canvas1')
@@ -45,9 +47,9 @@ export function ioSnowflake() {
 
   function go(n: number): Drawing {
     if (n === 0) {
-      return monoidDrawing.empty()
+      return monoidDrawing.empty
     }
-    const first = fill(closed(array, pentagon), fillColor(colors[n]))
+    const first = fill(closedArray(pentagon), fillColor(colors[n]))
     const next = scale(s, s, go(n - 1))
     const drawings = [first].concat(
       [0, 1, 2, 3, 4].map(i => {
@@ -108,16 +110,14 @@ export function freeSnowflake() {
       return [first]
     }
     const next = go(n - 1).map(d => f.withContext(f.scale(s, s).chain(() => d)))
-    const flakes = array.chain(
-      x =>
-        [0, 1, 2, 3, 4].map(i => {
-          return f.withContext(
-            f
-              .rotate(Math.PI / 2.5 * (i + 0.5))
-              .chain(() => f.withContext(f.translate(0, Math.cos(Math.PI / 5) * (1 + s)).chain(() => x)))
-          )
-        }),
-      next
+    const flakes = array.chain(next, x =>
+      [0, 1, 2, 3, 4].map(i => {
+        return f.withContext(
+          f
+            .rotate(Math.PI / 2.5 * (i + 0.5))
+            .chain(() => f.withContext(f.translate(0, Math.cos(Math.PI / 5) * (1 + s)).chain(() => x)))
+        )
+      })
     )
     return [first].concat(flakes)
   }

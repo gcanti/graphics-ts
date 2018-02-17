@@ -1,7 +1,6 @@
 import * as free from 'fp-ts/lib/Free'
 import * as canvas from './canvas'
-import * as identity from 'fp-ts/lib/Identity'
-import { HKT } from 'fp-ts/lib/HKT'
+import { Identity, identity } from 'fp-ts/lib/Identity'
 
 export type ImageSource = HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
 
@@ -11,127 +10,163 @@ export type URI = typeof URI
 
 export class SetLineWidth<A> {
   readonly _tag: 'SetLineWidth' = 'SetLineWidth'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly width: number, public readonly more: A) {}
 }
 
 export class SetFillStyle<A> {
   readonly _tag: 'SetFillStyle' = 'SetFillStyle'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly style: string, public readonly more: A) {}
 }
 
 export class SetStrokeStyle<A> {
   readonly _tag: 'SetStrokeStyle' = 'SetStrokeStyle'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly style: string, public readonly more: A) {}
 }
 
 export class SetShadowColor<A> {
   readonly _tag: 'SetShadowColor' = 'SetShadowColor'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly color: string, public readonly more: A) {}
 }
 
 export class SetShadowBlur<A> {
   readonly _tag: 'SetShadowBlur' = 'SetShadowBlur'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly blur: number, public readonly more: A) {}
 }
 
 export class SetShadowOffsetX<A> {
   readonly _tag: 'SetShadowOffsetX' = 'SetShadowOffsetX'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly offsetX: number, public readonly more: A) {}
 }
 
 export class SetShadowOffsetY<A> {
   readonly _tag: 'SetShadowOffsetY' = 'SetShadowOffsetY'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly offsetY: number, public readonly more: A) {}
 }
 
 export class SetLineCap<A> {
   readonly _tag: 'SetLineCap' = 'SetLineCap'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly cap: canvas.LineCap, public readonly more: A) {}
 }
 
 export class SetComposite<A> {
   readonly _tag: 'SetComposite' = 'SetComposite'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly composite: canvas.Composite, public readonly more: A) {}
 }
 
 export class SetAlpha<A> {
   readonly _tag: 'SetAlpha' = 'SetAlpha'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly alpha: number, public readonly more: A) {}
 }
 
 export class BeginPath<A> {
   readonly _tag: 'BeginPath' = 'BeginPath'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly more: A) {}
 }
 
 export class Stroke<A> {
   readonly _tag: 'Stroke' = 'Stroke'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly more: A) {}
 }
 
 export class Fill<A> {
   readonly _tag: 'Fill' = 'Fill'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly more: A) {}
 }
 
 export class Clip<A> {
   readonly _tag: 'Clip' = 'Clip'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly more: A) {}
 }
 
 export class LineTo<A> {
   readonly _tag: 'LineTo' = 'LineTo'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly x: number, public readonly y: number, public readonly more: A) {}
 }
 
 export class MoveTo<A> {
   readonly _tag: 'MoveTo' = 'MoveTo'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly x: number, public readonly y: number, public readonly more: A) {}
 }
 
 export class ClosePath<A> {
   readonly _tag: 'ClosePath' = 'ClosePath'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly more: A) {}
 }
 
 export class Arc<A> {
   readonly _tag: 'Arc' = 'Arc'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -144,8 +179,10 @@ export class Arc<A> {
 
 export class Rect<A> {
   readonly _tag: 'Rect' = 'Rect'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -157,8 +194,10 @@ export class Rect<A> {
 
 export class FillRect<A> {
   readonly _tag: 'FillRect' = 'FillRect'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -170,8 +209,10 @@ export class FillRect<A> {
 
 export class StrokeRect<A> {
   readonly _tag: 'StrokeRect' = 'StrokeRect'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -183,8 +224,10 @@ export class StrokeRect<A> {
 
 export class ClearRect<A> {
   readonly _tag: 'ClearRect' = 'ClearRect'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly x: number,
     public readonly y: number,
@@ -196,29 +239,37 @@ export class ClearRect<A> {
 
 export class Scale<A> {
   readonly _tag: 'Scale' = 'Scale'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly x: number, public readonly y: number, public readonly more: A) {}
 }
 
 export class Rotate<A> {
   readonly _tag: 'Rotate' = 'Rotate'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly angle: number, public readonly more: A) {}
 }
 
 export class Translate<A> {
   readonly _tag: 'Translate' = 'Translate'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly x: number, public readonly y: number, public readonly more: A) {}
 }
 
 export class Transform<A> {
   readonly _tag: 'Transform' = 'Transform'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly m11: number,
     public readonly m12: number,
@@ -232,36 +283,46 @@ export class Transform<A> {
 
 export class GetTextAlign<A> {
   readonly _tag: 'GetTextAlign' = 'GetTextAlign'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly more: (textAlign: canvas.TextAlign) => A) {}
 }
 
 export class SetTextAlign<A> {
   readonly _tag: 'SetTextAlign' = 'SetTextAlign'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly textAlign: canvas.TextAlign, public readonly more: A) {}
 }
 
 export class GetFont<A> {
   readonly _tag: 'GetFont' = 'GetFont'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly more: (font: string) => A) {}
 }
 
 export class SetFont<A> {
   readonly _tag: 'SetFont' = 'SetFont'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly font: string, public readonly more: A) {}
 }
 
 export class FillText<A> {
   readonly _tag: 'FillText' = 'FillText'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly text: string,
     public readonly x: number,
@@ -272,8 +333,10 @@ export class FillText<A> {
 
 export class StrokeText<A> {
   readonly _tag: 'StrokeText' = 'StrokeText'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly text: string,
     public readonly x: number,
@@ -284,29 +347,37 @@ export class StrokeText<A> {
 
 export class MeasureText<A> {
   readonly _tag: 'MeasureText' = 'MeasureText'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly text: string, public readonly more: (textMetrics: canvas.TextMetrics) => A) {}
 }
 
 export class Save<A> {
   readonly _tag: 'Save' = 'Save'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly more: A) {}
 }
 
 export class Restore<A> {
   readonly _tag: 'Restore' = 'Restore'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly more: A) {}
 }
 
 export class GetImageData<A> {
   readonly _tag: 'GetImageData' = 'GetImageData'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly sx: number,
     public readonly sy: number,
@@ -318,8 +389,10 @@ export class GetImageData<A> {
 
 export class PutImageData<A> {
   readonly _tag: 'PutImageData' = 'PutImageData'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly imageData: ImageData,
     public readonly dx: number,
@@ -330,8 +403,10 @@ export class PutImageData<A> {
 
 export class PutImageDataFull<A> {
   readonly _tag: 'PutImageDataFull' = 'PutImageDataFull'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly imageData: ImageData,
     public readonly dx: number,
@@ -346,8 +421,10 @@ export class PutImageDataFull<A> {
 
 export class CreateImageData<A> {
   readonly _tag: 'CreateImageData' = 'CreateImageData'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly imageData: number | ImageData,
     public readonly sh: number,
@@ -357,15 +434,19 @@ export class CreateImageData<A> {
 
 export class CreateImageDataCopy<A> {
   readonly _tag: 'CreateImageDataCopy' = 'CreateImageDataCopy'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(public readonly imageData: ImageData, public readonly more: (imageData: ImageData) => A) {}
 }
 
 export class DrawImage<A> {
   readonly _tag: 'DrawImage' = 'DrawImage'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly imageSource: canvas.ImageSource,
     public readonly offsetX: number,
@@ -376,8 +457,10 @@ export class DrawImage<A> {
 
 export class DrawImageScale<A> {
   readonly _tag: 'DrawImageScale' = 'DrawImageScale'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly imageSource: canvas.ImageSource,
     public readonly offsetX: number,
@@ -390,8 +473,10 @@ export class DrawImageScale<A> {
 
 export class DrawImageFull<A> {
   readonly _tag: 'DrawImageFull' = 'DrawImageFull'
-  readonly _A: A
-  readonly _URI = URI
+  // prettier-ignore
+  readonly '_A': A
+  // prettier-ignore
+  readonly '_URI' = URI
   constructor(
     public readonly imageSource: canvas.ImageSource,
     public readonly offsetX: number,
@@ -404,6 +489,12 @@ export class DrawImageFull<A> {
     public readonly canvasImageHeight: number,
     public readonly more: A
   ) {}
+}
+
+declare module 'fp-ts/lib/HKT' {
+  interface URI2HKT<A> {
+    Canvas: Canvas<A>
+  }
 }
 
 export type Canvas<A> =
@@ -585,9 +676,8 @@ export const drawImageFull = (
     )
   )
 
-function getInterpretCanvas(ctx: CanvasRenderingContext2D): <A>(hktfa: HKT<URI, A>) => identity.Identity<A> {
-  return function interpretCanvas<A>(hktfa: HKT<URI, A>): identity.Identity<A> {
-    const fa = hktfa as Canvas<A>
+function getInterpretCanvas(ctx: CanvasRenderingContext2D): <A>(fa: Canvas<A>) => Identity<A> {
+  return function interpretCanvas<A>(fa: Canvas<A>): Identity<A> {
     switch (fa._tag) {
       case 'BeginPath':
         ctx.beginPath()
@@ -728,11 +818,13 @@ function getInterpretCanvas(ctx: CanvasRenderingContext2D): <A>(hktfa: HKT<URI, 
 
 /** A convenience function: run the action, preserving the existing context */
 export function withContext<A>(drawning: Drawing<A>): Drawing<A> {
-  return save().chain(() => drawning).chain(a => restore().map(() => a))
+  return save()
+    .chain(() => drawning)
+    .chain(a => restore().map(() => a))
 }
 
 export type Drawing<A> = free.Free<URI, A>
 
 export function run<A>(drawing: Drawing<A>, ctx: CanvasRenderingContext2D): A {
-  return drawing.foldFree(identity)(getInterpretCanvas(ctx)).value
+  return free.foldFree(identity)(getInterpretCanvas(ctx), drawing).value
 }

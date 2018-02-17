@@ -266,12 +266,16 @@ export function closePath(ctx: CanvasRenderingContext2D): IO<CanvasRenderingCont
 
 /** A convenience function for drawing a stroked path */
 export function strokePath<A>(ctx: CanvasRenderingContext2D, path: IO<A>): IO<A> {
-  return beginPath(ctx).chain(() => path).chain(a => stroke(ctx).map(() => a))
+  return beginPath(ctx)
+    .chain(() => path)
+    .chain(a => stroke(ctx).map(() => a))
 }
 
 /** A convenience function for drawing a filled path */
 export function fillPath<A>(ctx: CanvasRenderingContext2D, path: IO<A>): IO<A> {
-  return beginPath(ctx).chain(() => path).chain(a => fill(ctx).map(() => a))
+  return beginPath(ctx)
+    .chain(() => path)
+    .chain(a => fill(ctx).map(() => a))
 }
 
 /**
@@ -488,7 +492,9 @@ export function restore(ctx: CanvasRenderingContext2D): IO<CanvasRenderingContex
 
 /** A convenience function: run the action, preserving the existing context */
 export function withContext<A>(ctx: CanvasRenderingContext2D, action: IO<A>): IO<A> {
-  return save(ctx).chain(() => action).chain(a => restore(ctx).map(() => a))
+  return save(ctx)
+    .chain(() => action)
+    .chain(a => restore(ctx).map(() => a))
 }
 
 /** Get image data for a portion of the canvas */

@@ -1,11 +1,10 @@
 // adapted from https://github.com/purescript-contrib/purescript-drawing
 
-import { HKT } from 'fp-ts/lib/HKT'
-import { Foldable, toArray } from 'fp-ts/lib/Foldable'
+import { HKT, URIS, URIS2, URIS3, Type, Type2, Type3 } from 'fp-ts/lib/HKT'
+import { Foldable, Foldable1, Foldable2, Foldable3, toArray } from 'fp-ts/lib/Foldable'
 import { Option, some, none } from 'fp-ts/lib/Option'
 import { Monoid } from 'fp-ts/lib/Monoid'
-import { IO } from 'fp-ts/lib/IO'
-import * as io from 'fp-ts/lib/IO'
+import { IO, io } from 'fp-ts/lib/IO'
 import * as canvas from './canvas'
 import { Color, toCss } from './color'
 import * as array from 'fp-ts/lib/Array'
@@ -66,13 +65,23 @@ export function composite(shapes: Array<Shape>): Composite {
 }
 
 /** Create a path */
-export function path<F>(foldable: Foldable<F>, points: HKT<F, Point>): Shape {
-  return new Path(false, toArray<F>(foldable)<Point>(points))
+export function path<F extends URIS3>(foldable: Foldable3<F>): <U, L>(points: Type3<F, U, L, Point>) => Shape
+export function path<F extends URIS2>(foldable: Foldable2<F>): <L>(points: Type2<F, L, Point>) => Shape
+export function path<F extends URIS>(foldable: Foldable1<F>): (points: Type<F, Point>) => Shape
+export function path<F>(F: Foldable<F>): (points: HKT<F, Point>) => Shape
+export function path<F>(F: Foldable<F>): (points: HKT<F, Point>) => Shape {
+  const toArrayF = toArray(F)
+  return points => new Path(false, toArrayF(points))
 }
 
 /** Create a closed path */
-export function closed<F>(foldable: Foldable<F>, points: HKT<F, Point>): Shape {
-  return new Path(true, toArray<F>(foldable)<Point>(points))
+export function closed<F extends URIS3>(F: Foldable3<F>): <U, L>(points: Type3<F, U, L, Point>) => Shape
+export function closed<F extends URIS2>(F: Foldable2<F>): <L>(points: Type2<F, L, Point>) => Shape
+export function closed<F extends URIS>(F: Foldable1<F>): (points: Type<F, Point>) => Shape
+export function closed<F>(F: Foldable<F>): (points: HKT<F, Point>) => Shape
+export function closed<F>(F: Foldable<F>): (points: HKT<F, Point>) => Shape {
+  const toArrayF = toArray(F)
+  return points => new Path(true, toArrayF(points))
 }
 
 /** Create a circle from the left, top and radius parameters */
@@ -87,11 +96,9 @@ export class FillStyle {
   }
 }
 
-const emptyFillStyle = new FillStyle(none)
-
 export const monoidFillStyle: Monoid<FillStyle> = {
-  empty: () => emptyFillStyle,
-  concat: x => y => x.concat(y)
+  concat: (x, y) => x.concat(y),
+  empty: new FillStyle(none)
 }
 
 export function fillColor(color: Color): FillStyle {
@@ -105,11 +112,9 @@ export class OutlineStyle {
   }
 }
 
-const emptyOutileStyle = new OutlineStyle(none, none)
-
 export const monoidOutlineStyle: Monoid<OutlineStyle> = {
-  empty: () => emptyOutileStyle,
-  concat: x => y => x.concat(y)
+  concat: (x, y) => x.concat(y),
+  empty: new OutlineStyle(none, none)
 }
 
 export function outlineColor(color: Color): OutlineStyle {
@@ -131,11 +136,9 @@ export class Shadow {
   }
 }
 
-const emptyShadow = new Shadow(none, none, none)
-
 export const monoidShadow: Monoid<Shadow> = {
-  empty: () => emptyShadow,
-  concat: x => y => x.concat(y)
+  concat: (x, y) => x.concat(y),
+  empty: new Shadow(none, none, none)
 }
 
 export function shadowColor(color: Color): Shadow {
@@ -244,8 +247,7 @@ export function withShadow(shadow: Shadow, drawing: Drawing): Drawing {
 }
 
 export const monoidDrawing: Monoid<Drawing> = {
-  empty: () => new Many([]),
-  concat: x => y => {
+  concat: (x, y) => {
     if (x._tag === 'Many') {
       return new Many(x.drawings.concat(y))
     }
@@ -253,7 +255,8 @@ export const monoidDrawing: Monoid<Drawing> = {
       return new Many([x as Drawing].concat(y.drawings))
     }
     return new Many([x, y])
-  }
+  },
+  empty: new Many([])
 }
 
 /** Render a `Drawing` to a canvas */
@@ -322,7 +325,8 @@ export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void
   function renderShape(shape: Shape): IO<void> {
     switch (shape._tag) {
       case 'Path':
-        return array.fold(
+        return array.foldL(
+          shape.points,
           () => io.of(undefined),
           (p, tail) => {
             return new IO(() => {
@@ -332,8 +336,7 @@ export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void
                 canvas.closePath(ctx).run()
               }
             })
-          },
-          shape.points
+          }
         )
       case 'Rectangle':
         return canvas.rect(ctx, shape).map(() => undefined)
