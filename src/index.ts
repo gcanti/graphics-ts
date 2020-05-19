@@ -1,7 +1,7 @@
 import * as canvas from './canvas'
 import * as color from './Color'
 import * as drawing from './drawing'
-import * as font from './font'
+import * as font from './Font'
 
 export {
   canvas,
