@@ -18,9 +18,25 @@ high state of flux, you're at risk of it changing without notice.
 - **Breaking Change**
   - upgrade to `fp-ts@2.x.x` and latest TypeScript (3.9.2) (@IMax153)
   - remove `free-canvas`
-  - `Color`
-    - rename `color` module to `Color` (@IMax153)
+  - rename `color` module to `Color` (@IMax153)
     - fix implementation of `toCss` (@IMax153)
+    - fix `white` color
+  - rename `font` module to `Font` (@IMax153)
+    - convert `FontOptions` into static interface (@IMax153)
+    - convert `Font` into static interface (@IMax153)
+    - add `fontOptions` constructor (@IMax153)
+    - add `font` constructor (@IMax153)
+    - add `Show` instance for `FontOptions` (`ShowFontOptions`) (@IMax153)
+    - add convenience function `showFontOptions` (@IMax153)
+    - add `Show` instance for `Font` (`ShowFont`) (@IMax153)
+    - add convenience function `showFont` (@IMax153)
+  - add `Shape` module (@IMax153)
+    - move `path` to `Shape` module (@IMax153)
+    - move `closed` to `Shape` module (@IMax153)
+    - move `rect` to `Shape` module (@IMax153)
+    - move `arc` to `Shape` module (@IMax153)
+    - move `circle` to `Shape` module (@IMax153)
+    - move `composite` to `Shape` module (@IMax153)
 
 # 0.5.0
 
