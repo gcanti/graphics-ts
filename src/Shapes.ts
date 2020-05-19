@@ -74,11 +74,11 @@ export const monoidPath: M.Monoid<Path> = M.getStructMonoid({
  *
  * @since 1.0.0
  */
-export function path<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Shape
-export function path<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Shape
-export function path<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Shape
-export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Shape
-export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Shape {
+export function path<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Path
+export function path<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Path
+export function path<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
+export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path
+export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path {
   return (fa) =>
     F.reduce(fa, monoidPath.empty, (b, a) => ({
       _tag: 'Path',
@@ -92,11 +92,11 @@ export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Shape {
  *
  * @since 1.0.0
  */
-export function closed<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Shape
-export function closed<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Shape
+export function closed<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Path
+export function closed<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Path
 export function closed<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
-export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Shape
-export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Shape {
+export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path
+export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path {
   return (fa) =>
     F.reduce(fa, monoidPath.empty, (b, a) => ({
       _tag: 'Path',
@@ -139,7 +139,7 @@ export interface Rect {
  *
  * @since 1.0.0
  */
-export const rect = (x: number, y: number, width: number, height: number): Shape => ({
+export const rect = (x: number, y: number, width: number, height: number): Rect => ({
   _tag: 'Rect',
   x,
   y,
@@ -186,7 +186,7 @@ export interface Arc {
  *
  * @since 1.0.0
  */
-export const arc = (x: number, y: number, r: number, start: number, end: number): Shape => ({
+export const arc = (x: number, y: number, r: number, start: number, end: number): Arc => ({
   _tag: 'Arc',
   x,
   y,
@@ -200,7 +200,7 @@ export const arc = (x: number, y: number, r: number, start: number, end: number)
  *
  * @since 1.0.0
  */
-export const circle = (x: number, y: number, r: number): Shape => ({
+export const circle = (x: number, y: number, r: number): Arc => ({
   _tag: 'Arc',
   x,
   y,
@@ -228,7 +228,7 @@ export interface Composite {
  *
  * @since 1.0.0
  */
-export const composite = (shapes: ReadonlyArray<Shape>): Shape => ({
+export const composite = (shapes: ReadonlyArray<Shape>): Composite => ({
   _tag: 'Composite',
   shapes
 })
