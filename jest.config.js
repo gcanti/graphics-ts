@@ -1,12 +1,8 @@
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   collectCoverage: true,
   collectCoverageFrom: ['src/**/*.ts'],
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest'
-  },
-  testRegex: "(\\.|/)(test|spec)\\.tsx?$",
   coverageThreshold: {
     global: {
       branches: 100,
@@ -15,4 +11,9 @@ module.exports = {
       statements: 100
     }
   },
+  setupFiles: ["<rootDir>/test/setup.ts"],
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest'
+  },
+  testRegex: "(\\.|/)(test|spec)\\.tsx?$",
 }

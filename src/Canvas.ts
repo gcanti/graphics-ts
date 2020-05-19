@@ -730,7 +730,11 @@ export const fillText: (
   y: number,
   maxWidth?: number
 ) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D> = (t, x, y, mw) => (ctx) => () => {
-  ctx.fillText(t, x, y, mw)
+  if (typeof mw !== 'undefined') {
+    ctx.fillText(t, x, y, mw)
+  } else {
+    ctx.fillText(t, x, y)
+  }
   return ctx
 }
 
@@ -745,7 +749,11 @@ export const strokeText: (
   y: number,
   maxWidth?: number
 ) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D> = (t, x, y, mw) => (ctx) => () => {
-  ctx.strokeText(t, x, y, mw)
+  if (typeof mw !== 'undefined') {
+    ctx.strokeText(t, x, y, mw)
+  } else {
+    ctx.strokeText(t, x, y)
+  }
   return ctx
 }
 
