@@ -1,4 +1,8 @@
 *.log
 node_modules
 lib
-example/bundle.js
+es6
+dev
+.idea
+coverage
+docs-examples

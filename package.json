@@ -2,20 +2,26 @@
   "name": "graphics-ts",
   "version": "0.5.0",
   "description": "A porting of purescript-{canvas, free-canvas, drawing} featuring fp-ts",
-  "files": ["lib"],
+  "files": [
+    "lib",
+    "es6"
+  ],
   "main": "lib/index.js",
+  "module": "es6/index.js",
   "typings": "lib/index.d.ts",
+  "sideEffects": false,
   "scripts": {
-    "lint": "tslint src/**/*.ts test/**/*.ts",
-    "mocha": "mocha -r ts-node/register test/*.ts",
-    "prettier":
-      "prettier --no-semi --single-quote --print-width 120 --parser typescript --list-different \"{src,test}/**/*.ts\"",
-    "fix-prettier":
-      "prettier --no-semi --single-quote --print-width 120 --parser typescript --write \"{src,test}/**/*.ts\"",
-    "test": "npm run lint && npm run prettier && npm run mocha",
-    "clean": "rm -rf lib/*",
-    "build": "npm run clean && tsc",
-    "start": "webpack --watch --progress --config example/webpack.config.js"
+    "lint": "tslint -p .",
+    "jest-clear-cache": "jest --clearCache",
+    "jest": "jest --ci",
+    "prettier": "prettier --list-different \"./{src,test,example}/**/*.ts\"",
+    "fix-prettier": "prettier --write \"./{src,test,example}/**/*.ts\"",
+    "test": "npm run lint && npm run prettier && npm run jest-clear-cache && npm run jest",
+    "clean": "rimraf lib/* es6/*",
+    "prebuild": "npm run clean",
+    "build": "tsc -p ./tsconfig.build.json && tsc -p ./tsconfig.build-es6.json",
+    "postbuild": "prettier --write \"./{lib,es6}/**/*.ts\"",
+    "start": "webpack-dev-server --config=example/webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -28,21 +34,36 @@
   },
   "homepage": "https://github.com/gcanti/graphics-ts",
   "dependencies": {
-    "fp-ts": "^1.0.1"
+    "fp-ts": "^2.6.1"
   },
   "devDependencies": {
-    "@types/mocha": "2.2.38",
-    "@types/node": "7.0.4",
-    "awesome-typescript-loader": "3.2.1",
-    "mocha": "3.2.0",
-    "prettier": "^1.8.2",
-    "ts-node": "3.2.0",
-    "tslint": "4.4.2",
-    "tslint-config-standard": "4.0.0",
-    "typescript": "^2.7.1",
-    "typings-checker": "1.1.2",
-    "webpack": "3.3.0"
+    "@types/jest": "^25.2.3",
+    "@types/node": "^14.0.1",
+    "html-webpack-plugin": "^4.3.0",
+    "jest": "^26.0.1",
+    "jest-canvas-mock": "^2.2.0",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.0.0",
+    "ts-node": "^8.10.1",
+    "tslint": "^6.1.2",
+    "tslint-config-standard": "^9.0.0",
+    "tslint-immutable": "^6.0.1",
+    "typescript": "^3.9.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
   },
-  "tags": [],
-  "keywords": []
+  "tags": [
+    "typescript",
+    "functional-programming",
+    "html-canvas",
+    "canvas"
+  ],
+  "keywords": [
+    "typescript",
+    "functional-programming",
+    "html-canvas",
+    "canvas"
+  ]
 }
