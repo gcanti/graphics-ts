@@ -6,8 +6,7 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest'
   },
-  testRegex: 'test',
-  moduleFileExtensions: ['ts', 'js'],
+  testRegex: "(\\.|/)(test|spec)\\.tsx?$",
   coverageThreshold: {
     global: {
       branches: 100,
@@ -16,5 +15,4 @@ module.exports = {
       statements: 100
     }
   },
-  modulePathIgnorePatterns: ['property-test']
 }
