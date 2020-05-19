@@ -59,9 +59,9 @@ export const fontOptions = ({
   variant,
   weight
 }: {
-  readonly style?: string;
-  readonly variant?: string;
-  readonly weight?: string;
+  readonly style?: string
+  readonly variant?: string
+  readonly weight?: string
 }): FontOptions => ({
   style: O.fromNullable(style),
   variant: O.fromNullable(variant),

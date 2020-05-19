@@ -71,7 +71,7 @@ export function path<F extends URIS>(foldable: Foldable1<F>): (points: Type<F, P
 export function path<F>(F: Foldable<F>): (points: HKT<F, Point>) => Shape
 export function path<F>(F: Foldable<F>): (points: HKT<F, Point>) => Shape {
   const toArrayF = toArray(F)
-  return points => new Path(false, toArrayF(points))
+  return (points) => new Path(false, toArrayF(points))
 }
 
 /** Create a closed path */
@@ -81,7 +81,7 @@ export function closed<F extends URIS>(F: Foldable1<F>): (points: Type<F, Point>
 export function closed<F>(F: Foldable<F>): (points: HKT<F, Point>) => Shape
 export function closed<F>(F: Foldable<F>): (points: HKT<F, Point>) => Shape {
   const toArrayF = toArray(F)
-  return points => new Path(true, toArrayF(points))
+  return (points) => new Path(true, toArrayF(points))
 }
 
 /** Create a circle from the left, top and radius parameters */
@@ -277,18 +277,33 @@ export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void
         )
       case 'Many':
         return new IO(() => {
-          drawing.drawings.forEach(drawing => go(drawing).run())
+          drawing.drawings.forEach((drawing) => go(drawing).run())
         })
       case 'Scale':
-        return canvas.withContext(ctx, canvas.scale(ctx, drawing).chain(() => go(drawing.drawing)))
+        return canvas.withContext(
+          ctx,
+          canvas.scale(ctx, drawing).chain(() => go(drawing.drawing))
+        )
       case 'Translate':
-        return canvas.withContext(ctx, canvas.translate(ctx, drawing).chain(() => go(drawing.drawing)))
+        return canvas.withContext(
+          ctx,
+          canvas.translate(ctx, drawing).chain(() => go(drawing.drawing))
+        )
       case 'Rotate':
-        return canvas.withContext(ctx, canvas.rotate(ctx, drawing.angle).chain(() => go(drawing.drawing)))
+        return canvas.withContext(
+          ctx,
+          canvas.rotate(ctx, drawing.angle).chain(() => go(drawing.drawing))
+        )
       case 'Clipped':
-        return canvas.withContext(ctx, renderShape(drawing.shape).chain(() => go(drawing.drawing)))
+        return canvas.withContext(
+          ctx,
+          renderShape(drawing.shape).chain(() => go(drawing.drawing))
+        )
       case 'WithShadow':
-        return canvas.withContext(ctx, applyShadow(drawing.shadow).chain(() => go(drawing.drawing)))
+        return canvas.withContext(
+          ctx,
+          applyShadow(drawing.shadow).chain(() => go(drawing.drawing))
+        )
       case 'Text':
         return canvas
           .withContext(ctx, canvas.setFont(ctx, drawing.font.toString()))
@@ -300,9 +315,9 @@ export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void
 
   function applyShadow(s: Shadow): IO<void> {
     return new IO(() => {
-      s.color.map(color => canvas.setShadowColor(ctx, toCss(color)).run())
-      s.blur.map(blur => canvas.setShadowBlur(ctx, blur).run())
-      s.offset.map(offset => {
+      s.color.map((color) => canvas.setShadowColor(ctx, toCss(color)).run())
+      s.blur.map((blur) => canvas.setShadowBlur(ctx, blur).run())
+      s.offset.map((offset) => {
         canvas.setShadowOffsetX(ctx, offset.x).run()
         canvas.setShadowOffsetY(ctx, offset.y).run()
       })
@@ -311,14 +326,14 @@ export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void
 
   function applyFillStyle(style: FillStyle): IO<void> {
     return new IO(() => {
-      style.color.map(color => canvas.setFillStyle(ctx, toCss(color)).run())
+      style.color.map((color) => canvas.setFillStyle(ctx, toCss(color)).run())
     })
   }
 
   function applyOutlineStyle(style: OutlineStyle): IO<void> {
     return new IO(() => {
-      style.color.map(color => canvas.setStrokeStyle(ctx, toCss(color)).run())
-      style.lineWidth.map(lineWidth => canvas.setLineWidth(ctx, lineWidth).run())
+      style.color.map((color) => canvas.setStrokeStyle(ctx, toCss(color)).run())
+      style.lineWidth.map((lineWidth) => canvas.setLineWidth(ctx, lineWidth).run())
     })
   }
 
@@ -331,7 +346,7 @@ export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void
           (p, tail) => {
             return new IO(() => {
               canvas.moveTo(ctx, p.x, p.y).run()
-              tail.forEach(p => canvas.lineTo(ctx, p.x, p.y).run())
+              tail.forEach((p) => canvas.lineTo(ctx, p.x, p.y).run())
               if (shape.closed) {
                 canvas.closePath(ctx).run()
               }
@@ -343,7 +358,7 @@ export function render(drawing: Drawing, ctx: CanvasRenderingContext2D): IO<void
       case 'Arc':
         return canvas.arc(ctx, shape).map(() => undefined)
       case 'Composite':
-        return new IO(() => shape.shapes.forEach(shape => renderShape(shape).run()))
+        return new IO(() => shape.shapes.forEach((shape) => renderShape(shape).run()))
     }
   }
 

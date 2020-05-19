@@ -25,8 +25,8 @@ export function ioSnowflake() {
   const canvas = unsafeGetCanvasElementById('canvas1')
   const ctx = unsafeGetContext2D(canvas)
 
-  const pentagon = [0, 1, 2, 3, 4, 5].map(i => {
-    const theta = Math.PI / 2.5 * i
+  const pentagon = [0, 1, 2, 3, 4, 5].map((i) => {
+    const theta = (Math.PI / 2.5) * i
     return { x: Math.sin(theta), y: Math.cos(theta) }
   })
 
@@ -52,8 +52,8 @@ export function ioSnowflake() {
     const first = fill(closedArray(pentagon), fillColor(colors[n]))
     const next = scale(s, s, go(n - 1))
     const drawings = [first].concat(
-      [0, 1, 2, 3, 4].map(i => {
-        return rotate(Math.PI / 2.5 * (i + 0.5), translate(0, Math.cos(Math.PI / 5) * (1 + s), next))
+      [0, 1, 2, 3, 4].map((i) => {
+        return rotate((Math.PI / 2.5) * (i + 0.5), translate(0, Math.cos(Math.PI / 5) * (1 + s), next))
       })
     )
     return fold(monoidDrawing)(drawings)
@@ -73,8 +73,8 @@ export function freeSnowflake() {
   const canvas = unsafeGetCanvasElementById('canvas2')
   const ctx = unsafeGetContext2D(canvas)
 
-  const pentagon = [0, 1, 2, 3, 4, 5].map(i => {
-    const theta = Math.PI / 2.5 * i
+  const pentagon = [0, 1, 2, 3, 4, 5].map((i) => {
+    const theta = (Math.PI / 2.5) * i
     return { x: Math.sin(theta), y: Math.cos(theta) }
   })
 
@@ -109,12 +109,12 @@ export function freeSnowflake() {
     if (n === 1) {
       return [first]
     }
-    const next = go(n - 1).map(d => f.withContext(f.scale(s, s).chain(() => d)))
-    const flakes = array.chain(next, x =>
-      [0, 1, 2, 3, 4].map(i => {
+    const next = go(n - 1).map((d) => f.withContext(f.scale(s, s).chain(() => d)))
+    const flakes = array.chain(next, (x) =>
+      [0, 1, 2, 3, 4].map((i) => {
         return f.withContext(
           f
-            .rotate(Math.PI / 2.5 * (i + 0.5))
+            .rotate((Math.PI / 2.5) * (i + 0.5))
             .chain(() => f.withContext(f.translate(0, Math.cos(Math.PI / 5) * (1 + s)).chain(() => x)))
         )
       })
@@ -122,7 +122,7 @@ export function freeSnowflake() {
     return [first].concat(flakes)
   }
 
-  drawings.forEach(drawing => {
+  drawings.forEach((drawing) => {
     f.run(
       f
         .setShadowColor(toCss(black))

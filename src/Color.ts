@@ -4,12 +4,12 @@
  * @since 1.0.0
  */
 
- /**
-  * Represents a color using the HSL cylindrical-coordinate system.
-  *
-  * @since 1.0.0
-  */
- export interface Color {
+/**
+ * Represents a color using the HSL cylindrical-coordinate system.
+ *
+ * @since 1.0.0
+ */
+export interface Color {
   /**
    * A number between `0` and `360` representing the hue of the color in degrees.
    */

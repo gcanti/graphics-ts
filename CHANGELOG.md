@@ -18,6 +18,8 @@ high state of flux, you're at risk of it changing without notice.
 - **Breaking Change**
   - upgrade to `fp-ts@2.x.x` and latest TypeScript (3.9.2) (@IMax153)
   - remove `free-canvas`
+  - rename `canvas` module to `Canvas` (@IMax153)
+    - inject the current `CanvasRenderingContext2D` into the `IO` wrapped by `withContext` (@IMax153)
   - rename `color` module to `Color` (@IMax153)
     - fix implementation of `toCss` (@IMax153)
     - fix `white` color

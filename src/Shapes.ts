@@ -74,18 +74,17 @@ export const monoidPath: M.Monoid<Path> = M.getStructMonoid({
  *
  * @since 1.0.0
  */
-export function path<F extends URIS3>(
-  foldable: Foldable3<F>
-): <E, A>(fa: Kind3<F, E, A, Point>) => Shape
+export function path<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Shape
 export function path<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Shape
 export function path<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Shape
 export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Shape
 export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Shape {
-  return (fa) => F.reduce(fa, monoidPath.empty, (b, a) => ({
-    _tag: 'Path',
-    closed: false,
-    points: ROA.snoc(b.points, a)
-  }))
+  return (fa) =>
+    F.reduce(fa, monoidPath.empty, (b, a) => ({
+      _tag: 'Path',
+      closed: false,
+      points: ROA.snoc(b.points, a)
+    }))
 }
 
 /**
@@ -93,20 +92,17 @@ export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Shape {
  *
  * @since 1.0.0
  */
-export function closed<F extends URIS3>(
-  foldable: Foldable3<F>
-): <E, A>(fa: Kind3<F, E, A, Point>) => Shape
-export function closed<F extends URIS2>(
-  foldable: Foldable2<F>
-): <A>(fa: Kind2<F, A, Point>) => Shape
+export function closed<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Shape
+export function closed<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Shape
 export function closed<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
 export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Shape
 export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Shape {
-  return (fa) => F.reduce(fa, monoidPath.empty, (b, a) => ({
-    _tag: 'Path',
-    closed: true,
-    points: ROA.snoc(b.points, a)
-  }))
+  return (fa) =>
+    F.reduce(fa, monoidPath.empty, (b, a) => ({
+      _tag: 'Path',
+      closed: true,
+      points: ROA.snoc(b.points, a)
+    }))
 }
 
 /**
