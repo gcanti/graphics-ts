@@ -9,9 +9,7 @@
 # Installation
 
 ```ts
-npm install
-npm start
-open example/test.html
+npm i graphics-ts fp-ts
 ```
 
 # Installation

@@ -14,9 +14,7 @@ nav_order: 1
 # Installation
 
 ```ts
-npm install
-npm start
-open example/test.html
+npm i graphics-ts fp-ts
 ```
 
 # Installation
