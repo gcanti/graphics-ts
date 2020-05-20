@@ -566,9 +566,8 @@ export const render: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO
   const go: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D> = (drawing) => {
     switch (drawing._tag) {
       case 'Clipped':
-        return C.withContext((ctx) =>
-          pipe(
-            ctx,
+        return C.withContext(
+          flow(
             C.beginPath,
             IO.chain(renderShape(drawing.shape)),
             IO.chain(C.clip()),
@@ -595,7 +594,7 @@ export const render: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO
         return C.withContext(
           flow(
             applyStyle(drawing.style.color, flow(toCss, C.setStrokeStyle)),
-            IO.chain(applyStyle(drawing.style.lineWidth, flow(C.setLineWidth))),
+            IO.chain(applyStyle(drawing.style.lineWidth, C.setLineWidth)),
             IO.chain(C.strokePath(renderShape(drawing.shape)))
           )
         )

@@ -540,13 +540,7 @@ export const strokePath: <A>(
     ctx,
     beginPath,
     IO.chain(() => f(ctx)),
-    IO.chain((a) =>
-      pipe(
-        ctx,
-        stroke(),
-        IO.map(() => a)
-      )
-    )
+    IO.chainFirst(() => pipe(ctx, stroke()))
   )
 
 /**
@@ -560,12 +554,7 @@ export const fillPath: <A>(
   pipe(
     beginPath(ctx),
     IO.chain(() => f(ctx)),
-    IO.chain((a) =>
-      pipe(
-        fill()(ctx),
-        IO.map(() => a)
-      )
-    )
+    IO.chainFirst(() => pipe(ctx, fill()))
   )
 
 /**
@@ -801,12 +790,7 @@ export const withContext: <A>(
   pipe(
     save(ctx),
     IO.chain(() => f(ctx)),
-    IO.chain((a) =>
-      pipe(
-        restore(ctx),
-        IO.map(() => a)
-      )
-    )
+    IO.chainFirst(() => restore(ctx))
   )
 
 /**
