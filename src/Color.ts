@@ -1,5 +1,5 @@
 /**
- * Adapted from https://github.com/sharkdp/purescript-colors
+ * Adapted from https://github.com/sharkdp/purescript-colors.
  *
  * @since 1.0.0
  */

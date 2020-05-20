@@ -1,3 +1,6 @@
+/**
+ * @since 1.0.0
+ */
 import * as A from 'fp-ts/lib/Array'
 import * as B from 'fp-ts/lib/boolean'
 import * as O from 'fp-ts/lib/Option'

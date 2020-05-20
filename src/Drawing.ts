@@ -1,4 +1,66 @@
 /**
+ * The `Drawing` module abstracts away the repetitive calls to the HTML Canvas API that are required
+ * when using the `Canvas` module directly and instead allows us to be more declarative with our code.
+ *
+ * Taking the MDN example from the [Canvas][#canvas] documentation,
+ *
+ * ```ts
+ * import * as IO from 'fp-ts/lib/IO'
+ * import * as ROA from 'fp-ts/lib/ReadonlyArray'
+ * import { flow } from 'fp-ts/lib/function'
+ * import { pipe } from 'fp-ts/lib/pipeable'
+ * import * as Color from 'graphics-ts/lib/Color'
+ * import * as D from 'graphics-ts/lib/Drawing'
+ * import * as S from 'graphics-ts/lib/Shape'
+ *
+ * const canvasId = 'canvas'
+ *
+ * pipe(
+ *   C.getCanvasElementById(canvasId),
+ *   IO.chain(
+ *     O.fold(
+ *       () => error(`[ERROR]: Unable to find canvas`),
+ *       flow(
+ *         C.getContext2D,
+ *         IO.chain(
+ *           C.fillPath(
+ *             flow(
+ *               C.setFillStyle(pipe(Color.black, Color.toCss)),
+ *               IO.chain(C.moveTo(S.point(75, 50))),
+ *               IO.chain(C.lineTo(S.point(100, 75))),
+ *               IO.chain(C.lineTo(S.point(100, 25)))
+ *             )
+ *           )
+ *         )
+ *       )
+ *     )
+ *   )
+ * )()
+ * ```
+ * the code above becomes the following
+ *
+ * ```ts
+ * pipe(
+ *   C.getCanvasElementById(canvasId),
+ *   IO.chain(
+ *     O.fold(
+ *       () => error(`[ERROR]: Unable to find canvas`),
+ *       flow(
+ *         C.getContext2D,
+ *         IO.chain(
+ *           D.render(
+ *             D.fill(
+ *               S.path(ROA.readonlyArray)([S.point(75, 50), S.point(100, 75), S.point(100, 25)]),
+ *               D.fillStyle(Color.black)
+ *             )
+ *           )
+ *         )
+ *       )
+ *     )
+ *   )
+ * )()
+ * ```
+ *
  * Adapted from https://github.com/purescript-contrib/purescript-drawing
  *
  * @since 1.0.0
@@ -77,21 +139,22 @@ export interface OutlineStyle {
  * Gets a `Monoid` instance for `OutlineStyle`.
  *
  * @example
- * import * as O from 'fp-ts/lib/Option';
- * import * as C from 'graphics-ts/lib/Color';
- * import * as D from 'graphics-ts/lib/Drawing';
+ * import * as O from 'fp-ts/lib/Option'
+ * import * as M from 'fp-ts/lib/Monoid'
+ * import * as C from 'graphics-ts/lib/Color'
+ * import * as D from 'graphics-ts/lib/Drawing'
  *
- * assert.deepStrictEqual(M.fold(D.monoidOutlineStyle)(
- *   [
+ * assert.deepStrictEqual(
+ *   M.fold(D.monoidOutlineStyle)([
  *     D.outlineColor(C.black),
  *     D.outlineColor(C.white),
- *     D.lineWidth(5),
- *   ],
+ *     D.lineWidth(5)
+ *   ]),
  *   {
  *     color: O.some(C.black),
- *     lineWidth: O.some(5),
+ *     lineWidth: O.some(5)
  *   }
- * ))
+ * )
  *
  * @since 1.0.0
  */
@@ -567,12 +630,7 @@ export const render: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO
     switch (drawing._tag) {
       case 'Clipped':
         return C.withContext(
-          flow(
-            C.beginPath,
-            IO.chain(renderShape(drawing.shape)),
-            IO.chain(C.clip()),
-            IO.chain(go(drawing.drawing))
-          )
+          flow(C.beginPath, IO.chain(renderShape(drawing.shape)), IO.chain(C.clip()), IO.chain(go(drawing.drawing)))
         )
 
       case 'Fill':

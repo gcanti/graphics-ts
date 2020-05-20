@@ -1,5 +1,67 @@
 /**
- * Adapted from https://github.com/purescript-contrib/purescript-canvas
+ * The `Canvas` module contains all the functions necessary to interact with the HTML
+ * Canvas API. `graphics-ts` wraps all canvas operations in an `IO<A>` to allow for
+ * chaining multiple effectful calls to the HTML Canvas API.
+ *
+ * For example, taking the example of [drawing a triangle](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes) from the MDN Web Docs, the code
+ * without `graphics-ts` looks like this.
+ *
+ * ```ts
+ * const draw = () => {
+ *   var canvas = document.getElementById('canvas')
+ *
+ *   if (canvas.getContext) {
+ *     var ctx = canvas.getContext('2d')
+ *
+ *     ctx.beginPath();
+ *     ctx.fillStyle = 'black'
+ *     ctx.moveTo(75, 50)
+ *     ctx.lineTo(100, 75)
+ *     ctx.lineTo(100, 25)
+ *     ctx.fill()
+ *   }
+ * }
+ * ```
+ *
+ * With `graphics-ts`, the above code becomes
+ *
+ * ```ts
+ * import * as IO from 'fp-ts/lib/IO'
+ * import { flow } from 'fp-ts/lib/function'
+ * import { pipe } from 'fp-ts/lib/pipeable'
+ * import * as C from 'graphics-ts/lib/Canvas'
+ * import * as S from 'graphics-ts/lib/Shape'
+ *
+ * const canvasId = 'canvas'
+ *
+ * pipe(
+ *   C.getCanvasElementById(canvasId),
+ *   IO.chain(
+ *     O.fold(
+ *       () => error(`[ERROR]: Unable to find canvas`),
+ *       flow(
+ *         C.getContext2D,
+ *         IO.chain(
+ *           C.fillPath(
+ *             flow(
+ *               C.setFillStyle(pipe(Color.black, Color.toCss)),
+ *               IO.chain(C.moveTo(S.point(75, 50))),
+ *               IO.chain(C.lineTo(S.point(100, 75))),
+ *               IO.chain(C.lineTo(S.point(100, 25)))
+ *             )
+ *           )
+ *         )
+ *       )
+ *     )
+ *   )
+ * )()
+ * ```
+ *
+ * While this may seem somewhat verbose compared to its non-functional counterpart above,
+ * the real power of the `Canvas` module is apparent when it is abstracted away by the
+ * [Drawing](#drawing) module.
+ *
+ * Adapted from https://github.com/purescript-contrib/purescript-canvas.
  *
  * @since 1.0.0
  */
@@ -16,7 +78,14 @@ import { Arc, Point, Rect } from './Shape'
  * @since 1.0.0
  */
 export interface CanvasDimensions {
+  /**
+   * The width of the canvas in CSS pixels.
+   */
   readonly width: number
+
+  /**
+   * The height of the canvas in CSS pixels.
+   */
   readonly height: number
 }
 
@@ -234,7 +303,7 @@ export const getWidth: (canvas: HTMLCanvasElement) => IO.IO<number> = (c) => IO.
 /**
  * Gets the canvas height in pixels.
  *
- * since 1.0.0
+ * @since 1.0.0
  */
 export const getHeight: (canvas: HTMLCanvasElement) => IO.IO<number> = (c) => IO.of(c.height)
 

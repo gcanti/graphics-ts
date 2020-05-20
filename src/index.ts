@@ -1,6 +1,26 @@
+/**
+ * @since 1.0.0
+ */
 import * as canvas from './Canvas'
 import * as color from './Color'
 import * as drawing from './Drawing'
 import * as font from './Font'
 
-export { canvas, color, drawing, font }
+export {
+  /**
+   * @since 1.0.0
+   */
+  canvas,
+  /**
+   * @since 1.0.0
+   */
+  color,
+  /**
+   * @since 1.0.0
+   */
+  drawing,
+  /**
+   * @since 1.0.0
+   */
+  font
+}
