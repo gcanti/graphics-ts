@@ -21,7 +21,8 @@
     "prebuild": "npm run clean",
     "build": "tsc -p ./tsconfig.build.json && tsc -p ./tsconfig.build-es6.json",
     "postbuild": "prettier --write \"./{lib,es6}/**/*.ts\"",
-    "start": "webpack-dev-server --config=example/webpack.config.js"
+    "start": "webpack-dev-server --config=example/webpack.config.js",
+    "docs": "docs-ts"
   },
   "repository": {
     "type": "git",
@@ -33,12 +34,15 @@
     "url": "https://github.com/gcanti/graphics-ts/issues"
   },
   "homepage": "https://github.com/gcanti/graphics-ts",
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
     "fp-ts": "^2.6.1"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",
     "@types/node": "^14.0.1",
+    "docs-ts": "^0.4.0",
+    "fp-ts": "^2.6.1",
     "glob": "^7.1.6",
     "html-webpack-plugin": "^4.3.0",
     "jest": "^26.0.1",
