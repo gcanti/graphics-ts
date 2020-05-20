@@ -243,8 +243,11 @@ export const getHeight: (canvas: HTMLCanvasElement) => IO.IO<number> = (c) => IO
  *
  * @since 1.0.0
  */
-export const setWidth: (width: number) => (canvas: HTMLCanvasElement) => IO.IO<void> = (w) => (c) => () => {
+export const setWidth: (width: number) => (canvas: HTMLCanvasElement) => IO.IO<HTMLCanvasElement> = (w) => (
+  c
+) => () => {
   c.width = w
+  return c
 }
 
 /**
@@ -252,8 +255,11 @@ export const setWidth: (width: number) => (canvas: HTMLCanvasElement) => IO.IO<v
  *
  * @since 1.0.0
  */
-export const setHeight: (height: number) => (canvas: HTMLCanvasElement) => IO.IO<void> = (h) => (c) => () => {
+export const setHeight: (height: number) => (canvas: HTMLCanvasElement) => IO.IO<HTMLCanvasElement> = (h) => (
+  c
+) => () => {
   c.height = h
+  return c
 }
 
 /**
@@ -269,12 +275,10 @@ export const getDimensions: (canvas: HTMLCanvasElement) => IO.IO<CanvasDimension
  *
  * @since 1.0.0
  */
-export const setDimensions: (dimensions: CanvasDimensions) => (canvas: HTMLCanvasElement) => IO.IO<void> = (d) => (c) =>
-  pipe(
-    c,
-    setWidth(d.width),
-    IO.chain(() => pipe(c, setHeight(d.height)))
-  )
+export const setDimensions: (
+  dimensions: CanvasDimensions
+) => (canvas: HTMLCanvasElement) => IO.IO<HTMLCanvasElement> = (d) => (ctx) =>
+  pipe(ctx, setWidth(d.width), IO.chain(setHeight(d.height)))
 
 /**
  * Create a data URL for the canvas.
