@@ -664,7 +664,7 @@ describe('Canvas', () => {
 
   describe('setFont', () => {
     it('should set the current font', () => {
-      const font = pipe(F.font('serif', 14), F.showFont)
+      const font = pipe(F.font('serif', 14), F.showFont.show)
 
       pipe(canvas, C.getContext2D, IO.chain(C.setFont(font)))()
 
@@ -675,7 +675,7 @@ describe('Canvas', () => {
   describe('fillText', () => {
     it('should render filled text to the canvas', () => {
       const fillText = 'Hello World!'
-      const font = pipe(F.font('serif', 14), F.showFont)
+      const font = pipe(F.font('serif', 14), F.showFont.show)
       const x = 50
       const y = 90
 
@@ -693,7 +693,7 @@ describe('Canvas', () => {
 
     it('should render filled text with a max width to the canvas', () => {
       const fillText = 'Hello World!'
-      const font = pipe(F.font('serif', 14), F.showFont)
+      const font = pipe(F.font('serif', 14), F.showFont.show)
       const x = 50
       const y = 90
       const maxWidth = 150
@@ -714,7 +714,7 @@ describe('Canvas', () => {
   describe('strokeText', () => {
     it('should render outlined text to the canvas', () => {
       const strokeText = 'Hello World!'
-      const font = pipe(F.font('serif', 14), F.showFont)
+      const font = pipe(F.font('serif', 14), F.showFont.show)
       const x = 50
       const y = 90
 
@@ -732,7 +732,7 @@ describe('Canvas', () => {
 
     it('should render outlined text with a max width to the canvas', () => {
       const strokeText = 'Hello World!'
-      const font = pipe(F.font('serif', 14), F.showFont)
+      const font = pipe(F.font('serif', 14), F.showFont.show)
       const x = 50
       const y = 90
       const maxWidth = 150

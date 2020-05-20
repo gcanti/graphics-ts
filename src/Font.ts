@@ -73,16 +73,9 @@ export const fontOptions = ({
  *
  * @since 1.0.0
  */
-export const ShowFontOptions: S.Show<FontOptions> = {
+export const showFontOptions: S.Show<FontOptions> = {
   show: (o) => intercalate(monoidString, ROR.readonlyRecord)(' ', ROR.compact(ROR.fromRecord(o)))
 }
-
-/**
- * Shows the string representation of `FontOptions`.
- *
- * @since 1.0.0
- */
-export const showFontOptions = ShowFontOptions.show
 
 /**
  * Represents the `font` CSS property.
@@ -129,7 +122,7 @@ export const font = (fontFamily: FontFamily, size: number, options?: FontOptions
  *
  * @since 1.0.0
  */
-const ShowFont: S.Show<Font> = {
+export const showFont: S.Show<Font> = {
   show: ({ fontFamily, size, fontOptions }) =>
     intercalate(monoidString, A.array)(
       ' ',
@@ -141,7 +134,7 @@ const ShowFont: S.Show<Font> = {
           ROR.compact,
           ROR.isEmpty,
           B.fold(
-            () => O.some(showFontOptions(fontOptions)),
+            () => O.some(showFontOptions.show(fontOptions)),
             () => O.none
           )
         ),
@@ -150,10 +143,3 @@ const ShowFont: S.Show<Font> = {
       ])
     )
 }
-
-/**
- * Show the string representation of `Font`.
- *
- * @since 1.0.0
- */
-export const showFont = ShowFont.show

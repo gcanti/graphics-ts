@@ -23,11 +23,11 @@ describe('Font', () => {
 
   describe('showFontOptions', () => {
     assert.deepStrictEqual(
-      pipe(F.fontOptions({ style: 'italic', variant: 'normal', weight: 'bold' }), F.showFontOptions),
+      pipe(F.fontOptions({ style: 'italic', variant: 'normal', weight: 'bold' }), F.showFontOptions.show),
       'italic normal bold'
     )
 
-    assert.deepStrictEqual(pipe(F.fontOptions({ weight: 'bold' }), F.showFontOptions), 'bold')
+    assert.deepStrictEqual(pipe(F.fontOptions({ weight: 'bold' }), F.showFontOptions.show), 'bold')
   })
 
   describe('font', () => {
@@ -47,8 +47,11 @@ describe('Font', () => {
   })
 
   describe('showFont', () => {
-    assert.deepStrictEqual(pipe(F.font('serif', 48, F.fontOptions({ weight: 'bold' })), F.showFont), 'bold 48px serif')
+    assert.deepStrictEqual(
+      pipe(F.font('serif', 48, F.fontOptions({ weight: 'bold' })), F.showFont.show),
+      'bold 48px serif'
+    )
 
-    assert.deepStrictEqual(pipe(F.font('serif', 48), F.showFont), '48px serif')
+    assert.deepStrictEqual(pipe(F.font('serif', 48), F.showFont.show), '48px serif')
   })
 })

@@ -461,7 +461,7 @@ describe('Drawing', () => {
 
       // Actual
       testCtx.save()
-      testCtx.font = pipe(font, F.showFont)
+      testCtx.font = pipe(font, F.showFont.show)
       testCtx.fillStyle = pipe(C.black, C.toCss)
       testCtx.fillText(text, x, y)
       testCtx.restore()
