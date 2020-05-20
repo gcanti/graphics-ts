@@ -77,7 +77,6 @@ export interface OutlineStyle {
  * Gets a `Monoid` instance for `OutlineStyle`.
  *
  * @example
- * ```typescript
  * import * as O from 'fp-ts/lib/Option';
  * import * as C from 'graphics-ts/lib/Color';
  * import * as D from 'graphics-ts/lib/Drawing';
@@ -93,7 +92,6 @@ export interface OutlineStyle {
  *     lineWidth: O.some(5),
  *   }
  * ))
- * ```
  *
  * @since 1.0.0
  */
@@ -568,25 +566,21 @@ export const render: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO
   const go: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D> = (drawing) => {
     switch (drawing._tag) {
       case 'Clipped':
-        return flow(
-          C.withContext((ctx) =>
-            pipe(
-              ctx,
-              C.beginPath,
-              IO.chain(renderShape(drawing.shape)),
-              IO.chain(C.clip()),
-              IO.chain(() => pipe(ctx, go(drawing.drawing)))
-            )
+        return C.withContext((ctx) =>
+          pipe(
+            ctx,
+            C.beginPath,
+            IO.chain(renderShape(drawing.shape)),
+            IO.chain(C.clip()),
+            IO.chain(go(drawing.drawing))
           )
         )
 
       case 'Fill':
-        return flow(
-          C.withContext(
-            flow(
-              applyStyle(drawing.style.color, flow(toCss, C.setFillStyle)),
-              IO.chain(C.fillPath(flow(renderShape(drawing.shape))))
-            )
+        return C.withContext(
+          flow(
+            applyStyle(drawing.style.color, flow(toCss, C.setFillStyle)),
+            IO.chain(C.fillPath(renderShape(drawing.shape)))
           )
         )
 
@@ -598,57 +592,45 @@ export const render: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO
           )
 
       case 'Outline':
-        return flow(
-          C.withContext(
-            flow(
-              applyStyle(drawing.style.color, flow(toCss, C.setStrokeStyle)),
-              IO.chain(applyStyle(drawing.style.lineWidth, flow(C.setLineWidth))),
-              IO.chain(C.strokePath(flow(renderShape(drawing.shape))))
-            )
+        return C.withContext(
+          flow(
+            applyStyle(drawing.style.color, flow(toCss, C.setStrokeStyle)),
+            IO.chain(applyStyle(drawing.style.lineWidth, flow(C.setLineWidth))),
+            IO.chain(C.strokePath(renderShape(drawing.shape)))
           )
         )
 
       case 'Rotate':
-        return flow(C.withContext(flow(C.rotate(drawing.angle), IO.chain(go(drawing.drawing)))))
+        return C.withContext(flow(C.rotate(drawing.angle), IO.chain(go(drawing.drawing))))
 
       case 'Scale':
-        return flow(C.withContext(flow(C.scale(drawing.scaleX, drawing.scaleY), IO.chain(go(drawing.drawing)))))
+        return C.withContext(flow(C.scale(drawing.scaleX, drawing.scaleY), IO.chain(go(drawing.drawing))))
 
       case 'Text':
-        return flow(
-          C.withContext(
-            flow(
-              pipe(showFont(drawing.font), C.setFont),
-              IO.chain(applyStyle(drawing.style.color, flow(toCss, C.setFillStyle))),
-              IO.chain(C.fillText(drawing.text, drawing.x, drawing.y))
-            )
+        return C.withContext(
+          flow(
+            pipe(showFont.show(drawing.font), C.setFont),
+            IO.chain(applyStyle(drawing.style.color, flow(toCss, C.setFillStyle))),
+            IO.chain(C.fillText(drawing.text, drawing.x, drawing.y))
           )
         )
 
       case 'Translate':
-        return flow(
-          C.withContext(flow(C.translate(drawing.translateX, drawing.translateY), IO.chain(go(drawing.drawing))))
-        )
+        return C.withContext(flow(C.translate(drawing.translateX, drawing.translateY), IO.chain(go(drawing.drawing))))
 
       case 'WithShadow':
-        return flow(
-          C.withContext(
-            flow(
-              applyStyle(drawing.shadow.color, flow(toCss, C.setShadowColor)),
-              IO.chain(applyStyle(drawing.shadow.blur, flow(C.setShadowBlur))),
-              IO.chain(
-                flow(
-                  applyStyle(drawing.shadow.offset, (o) =>
-                    flow(C.setShadowOffsetX(o.x), IO.chain(C.setShadowOffsetY(o.y)))
-                  )
-                )
-              ),
-              IO.chain(go(drawing.drawing))
-            )
+        return C.withContext(
+          flow(
+            applyStyle(drawing.shadow.color, flow(toCss, C.setShadowColor)),
+            IO.chain(applyStyle(drawing.shadow.blur, C.setShadowBlur)),
+            IO.chain(
+              applyStyle(drawing.shadow.offset, (o) => flow(C.setShadowOffsetX(o.x), IO.chain(C.setShadowOffsetY(o.y))))
+            ),
+            IO.chain(go(drawing.drawing))
           )
         )
     }
   }
 
-  return flow(go(drawing))
+  return go(drawing)
 }
