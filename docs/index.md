@@ -13,12 +13,6 @@ nav_order: 1
 
 # Installation
 
-```ts
-npm i graphics-ts fp-ts
-```
-
-# Installation
-
 To install the stable version:
 
 ```
@@ -35,7 +29,7 @@ Note: `fp-ts` is a peer dependency for `graphics-ts`
 
 To run the example, clone the repository and run the following:
 
-```ts
+```
 npm install
 npm start
 open example/test.html
