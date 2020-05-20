@@ -14,7 +14,7 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import * as C from './Canvas'
 import { toCss, Color } from './Color'
 import { showFont, Font } from './Font'
-import { Point, Shape } from './Shapes'
+import { Point, Shape } from './Shape'
 
 const readonlyArrayMonoidDrawing = ROA.getMonoid<Drawing>()
 const getFirstMonoidColor = O.getFirstMonoid<Color>()
@@ -572,7 +572,9 @@ export const render: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO
           C.withContext((ctx) =>
             pipe(
               ctx,
-              renderShape(drawing.shape),
+              C.beginPath,
+              IO.chain(renderShape(drawing.shape)),
+              IO.chain(C.clip()),
               IO.chain(() => pipe(ctx, go(drawing.drawing)))
             )
           )

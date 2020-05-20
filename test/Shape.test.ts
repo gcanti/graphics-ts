@@ -3,7 +3,7 @@ import * as ROA from 'fp-ts/lib/ReadonlyArray'
 import * as ROR from 'fp-ts/lib/ReadonlyRecord'
 import { pipe } from 'fp-ts/lib/pipeable'
 
-import * as S from '../src/Shapes'
+import * as S from '../src/Shape'
 
 describe('point', () => {
   it('should construct a point from x and y coordinated', () => {

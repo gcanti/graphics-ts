@@ -6,7 +6,7 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import * as C from '../src/Canvas'
 import * as Color from '../src/Color'
 import * as F from '../src/Font'
-import * as S from '../src/Shapes'
+import * as S from '../src/Shape'
 import { assertCalledWith } from './utils'
 import { flow } from 'fp-ts/lib/function'
 

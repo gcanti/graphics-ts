@@ -8,7 +8,7 @@ import * as O from 'fp-ts/lib/Option'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { pipe } from 'fp-ts/lib/pipeable'
 
-import { Arc, Point, Rect } from './Shapes'
+import { Arc, Point, Rect } from './Shape'
 
 /**
  * Represents the dimensions of the HTML canvas.

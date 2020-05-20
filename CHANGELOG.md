@@ -26,6 +26,7 @@ high state of flux, you're at risk of it changing without notice.
     - fix `white` color
   - rename `drawing` module to `Drawing` (@IMax153)
     - convert from classes to static interfaces with associated constructors for all `Drawings`s
+    - fixed implementation of `Clipped` drawings (@IMax153)
   - rename `font` module to `Font` (@IMax153)
     - convert from classes to static interfaces with associated constructors for `Font` and `FontOptions`
     - add `Show` instance for `FontOptions` (`ShowFontOptions`) (@IMax153)
