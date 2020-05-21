@@ -290,22 +290,22 @@ export const getCanvasElementById: (id: string) => IO.IO<O.Option<HTMLCanvasElem
  *
  * @since 1.0.0
  */
-export const getContext2D: (canvas: HTMLCanvasElement) => IO.IO<CanvasRenderingContext2D> = (c) =>
-  IO.of(unsafeGetContext2D(c))
+export const getContext2D: (canvas: HTMLCanvasElement) => IO.IO<CanvasRenderingContext2D> = (c) => () =>
+  unsafeGetContext2D(c)
 
 /**
  * Gets the canvas width in pixels.
  *
  * @since 1.0.0
  */
-export const getWidth: (canvas: HTMLCanvasElement) => IO.IO<number> = (c) => IO.of(c.width)
+export const getWidth: (canvas: HTMLCanvasElement) => IO.IO<number> = (c) => () => c.width
 
 /**
  * Gets the canvas height in pixels.
  *
  * @since 1.0.0
  */
-export const getHeight: (canvas: HTMLCanvasElement) => IO.IO<number> = (c) => IO.of(c.height)
+export const getHeight: (canvas: HTMLCanvasElement) => IO.IO<number> = (c) => () => c.height
 
 /**
  * Sets the width of the canvas in pixels.
@@ -748,7 +748,7 @@ export const transform: (
  *
  * @since 1.0.0
  */
-export const getTextAlign: (ctx: CanvasRenderingContext2D) => IO.IO<TextAlign> = (ctx) => IO.of(ctx.textAlign)
+export const getTextAlign: (ctx: CanvasRenderingContext2D) => IO.IO<TextAlign> = (ctx) => () => ctx.textAlign
 
 /**
  * Sets the current text alignment.
@@ -767,7 +767,7 @@ export const setTextAlign: (
  *
  * @since 1.0.0
  */
-export const getFont: (ctx: CanvasRenderingContext2D) => IO.IO<string> = (ctx) => IO.of(ctx.font)
+export const getFont: (ctx: CanvasRenderingContext2D) => IO.IO<string> = (ctx) => () => ctx.font
 
 /**
  * Sets the current font.
@@ -824,8 +824,9 @@ export const strokeText: (
  *
  * @since 1.0.0
  */
-export const measureText: (text: string) => (ctx: CanvasRenderingContext2D) => IO.IO<TextMetrics> = (t) => (ctx) =>
-  IO.of(ctx.measureText(t))
+export const measureText: (text: string) => (ctx: CanvasRenderingContext2D) => IO.IO<TextMetrics> = (t) => (
+  ctx
+) => () => ctx.measureText(t)
 
 /**
  * Save the current canvas context.
@@ -989,8 +990,8 @@ export const drawImageFull: (
 export const createPattern: (
   imageSource: ImageSource,
   repetition: PatternRepetition
-) => (ctx: CanvasRenderingContext2D) => IO.IO<O.Option<CanvasPattern>> = (s, r) => (ctx) =>
-  IO.of(O.fromNullable(ctx.createPattern(s, r)))
+) => (ctx: CanvasRenderingContext2D) => IO.IO<O.Option<CanvasPattern>> = (s, r) => (ctx) => () =>
+  O.fromNullable(ctx.createPattern(s, r))
 
 /**
  * Creates a linear `CanvasGradient` object.
@@ -1002,8 +1003,8 @@ export const createLinearGradient: (
   y0: number,
   x1: number,
   y1: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasGradient> = (x0, y0, x1, y1) => (ctx) =>
-  IO.of(ctx.createLinearGradient(x0, y0, x1, y1))
+) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasGradient> = (x0, y0, x1, y1) => (ctx) => () =>
+  ctx.createLinearGradient(x0, y0, x1, y1)
 
 /**
  * Creates a radial `CanvasGradient` object.
@@ -1017,8 +1018,8 @@ export const createRadialGradient: (
   x1: number,
   y1: number,
   r1: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasGradient> = (x0, y0, r0, x1, y1, r1) => (ctx) =>
-  IO.of(ctx.createRadialGradient(x0, y0, r0, x1, y1, r1))
+) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasGradient> = (x0, y0, r0, x1, y1, r1) => (ctx) => () =>
+  ctx.createRadialGradient(x0, y0, r0, x1, y1, r1)
 
 /**
  * Add a single color stop to a `CanvasGradient` object.
