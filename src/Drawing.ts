@@ -572,7 +572,7 @@ const applyStyle: <A>(
   pipe(
     fa,
     O.fold(
-      () => () => ctx,
+      () => IO.of(ctx),
       (a) => pipe(ctx, f(a))
     )
   )
@@ -586,7 +586,7 @@ const renderShape: (shape: Shape) => (ctx: CanvasRenderingContext2D) => IO.IO<Ca
       return (ctx) =>
         pipe(
           readOnlyArrayTraverseIO(shape.shapes, (s) => pipe(ctx, renderShape(s))),
-          IO.chain(() => () => ctx)
+          IO.map(() => ctx)
         )
 
     case 'Path':
@@ -594,7 +594,7 @@ const renderShape: (shape: Shape) => (ctx: CanvasRenderingContext2D) => IO.IO<Ca
         pipe(
           shape.points,
           ROA.foldLeft(
-            () => () => ctx,
+            () => IO.of(ctx),
             (first, nexts) =>
               pipe(
                 ctx,
@@ -604,7 +604,7 @@ const renderShape: (shape: Shape) => (ctx: CanvasRenderingContext2D) => IO.IO<Ca
                   pipe(
                     shape.closed,
                     B.fold(
-                      () => () => ctx,
+                      () => IO.of(ctx),
                       () => C.closePath(ctx)
                     )
                   )
@@ -645,7 +645,7 @@ export const render: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO
         return (ctx) =>
           pipe(
             readOnlyArrayTraverseIO(drawing.drawings, (d) => go(d)(ctx)),
-            IO.chain(() => () => ctx)
+            IO.map(() => ctx)
           )
 
       case 'Outline':
