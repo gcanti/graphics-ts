@@ -38,15 +38,6 @@ beforeEach(() => {
   testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D
 })
 
-// const logCtx = (ctx: CanvasRenderingContext2D): IO.IO<void> => () => {
-//   console.log('DRAW CALLS')
-//   console.log(ctx.__getDrawCalls())
-//   console.log('EVENTS')
-//   console.log(ctx.__getEvents())
-//   console.log('PATH')
-//   console.log(ctx.__getPath())
-// }
-
 describe('Canvas', () => {
   describe('unsafeGetCanvasElementById', () => {
     it('should unsafely return the canvas element if it exists', () => {
