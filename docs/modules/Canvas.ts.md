@@ -77,6 +77,9 @@ Added in v1.0.0
 <h2 class="text-delta">Table of contents</h2>
 
 - [CanvasDimensions (interface)](#canvasdimensions-interface)
+- [Gradient (interface)](#gradient-interface)
+- [Html (interface)](#html-interface)
+- [Render (interface)](#render-interface)
 - [TextMetrics (interface)](#textmetrics-interface)
 - [FillRule (type alias)](#fillrule-type-alias)
 - [GlobalCompositeOperation (type alias)](#globalcompositeoperation-type-alias)
@@ -174,6 +177,48 @@ export interface CanvasDimensions {
 ```
 
 Added in v1.0.0
+
+# Gradient (interface)
+
+Represents the management of a `CanvasGradient` as _reading_ from the `CanvasGradient` and
+returning a type `A` wrapped in an `IO`. In other words, we can say that when we are managing
+a `CanvasGradient` we are yielding an `Gradient` effect.
+
+**Signature**
+
+```ts
+export interface Gradient<A> extends R.Reader<CanvasGradient, IO.IO<A>> {}
+```
+
+Added in v0.0.1
+
+# Html (interface)
+
+Represents the management of an `HTMLCanvasElement` as _reading_ from the `HTMLCanvasElement`
+and returning a type `A` wrapped in an `IO`. In other words, we can say that when we are
+managing an `HTMLCanvasElement` we are yielding an `Html` effect.
+
+**Signature**
+
+```ts
+export interface Html<A> extends R.Reader<HTMLCanvasElement, IO.IO<A>> {}
+```
+
+Added in v0.0.1
+
+# Render (interface)
+
+Represents the management of a `CanvasRenderingContext2D` as _reading_ from the
+`CanvasRenderingContext2D` and returning a type `A` wrapped in an `IO`. In other words, we can
+say that when we are managing a `CanvasRenderingContext2D` we are yielding an `Render` effect.
+
+**Signature**
+
+```ts
+export interface Render<A> extends R.Reader<CanvasRenderingContext2D, IO.IO<A>> {}
+```
+
+Added in v0.0.1
 
 # TextMetrics (interface)
 
@@ -375,10 +420,7 @@ Add a single color stop to a `CanvasGradient` object.
 **Signature**
 
 ```ts
-export declare const addColorStop: (
-  offset: number,
-  color: string
-) => (gradient: CanvasGradient) => IO.IO<CanvasGradient>
+export declare const addColorStop: (offset: number, color: string) => Gradient<CanvasGradient>
 ```
 
 Added in v1.0.0
@@ -390,7 +432,7 @@ Render an arc.
 **Signature**
 
 ```ts
-export declare const arc: (arc: Arc) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const arc: (arc: Arc) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -402,7 +444,7 @@ Begin a path on the canvas.
 **Signature**
 
 ```ts
-export declare const beginPath: (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const beginPath: Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -421,7 +463,7 @@ export declare const bezierCurveTo: (
   cpy2: number,
   x: number,
   y: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -433,7 +475,7 @@ Set the pixels in the specified rectangle back to transparent black.
 **Signature**
 
 ```ts
-export declare const clearRect: (rect: Rect) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const clearRect: (rect: Rect) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -445,10 +487,7 @@ Clip the current path on the canvas.
 **Signature**
 
 ```ts
-export declare const clip: (
-  fillRule?: FillRule,
-  path?: Path2D
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const clip: (fillRule?: FillRule, path?: Path2D) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -460,7 +499,7 @@ Closes the current canvas path.
 **Signature**
 
 ```ts
-export declare const closePath: (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const closePath: Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -472,7 +511,7 @@ Gets `ImageData` for the specified rectangle.
 **Signature**
 
 ```ts
-export declare const createImageData: (sw: number, sh: number) => (ctx: CanvasRenderingContext2D) => IO.IO<ImageData>
+export declare const createImageData: (sw: number, sh: number) => Render<ImageData>
 ```
 
 Added in v1.0.0
@@ -484,7 +523,7 @@ Creates a copy of an existing `ImageData` object.
 **Signature**
 
 ```ts
-export declare const createImageDataCopy: (imageData: ImageData) => (ctx: CanvasRenderingContext2D) => IO.IO<ImageData>
+export declare const createImageDataCopy: (imageData: ImageData) => Render<ImageData>
 ```
 
 Added in v1.0.0
@@ -496,12 +535,7 @@ Creates a linear `CanvasGradient` object.
 **Signature**
 
 ```ts
-export declare const createLinearGradient: (
-  x0: number,
-  y0: number,
-  x1: number,
-  y1: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasGradient>
+export declare const createLinearGradient: (x0: number, y0: number, x1: number, y1: number) => Render<CanvasGradient>
 ```
 
 Added in v1.0.0
@@ -516,7 +550,7 @@ Creates a new canvas pattern (repeatable image).
 export declare const createPattern: (
   imageSource: ImageSource,
   repetition: PatternRepetition
-) => (ctx: CanvasRenderingContext2D) => IO.IO<O.Option<CanvasPattern>>
+) => Render<O.Option<CanvasPattern>>
 ```
 
 Added in v1.0.0
@@ -535,7 +569,7 @@ export declare const createRadialGradient: (
   x1: number,
   y1: number,
   r1: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasGradient>
+) => Render<CanvasGradient>
 ```
 
 Added in v1.0.0
@@ -551,7 +585,7 @@ export declare const drawImage: (
   imageSource: ImageSource,
   offsetX: number,
   offsetY: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -573,7 +607,7 @@ export declare const drawImageFull: (
   canvasOffsetY: number,
   canvasImageWidth: number,
   canvasImageHeight: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -591,7 +625,7 @@ export declare const drawImageScale: (
   offsetY: number,
   width: number,
   height: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -603,10 +637,7 @@ Fill the current path on the canvas.
 **Signature**
 
 ```ts
-export declare const fill: (
-  fillRule?: FillRule,
-  path?: Path2D
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const fill: (fillRule?: FillRule, path?: Path2D) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -618,9 +649,7 @@ Convenience function for drawing a filled path.
 **Signature**
 
 ```ts
-export declare const fillPath: <A>(
-  f: (ctx: CanvasRenderingContext2D) => IO.IO<A>
-) => (ctx: CanvasRenderingContext2D) => IO.IO<A>
+export declare const fillPath: <A>(f: Render<A>) => Render<A>
 ```
 
 Added in v1.0.0
@@ -632,7 +661,7 @@ Render a filled rectangle.
 **Signature**
 
 ```ts
-export declare const fillRect: (rect: Rect) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const fillRect: (rect: Rect) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -649,7 +678,7 @@ export declare const fillText: (
   x: number,
   y: number,
   maxWidth?: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -674,7 +703,7 @@ Gets the 2D graphics context for a canvas element.
 **Signature**
 
 ```ts
-export declare const getContext2D: (canvas: HTMLCanvasElement) => IO.IO<CanvasRenderingContext2D>
+export declare const getContext2D: Html<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -686,7 +715,7 @@ Gets the dimensions of the canvas in pixels.
 **Signature**
 
 ```ts
-export declare const getDimensions: (canvas: HTMLCanvasElement) => IO.IO<CanvasDimensions>
+export declare const getDimensions: Html<CanvasDimensions>
 ```
 
 Added in v1.0.0
@@ -698,7 +727,7 @@ Gets the current font.
 **Signature**
 
 ```ts
-export declare const getFont: (ctx: CanvasRenderingContext2D) => IO.IO<string>
+export declare const getFont: Render<string>
 ```
 
 Added in v1.0.0
@@ -710,7 +739,7 @@ Gets the canvas height in pixels.
 **Signature**
 
 ```ts
-export declare const getHeight: (canvas: HTMLCanvasElement) => IO.IO<number>
+export declare const getHeight: Html<number>
 ```
 
 Added in v1.0.0
@@ -722,7 +751,7 @@ Gets the image data for the specified portion of the canvas.
 **Signature**
 
 ```ts
-export declare const getImageData: (rect: Rect) => (ctx: CanvasRenderingContext2D) => IO.IO<ImageData>
+export declare const getImageData: (rect: Rect) => Render<ImageData>
 ```
 
 Added in v1.0.0
@@ -734,7 +763,7 @@ Gets the current text alignment.
 **Signature**
 
 ```ts
-export declare const getTextAlign: (ctx: CanvasRenderingContext2D) => IO.IO<TextAlign>
+export declare const getTextAlign: Render<TextAlign>
 ```
 
 Added in v1.0.0
@@ -746,7 +775,7 @@ Gets the canvas width in pixels.
 **Signature**
 
 ```ts
-export declare const getWidth: (canvas: HTMLCanvasElement) => IO.IO<number>
+export declare const getWidth: Html<number>
 ```
 
 Added in v1.0.0
@@ -758,7 +787,7 @@ Move the canvas path to the specified point while drawing a line segment.
 **Signature**
 
 ```ts
-export declare const lineTo: (point: Point) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const lineTo: (point: Point) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -770,7 +799,7 @@ Get the text measurements for the specified text.
 **Signature**
 
 ```ts
-export declare const measureText: (text: string) => (ctx: CanvasRenderingContext2D) => IO.IO<TextMetrics>
+export declare const measureText: (text: string) => Render<TextMetrics>
 ```
 
 Added in v1.0.0
@@ -782,7 +811,7 @@ Move the canvas path to the specified point without drawing a line segment.
 **Signature**
 
 ```ts
-export declare const moveTo: (point: Point) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const moveTo: (point: Point) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -794,11 +823,7 @@ Sets the image data for the specified portion of the canvas.
 **Signature**
 
 ```ts
-export declare const putImageData: (
-  imageData: ImageData,
-  dx: number,
-  dy: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const putImageData: (imageData: ImageData, dx: number, dy: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -818,7 +843,7 @@ export declare const putImageDataFull: (
   dirtyY: number,
   dirtyWidth: number,
   dirtyHeight: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -835,7 +860,7 @@ export declare const quadraticCurveTo: (
   cpy: number,
   x: number,
   y: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -847,7 +872,7 @@ Render a rectangle.
 **Signature**
 
 ```ts
-export declare const rect: (rect: Rect) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const rect: (rect: Rect) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -859,7 +884,7 @@ Restore the previous canvas context.
 **Signature**
 
 ```ts
-export declare const restore: (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const restore: Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -871,7 +896,7 @@ Apply rotation to the current canvas context transform.
 **Signature**
 
 ```ts
-export declare const rotate: (angle: number) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const rotate: (angle: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -883,7 +908,7 @@ Save the current canvas context.
 **Signature**
 
 ```ts
-export declare const save: (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const save: Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -895,10 +920,7 @@ Apply scale to the current canvas context transform.
 **Signature**
 
 ```ts
-export declare const scale: (
-  scaleX: number,
-  scaleY: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const scale: (scaleX: number, scaleY: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -910,9 +932,7 @@ Sets the dimensions of the canvas in pixels.
 **Signature**
 
 ```ts
-export declare const setDimensions: (
-  dimensions: CanvasDimensions
-) => (canvas: HTMLCanvasElement) => IO.IO<HTMLCanvasElement>
+export declare const setDimensions: (dimensions: CanvasDimensions) => Html<HTMLCanvasElement>
 ```
 
 Added in v1.0.0
@@ -924,9 +944,7 @@ Sets the current fill style for the canvas context.
 **Signature**
 
 ```ts
-export declare const setFillStyle: (
-  style: string | CanvasGradient | CanvasPattern
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setFillStyle: (style: string | CanvasGradient | CanvasPattern) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -938,7 +956,7 @@ Sets the current font.
 **Signature**
 
 ```ts
-export declare const setFont: (font: string) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setFont: (font: string) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -950,9 +968,7 @@ Sets the current global alpha for the canvas context.
 **Signature**
 
 ```ts
-export declare const setGlobalAlpha: (
-  alpha: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setGlobalAlpha: (alpha: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -966,7 +982,7 @@ Sets the current global composite operation type for the canvas context.
 ```ts
 export declare const setGlobalCompositeOperation: (
   compositeOperation: GlobalCompositeOperation
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -978,7 +994,7 @@ Sets the height of the canvas in pixels.
 **Signature**
 
 ```ts
-export declare const setHeight: (height: number) => (canvas: HTMLCanvasElement) => IO.IO<HTMLCanvasElement>
+export declare const setHeight: (height: number) => Html<HTMLCanvasElement>
 ```
 
 Added in v1.0.0
@@ -990,7 +1006,7 @@ Sets the current line cap type for the canvas context.
 **Signature**
 
 ```ts
-export declare const setLineCap: (cap: LineCap) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setLineCap: (cap: LineCap) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1002,7 +1018,7 @@ Sets the current line join type for the canvas context.
 **Signature**
 
 ```ts
-export declare const setLineJoin: (join: LineJoin) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setLineJoin: (join: LineJoin) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1014,7 +1030,7 @@ Sets the current line width for the canvas context in pixels.
 **Signature**
 
 ```ts
-export declare const setLineWidth: (width: number) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setLineWidth: (width: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1026,9 +1042,7 @@ Sets the current miter limit for the canvas context.
 **Signature**
 
 ```ts
-export declare const setMiterLimit: (
-  limit: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setMiterLimit: (limit: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1040,7 +1054,7 @@ Sets the current shadow blur radius for the canvas context.
 **Signature**
 
 ```ts
-export declare const setShadowBlur: (blur: number) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setShadowBlur: (blur: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1052,9 +1066,7 @@ Sets the current shadow color for the canvas context.
 **Signature**
 
 ```ts
-export declare const setShadowColor: (
-  color: string
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setShadowColor: (color: string) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1066,9 +1078,7 @@ Sets the current shadow x-offset for the canvas context.
 **Signature**
 
 ```ts
-export declare const setShadowOffsetX: (
-  offsetX: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setShadowOffsetX: (offsetX: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1080,9 +1090,7 @@ Sets the current shadow y-offset for the canvas context.
 **Signature**
 
 ```ts
-export declare const setShadowOffsetY: (
-  offsetY: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setShadowOffsetY: (offsetY: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1094,9 +1102,7 @@ Sets the current stroke style for the canvas context.
 **Signature**
 
 ```ts
-export declare const setStrokeStyle: (
-  style: string
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setStrokeStyle: (style: string) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1108,9 +1114,7 @@ Sets the current text alignment.
 **Signature**
 
 ```ts
-export declare const setTextAlign: (
-  textAlign: TextAlign
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const setTextAlign: (textAlign: TextAlign) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1122,7 +1126,7 @@ Sets the width of the canvas in pixels.
 **Signature**
 
 ```ts
-export declare const setWidth: (width: number) => (canvas: HTMLCanvasElement) => IO.IO<HTMLCanvasElement>
+export declare const setWidth: (width: number) => Html<HTMLCanvasElement>
 ```
 
 Added in v1.0.0
@@ -1134,7 +1138,7 @@ Stroke the current path on the canvas.
 **Signature**
 
 ```ts
-export declare const stroke: (path?: Path2D) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const stroke: (path?: Path2D) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1146,9 +1150,7 @@ Convenience function for drawing a stroked path.
 **Signature**
 
 ```ts
-export declare const strokePath: <A>(
-  f: (ctx: CanvasRenderingContext2D) => IO.IO<A>
-) => (ctx: CanvasRenderingContext2D) => IO.IO<A>
+export declare const strokePath: <A>(f: Render<A>) => Render<A>
 ```
 
 Added in v1.0.0
@@ -1160,7 +1162,7 @@ Render a stroked rectangle.
 **Signature**
 
 ```ts
-export declare const strokeRect: (r: Rect) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const strokeRect: (r: Rect) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1177,7 +1179,7 @@ export declare const strokeText: (
   x: number,
   y: number,
   maxWidth?: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1189,7 +1191,7 @@ Create a data URL for the canvas.
 **Signature**
 
 ```ts
-export declare const toDataURL: (canvas: HTMLCanvasElement) => IO.IO<string>
+export declare const toDataURL: Html<string>
 ```
 
 Added in v1.0.0
@@ -1208,7 +1210,7 @@ export declare const transform: (
   m22: number,
   m31: number,
   m32: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1220,10 +1222,7 @@ Translate the current canvas context transform.
 **Signature**
 
 ```ts
-export declare const translate: (
-  translateX: number,
-  translateY: number
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const translate: (translateX: number, translateY: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1260,9 +1259,7 @@ canvas context.
 **Signature**
 
 ```ts
-export declare const withContext: <A>(
-  f: (ctx: CanvasRenderingContext2D) => IO.IO<A>
-) => (ctx: CanvasRenderingContext2D) => IO.IO<A>
+export declare const withContext: <A>(f: Render<A>) => Render<A>
 ```
 
 Added in v1.0.0
