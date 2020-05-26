@@ -12,61 +12,51 @@ when using the `Canvas` module directly and instead allows us to be more declara
 Taking the MDN example from the [Canvas][#canvas] documentation,
 
 ```ts
+import * as R from 'fp-ts-contrib/lib/ReaderIO'
+import * as Console from 'fp-ts/lib/Console'
 import * as IO from 'fp-ts/lib/IO'
-import * as ROA from 'fp-ts/lib/ReadonlyArray'
+import * as O from 'fp-ts/lib/Option'
 import { flow } from 'fp-ts/lib/function'
 import { pipe } from 'fp-ts/lib/pipeable'
+import * as C from 'graphics-ts/lib/Canvas'
 import * as Color from 'graphics-ts/lib/Color'
-import * as D from 'graphics-ts/lib/Drawing'
 import * as S from 'graphics-ts/lib/Shape'
 
 const canvasId = 'canvas'
 
-pipe(
-  C.getCanvasElementById(canvasId),
-  IO.chain(
-    O.fold(
-      () => error(`[ERROR]: Unable to find canvas`),
-      flow(
-        C.getContext2D,
-        IO.chain(
-          C.fillPath(
-            flow(
-              C.setFillStyle(pipe(Color.black, Color.toCss)),
-              IO.chain(C.moveTo(S.point(75, 50))),
-              IO.chain(C.lineTo(S.point(100, 75))),
-              IO.chain(C.lineTo(S.point(100, 25)))
-            )
-          )
-        )
-      )
-    )
+const render = (canvasId: string) => <A>(r: C.Render<A>): IO.IO<void> =>
+  pipe(
+    C.getCanvasElementById(canvasId),
+    IO.chain(O.fold(() => Console.error(`[ERROR]: Unable to find canvas`), flow(C.getContext2D, IO.chain(r))))
   )
-)()
+
+const triangle: C.Render<void> = C.fillPath(
+  pipe(
+    C.setFillStyle(pipe(Color.black, Color.toCss)),
+    R.chain(() => C.moveTo(S.point(75, 50))),
+    R.chain(() => C.lineTo(S.point(100, 75))),
+    R.chain(() => C.lineTo(S.point(100, 25)))
+  )
+)
+
+render(canvasId)(triangle)()
 ```
 
-the code above becomes the following
+the `triangle` renderer above becomes the following
 
 ```ts
-pipe(
-  C.getCanvasElementById(canvasId),
-  IO.chain(
-    O.fold(
-      () => error(`[ERROR]: Unable to find canvas`),
-      flow(
-        C.getContext2D,
-        IO.chain(
-          D.render(
-            D.fill(
-              S.path(ROA.readonlyArray)([S.point(75, 50), S.point(100, 75), S.point(100, 25)]),
-              D.fillStyle(Color.black)
-            )
-          )
-        )
-      )
-    )
+(...)
+
+import * as D from 'graphics-ts/lib/Drawing'
+
+const triangle: C.Render<void> = D.render(
+  D.fill(
+    S.path(RA.readonlyArray)([S.point(75, 50), S.point(100, 75), S.point(100, 25)]),
+    D.fillStyle(Color.black)
   )
-)()
+)
+
+render(canvasId)(triangle)()
 ```
 
 Adapted from https://github.com/purescript-contrib/purescript-drawing
@@ -583,7 +573,7 @@ Renders a `Drawing`.
 **Signature**
 
 ```ts
-export declare const render: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
+export declare const render: (drawing: Drawing) => C.Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0

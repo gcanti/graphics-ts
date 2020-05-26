@@ -33,35 +33,34 @@ const draw = () => {
 With `graphics-ts`, the above code becomes
 
 ```ts
+import * as R from 'fp-ts-contrib/lib/ReaderIO'
+import * as Console from 'fp-ts/lib/Console'
 import * as IO from 'fp-ts/lib/IO'
+import * as O from 'fp-ts/lib/Option'
 import { flow } from 'fp-ts/lib/function'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as C from 'graphics-ts/lib/Canvas'
+import * as Color from 'graphics-ts/lib/Color'
 import * as S from 'graphics-ts/lib/Shape'
 
 const canvasId = 'canvas'
 
-pipe(
-  C.getCanvasElementById(canvasId),
-  IO.chain(
-    O.fold(
-      () => error(`[ERROR]: Unable to find canvas`),
-      flow(
-        C.getContext2D,
-        IO.chain(
-          C.fillPath(
-            flow(
-              C.setFillStyle(pipe(Color.black, Color.toCss)),
-              IO.chain(C.moveTo(S.point(75, 50))),
-              IO.chain(C.lineTo(S.point(100, 75))),
-              IO.chain(C.lineTo(S.point(100, 25)))
-            )
-          )
-        )
-      )
-    )
+const render = (canvasId: string) => <A>(r: C.Render<A>): IO.IO<void> =>
+  pipe(
+    C.getCanvasElementById(canvasId),
+    IO.chain(O.fold(() => Console.error(`[ERROR]: Unable to find canvas`), flow(C.getContext2D, IO.chain(r))))
   )
-)()
+
+const triangle: C.Render<void> = C.fillPath(
+  pipe(
+    C.setFillStyle(pipe(Color.black, Color.toCss)),
+    R.chain(() => C.moveTo(S.point(75, 50))),
+    R.chain(() => C.lineTo(S.point(100, 75))),
+    R.chain(() => C.lineTo(S.point(100, 25)))
+  )
+)
+
+render(canvasId)(triangle)()
 ```
 
 While this may seem somewhat verbose compared to its non-functional counterpart above,
@@ -187,7 +186,7 @@ a `CanvasGradient` we are yielding an `Gradient` effect.
 **Signature**
 
 ```ts
-export interface Gradient<A> extends R.Reader<CanvasGradient, IO.IO<A>> {}
+export interface Gradient<A> extends R.ReaderIO<CanvasGradient, A> {}
 ```
 
 Added in v0.0.1
@@ -201,7 +200,7 @@ managing an `HTMLCanvasElement` we are yielding an `Html` effect.
 **Signature**
 
 ```ts
-export interface Html<A> extends R.Reader<HTMLCanvasElement, IO.IO<A>> {}
+export interface Html<A> extends R.ReaderIO<HTMLCanvasElement, A> {}
 ```
 
 Added in v0.0.1
@@ -215,7 +214,7 @@ say that when we are managing a `CanvasRenderingContext2D` we are yielding an `R
 **Signature**
 
 ```ts
-export interface Render<A> extends R.Reader<CanvasRenderingContext2D, IO.IO<A>> {}
+export interface Render<A> extends R.ReaderIO<CanvasRenderingContext2D, A> {}
 ```
 
 Added in v0.0.1
