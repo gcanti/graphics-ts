@@ -5,7 +5,7 @@
  */
 import { HKT, Kind, Kind2, Kind3, URIS, URIS2, URIS3 } from 'fp-ts/lib/HKT'
 import { Foldable, Foldable1, Foldable2, Foldable3 } from 'fp-ts/lib/Foldable'
-import * as ROA from 'fp-ts/lib/ReadonlyArray'
+import * as RA from 'fp-ts/lib/ReadonlyArray'
 import * as M from 'fp-ts/lib/Monoid'
 
 /**
@@ -66,7 +66,7 @@ export interface Path {
 export const monoidPath: M.Monoid<Path> = M.getStructMonoid({
   _tag: { concat: () => 'Path', empty: 'Path' },
   closed: M.monoidAny,
-  points: ROA.getMonoid<Point>()
+  points: RA.getMonoid<Point>()
 })
 
 /**
@@ -83,7 +83,7 @@ export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path {
     F.reduce(fa, monoidPath.empty, (b, a) => ({
       _tag: 'Path',
       closed: false,
-      points: ROA.snoc(b.points, a)
+      points: RA.snoc(b.points, a)
     }))
 }
 
@@ -101,7 +101,7 @@ export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path {
     F.reduce(fa, monoidPath.empty, (b, a) => ({
       _tag: 'Path',
       closed: true,
-      points: ROA.snoc(b.points, a)
+      points: RA.snoc(b.points, a)
     }))
 }
 

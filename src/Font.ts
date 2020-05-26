@@ -4,7 +4,7 @@
 import * as A from 'fp-ts/lib/Array'
 import * as B from 'fp-ts/lib/boolean'
 import * as O from 'fp-ts/lib/Option'
-import * as ROR from 'fp-ts/lib/ReadonlyRecord'
+import * as RR from 'fp-ts/lib/ReadonlyRecord'
 import * as S from 'fp-ts/lib/Show'
 import { monoidString } from 'fp-ts/lib/Monoid'
 import { intercalate } from 'fp-ts/lib/Foldable'
@@ -77,7 +77,7 @@ export const fontOptions = ({
  * @since 1.0.0
  */
 export const showFontOptions: S.Show<FontOptions> = {
-  show: (o) => intercalate(monoidString, ROR.readonlyRecord)(' ', ROR.compact(ROR.fromRecord(o)))
+  show: (o) => intercalate(monoidString, RR.readonlyRecord)(' ', RR.compact(RR.fromRecord(o)))
 }
 
 /**
@@ -133,9 +133,9 @@ export const showFont: S.Show<Font> = {
         // Determine if any font options were specified
         pipe(
           fontOptions,
-          ROR.fromRecord,
-          ROR.compact,
-          ROR.isEmpty,
+          RR.fromRecord,
+          RR.compact,
+          RR.isEmpty,
           B.fold(
             () => O.some(showFontOptions.show(fontOptions)),
             () => O.none
