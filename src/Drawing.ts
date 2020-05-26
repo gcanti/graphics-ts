@@ -5,80 +5,71 @@
  * Taking the MDN example from the [Canvas][#canvas] documentation,
  *
  * ```ts
+ * import * as R from 'fp-ts-contrib/lib/ReaderIO'
+ * import * as Console from 'fp-ts/lib/Console'
  * import * as IO from 'fp-ts/lib/IO'
- * import * as ROA from 'fp-ts/lib/ReadonlyArray'
+ * import * as O from 'fp-ts/lib/Option'
  * import { flow } from 'fp-ts/lib/function'
  * import { pipe } from 'fp-ts/lib/pipeable'
+ * import * as C from 'graphics-ts/lib/Canvas'
  * import * as Color from 'graphics-ts/lib/Color'
- * import * as D from 'graphics-ts/lib/Drawing'
  * import * as S from 'graphics-ts/lib/Shape'
  *
  * const canvasId = 'canvas'
  *
- * pipe(
- *   C.getCanvasElementById(canvasId),
- *   IO.chain(
- *     O.fold(
- *       () => error(`[ERROR]: Unable to find canvas`),
- *       flow(
- *         C.getContext2D,
- *         IO.chain(
- *           C.fillPath(
- *             flow(
- *               C.setFillStyle(pipe(Color.black, Color.toCss)),
- *               IO.chain(C.moveTo(S.point(75, 50))),
- *               IO.chain(C.lineTo(S.point(100, 75))),
- *               IO.chain(C.lineTo(S.point(100, 25)))
- *             )
- *           )
- *         )
- *       )
- *     )
+ * const render = (canvasId: string) => <A>(r: C.Render<A>): IO.IO<void> =>
+ *   pipe(
+ *     C.getCanvasElementById(canvasId),
+ *     IO.chain(O.fold(() => Console.error(`[ERROR]: Unable to find canvas`), flow(C.getContext2D, IO.chain(r))))
  *   )
- * )()
+ *
+ * const triangle: C.Render<void> = C.fillPath(
+ *   pipe(
+ *     C.setFillStyle(pipe(Color.black, Color.toCss)),
+ *     R.chain(() => C.moveTo(S.point(75, 50))),
+ *     R.chain(() => C.lineTo(S.point(100, 75))),
+ *     R.chain(() => C.lineTo(S.point(100, 25)))
+ *   )
+ * )
+ *
+ * render(canvasId)(triangle)()
  * ```
- * the code above becomes the following
+ *
+ * the `triangle` renderer above becomes the following
  *
  * ```ts
- * pipe(
- *   C.getCanvasElementById(canvasId),
- *   IO.chain(
- *     O.fold(
- *       () => error(`[ERROR]: Unable to find canvas`),
- *       flow(
- *         C.getContext2D,
- *         IO.chain(
- *           D.render(
- *             D.fill(
- *               S.path(ROA.readonlyArray)([S.point(75, 50), S.point(100, 75), S.point(100, 25)]),
- *               D.fillStyle(Color.black)
- *             )
- *           )
- *         )
- *       )
- *     )
+ * (...)
+ *
+ * import * as D from 'graphics-ts/lib/Drawing'
+ *
+ * const triangle: C.Render<void> = D.render(
+ *   D.fill(
+ *     S.path(RA.readonlyArray)([S.point(75, 50), S.point(100, 75), S.point(100, 25)]),
+ *     D.fillStyle(Color.black)
  *   )
- * )()
+ * )
+ *
+ * render(canvasId)(triangle)()
  * ```
  *
  * Adapted from https://github.com/purescript-contrib/purescript-drawing
  *
  * @since 1.0.0
  */
-import * as B from 'fp-ts/lib/boolean'
 import * as IO from 'fp-ts/lib/IO'
 import * as M from 'fp-ts/lib/Monoid'
 import * as O from 'fp-ts/lib/Option'
-import * as ROA from 'fp-ts/lib/ReadonlyArray'
+import * as RA from 'fp-ts/lib/ReadonlyArray'
 import { flow } from 'fp-ts/lib/function'
 import { pipe } from 'fp-ts/lib/pipeable'
+import * as R from 'fp-ts-contrib/lib/ReaderIO'
 
 import * as C from './Canvas'
 import { toCss, Color } from './Color'
 import { showFont, Font } from './Font'
 import { Point, Shape } from './Shape'
 
-const readonlyArrayMonoidDrawing = ROA.getMonoid<Drawing>()
+const readonlyArrayMonoidDrawing = RA.getMonoid<Drawing>()
 const getFirstMonoidColor = O.getFirstMonoid<Color>()
 const getFirstMonoidNumber = O.getFirstMonoid<number>()
 const getFirstMonoidPoint = O.getFirstMonoid<Point>()
@@ -563,21 +554,18 @@ export const monoidDrawing: M.Monoid<Drawing> = {
   empty: many(readonlyArrayMonoidDrawing.empty)
 }
 
-const readOnlyArrayTraverseIO = ROA.readonlyArray.traverse(IO.io)
+const traverseReaderIO = RA.readonlyArray.traverse(R.readerIO)
 
 const applyStyle: <A>(
-  oa: O.Option<A>,
-  f: (a: A) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D>
-) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D> = (fa, f) => (ctx) =>
+  fa: O.Option<A>,
+  f: (a: A) => C.Render<CanvasRenderingContext2D>
+) => C.Render<CanvasRenderingContext2D> = (fa, f) =>
   pipe(
     fa,
-    O.fold(
-      () => IO.of(ctx),
-      (a) => pipe(ctx, f(a))
-    )
+    O.fold(() => IO.of, f)
   )
 
-const renderShape: (shape: Shape) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D> = (shape) => {
+const renderShape: (shape: Shape) => C.Render<CanvasRenderingContext2D> = (shape) => {
   switch (shape._tag) {
     case 'Arc':
       return C.arc(shape)
@@ -585,33 +573,24 @@ const renderShape: (shape: Shape) => (ctx: CanvasRenderingContext2D) => IO.IO<Ca
     case 'Composite':
       return (ctx) =>
         pipe(
-          readOnlyArrayTraverseIO(shape.shapes, (s) => pipe(ctx, renderShape(s))),
+          ctx,
+          traverseReaderIO(shape.shapes, renderShape),
           IO.map(() => ctx)
         )
 
     case 'Path':
-      return (ctx) =>
-        pipe(
-          shape.points,
-          ROA.foldLeft(
-            () => IO.of(ctx),
-            (first, nexts) =>
-              pipe(
-                ctx,
-                C.moveTo(first),
-                IO.chain((ctx) => readOnlyArrayTraverseIO(nexts, (next) => pipe(ctx, C.lineTo(next)))),
-                IO.chain(() =>
-                  pipe(
-                    shape.closed,
-                    B.fold(
-                      () => IO.of(ctx),
-                      () => C.closePath(ctx)
-                    )
-                  )
-                )
-              )
-          )
+      return pipe(
+        shape.points,
+        RA.foldLeft(
+          () => IO.of,
+          (head, tail) =>
+            pipe(
+              C.moveTo(head),
+              R.chain(() => traverseReaderIO(tail, C.lineTo)),
+              R.chain(() => (shape.closed ? C.closePath : IO.of))
+            )
         )
+      )
 
     case 'Rect':
       return C.rect(shape)
@@ -623,67 +602,91 @@ const renderShape: (shape: Shape) => (ctx: CanvasRenderingContext2D) => IO.IO<Ca
  *
  * @since 1.0.0
  */
-export const render: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D> = (
-  drawing
-) => {
-  const go: (drawing: Drawing) => (ctx: CanvasRenderingContext2D) => IO.IO<CanvasRenderingContext2D> = (drawing) => {
-    switch (drawing._tag) {
+export const render: (drawing: Drawing) => C.Render<CanvasRenderingContext2D> = (drawing) => {
+  const go: (drawing: Drawing) => C.Render<CanvasRenderingContext2D> = (d) => {
+    switch (d._tag) {
       case 'Clipped':
         return C.withContext(
-          flow(C.beginPath, IO.chain(renderShape(drawing.shape)), IO.chain(C.clip()), IO.chain(go(drawing.drawing)))
+          pipe(
+            C.beginPath,
+            R.chain(() => renderShape(d.shape)),
+            R.chain(() => C.clip()),
+            R.chain(() => go(d.drawing))
+          )
         )
 
       case 'Fill':
         return C.withContext(
-          flow(
-            applyStyle(drawing.style.color, flow(toCss, C.setFillStyle)),
-            IO.chain(C.fillPath(renderShape(drawing.shape)))
+          pipe(
+            applyStyle(d.style.color, flow(toCss, C.setFillStyle)),
+            R.chain(() => C.fillPath(renderShape(d.shape)))
           )
         )
 
       case 'Many':
         return (ctx) =>
           pipe(
-            readOnlyArrayTraverseIO(drawing.drawings, (d) => go(d)(ctx)),
+            ctx,
+            traverseReaderIO(d.drawings, go),
             IO.map(() => ctx)
           )
 
       case 'Outline':
         return C.withContext(
-          flow(
-            applyStyle(drawing.style.color, flow(toCss, C.setStrokeStyle)),
-            IO.chain(applyStyle(drawing.style.lineWidth, C.setLineWidth)),
-            IO.chain(C.strokePath(renderShape(drawing.shape)))
+          pipe(
+            applyStyle(d.style.color, flow(toCss, C.setStrokeStyle)),
+            R.chain(() => applyStyle(d.style.lineWidth, C.setLineWidth)),
+            R.chain(() => C.strokePath(renderShape(d.shape)))
           )
         )
 
       case 'Rotate':
-        return C.withContext(flow(C.rotate(drawing.angle), IO.chain(go(drawing.drawing))))
+        return C.withContext(
+          pipe(
+            C.rotate(d.angle),
+            R.chain(() => go(d.drawing))
+          )
+        )
 
       case 'Scale':
-        return C.withContext(flow(C.scale(drawing.scaleX, drawing.scaleY), IO.chain(go(drawing.drawing))))
+        return C.withContext(
+          pipe(
+            C.scale(d.scaleX, d.scaleY),
+            R.chain(() => go(d.drawing))
+          )
+        )
 
       case 'Text':
         return C.withContext(
-          flow(
-            pipe(showFont.show(drawing.font), C.setFont),
-            IO.chain(applyStyle(drawing.style.color, flow(toCss, C.setFillStyle))),
-            IO.chain(C.fillText(drawing.text, drawing.x, drawing.y))
+          pipe(
+            C.setFont(showFont.show(d.font)),
+            R.chain(() => applyStyle(d.style.color, flow(toCss, C.setFillStyle))),
+            R.chain(() => C.fillText(d.text, d.x, d.y))
           )
         )
 
       case 'Translate':
-        return C.withContext(flow(C.translate(drawing.translateX, drawing.translateY), IO.chain(go(drawing.drawing))))
+        return C.withContext(
+          pipe(
+            C.translate(d.translateX, d.translateY),
+            R.chain(() => go(d.drawing))
+          )
+        )
 
       case 'WithShadow':
         return C.withContext(
-          flow(
-            applyStyle(drawing.shadow.color, flow(toCss, C.setShadowColor)),
-            IO.chain(applyStyle(drawing.shadow.blur, C.setShadowBlur)),
-            IO.chain(
-              applyStyle(drawing.shadow.offset, (o) => flow(C.setShadowOffsetX(o.x), IO.chain(C.setShadowOffsetY(o.y))))
+          pipe(
+            applyStyle(d.shadow.color, flow(toCss, C.setShadowColor)),
+            R.chain(() => applyStyle(d.shadow.blur, C.setShadowBlur)),
+            R.chain(() =>
+              applyStyle(d.shadow.offset, (o) =>
+                pipe(
+                  C.setShadowOffsetX(o.x),
+                  R.chain(() => C.setShadowOffsetY(o.y))
+                )
+              )
             ),
-            IO.chain(go(drawing.drawing))
+            R.chain(() => go(d.drawing))
           )
         )
     }
