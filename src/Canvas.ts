@@ -26,35 +26,34 @@
  * With `graphics-ts`, the above code becomes
  *
  * ```ts
+ * import * as R from 'fp-ts-contrib/lib/ReaderIO'
+ * import * as Console from 'fp-ts/lib/Console'
  * import * as IO from 'fp-ts/lib/IO'
+ * import * as O from 'fp-ts/lib/Option'
  * import { flow } from 'fp-ts/lib/function'
  * import { pipe } from 'fp-ts/lib/pipeable'
  * import * as C from 'graphics-ts/lib/Canvas'
+ * import * as Color from 'graphics-ts/lib/Color'
  * import * as S from 'graphics-ts/lib/Shape'
  *
  * const canvasId = 'canvas'
  *
- * pipe(
- *   C.getCanvasElementById(canvasId),
- *   IO.chain(
- *     O.fold(
- *       () => error(`[ERROR]: Unable to find canvas`),
- *       flow(
- *         C.getContext2D,
- *         IO.chain(
- *           C.fillPath(
- *             flow(
- *               C.setFillStyle(pipe(Color.black, Color.toCss)),
- *               IO.chain(C.moveTo(S.point(75, 50))),
- *               IO.chain(C.lineTo(S.point(100, 75))),
- *               IO.chain(C.lineTo(S.point(100, 25)))
- *             )
- *           )
- *         )
- *       )
- *     )
+ * const render = (canvasId: string) => <A>(r: C.Render<A>): IO.IO<void> =>
+ *   pipe(
+ *     C.getCanvasElementById(canvasId),
+ *     IO.chain(O.fold(() => Console.error(`[ERROR]: Unable to find canvas`), flow(C.getContext2D, IO.chain(r))))
  *   )
- * )()
+ *
+ * const triangle: C.Render<void> = C.fillPath(
+ *   pipe(
+ *     C.setFillStyle(pipe(Color.black, Color.toCss)),
+ *     R.chain(() => C.moveTo(S.point(75, 50))),
+ *     R.chain(() => C.lineTo(S.point(100, 75))),
+ *     R.chain(() => C.lineTo(S.point(100, 25)))
+ *   )
+ * )
+ *
+ * render(canvasId)(triangle)()
  * ```
  *
  * While this may seem somewhat verbose compared to its non-functional counterpart above,
@@ -65,9 +64,9 @@
  *
  * @since 1.0.0
  */
+import * as R from 'fp-ts-contrib/lib/ReaderIO'
 import * as IO from 'fp-ts/lib/IO'
 import * as O from 'fp-ts/lib/Option'
-import * as R from 'fp-ts/lib/Reader'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { pipe } from 'fp-ts/lib/pipeable'
 
@@ -80,7 +79,7 @@ import { Arc, Point, Rect } from './Shape'
  *
  * @since 0.0.1
  */
-export interface Html<A> extends R.Reader<HTMLCanvasElement, IO.IO<A>> {}
+export interface Html<A> extends R.ReaderIO<HTMLCanvasElement, A> {}
 
 /**
  * Represents the management of a `CanvasRenderingContext2D` as *reading* from the
@@ -89,7 +88,7 @@ export interface Html<A> extends R.Reader<HTMLCanvasElement, IO.IO<A>> {}
  *
  * @since 0.0.1
  */
-export interface Render<A> extends R.Reader<CanvasRenderingContext2D, IO.IO<A>> {}
+export interface Render<A> extends R.ReaderIO<CanvasRenderingContext2D, A> {}
 
 /**
  * Represents the management of a `CanvasGradient` as *reading* from the `CanvasGradient` and
@@ -98,7 +97,7 @@ export interface Render<A> extends R.Reader<CanvasRenderingContext2D, IO.IO<A>> 
  *
  * @since 0.0.1
  */
-export interface Gradient<A> extends R.Reader<CanvasGradient, IO.IO<A>> {}
+export interface Gradient<A> extends R.ReaderIO<CanvasGradient, A> {}
 
 /**
  * Represents the dimensions of the HTML canvas.
@@ -367,8 +366,11 @@ export const getDimensions: Html<CanvasDimensions> = (c) =>
  *
  * @since 1.0.0
  */
-export const setDimensions: (dimensions: CanvasDimensions) => Html<HTMLCanvasElement> = (d) => (ctx) =>
-  pipe(ctx, setWidth(d.width), IO.chain(setHeight(d.height)))
+export const setDimensions: (dimensions: CanvasDimensions) => Html<HTMLCanvasElement> = (d) =>
+  pipe(
+    setWidth(d.width),
+    R.chain(() => setHeight(d.height))
+  )
 
 /**
  * Create a data URL for the canvas.
@@ -591,12 +593,11 @@ export const closePath: Render<CanvasRenderingContext2D> = (ctx) => () => {
  *
  * @since 1.0.0
  */
-export const strokePath: <A>(f: Render<A>) => Render<A> = (f) => (ctx) =>
+export const strokePath: <A>(f: Render<A>) => Render<A> = (f) =>
   pipe(
-    ctx,
     beginPath,
-    IO.chain(() => f(ctx)),
-    IO.chainFirst(() => pipe(ctx, stroke()))
+    R.chain(() => f),
+    R.chainFirst(() => stroke())
   )
 
 /**
@@ -604,11 +605,11 @@ export const strokePath: <A>(f: Render<A>) => Render<A> = (f) => (ctx) =>
  *
  * @since 1.0.0
  */
-export const fillPath: <A>(f: Render<A>) => Render<A> = (f) => (ctx) =>
+export const fillPath: <A>(f: Render<A>) => Render<A> = (f) =>
   pipe(
-    beginPath(ctx),
-    IO.chain(() => f(ctx)),
-    IO.chainFirst(() => pipe(ctx, fill()))
+    beginPath,
+    R.chain(() => f),
+    R.chainFirst(() => fill())
   )
 
 /**
@@ -815,11 +816,11 @@ export const restore: Render<CanvasRenderingContext2D> = (ctx) => () => {
  *
  * @since 1.0.0
  */
-export const withContext: <A>(f: Render<A>) => Render<A> = (f) => (ctx) =>
+export const withContext: <A>(f: Render<A>) => Render<A> = (f) =>
   pipe(
-    save(ctx),
-    IO.chain(() => f(ctx)),
-    IO.chainFirst(() => restore(ctx))
+    save,
+    R.chain(() => f),
+    R.chainFirst(() => restore)
   )
 
 /**

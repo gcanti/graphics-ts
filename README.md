@@ -11,10 +11,10 @@
 To install the stable version:
 
 ```
-npm install graphics-ts fp-ts
+npm install graphics-ts fp-ts fp-ts-contrib
 ```
 
-Note: `fp-ts` is a peer dependency for `graphics-ts`
+Note: `fp-ts` and `fp-ts-contrib` are peer dependencies for `graphics-ts`
 
 # Documentation
 
