@@ -571,12 +571,10 @@ const renderShape: (shape: Shape) => C.Render<CanvasRenderingContext2D> = (shape
       return C.arc(shape)
 
     case 'Composite':
-      return (ctx) =>
-        pipe(
-          ctx,
-          traverseReaderIO(shape.shapes, renderShape),
-          IO.map(() => ctx)
-        )
+      return pipe(
+        traverseReaderIO(shape.shapes, renderShape),
+        R.chain(() => R.ask())
+      )
 
     case 'Path':
       return pipe(
@@ -624,12 +622,10 @@ export const render: (drawing: Drawing) => C.Render<CanvasRenderingContext2D> = 
         )
 
       case 'Many':
-        return (ctx) =>
-          pipe(
-            ctx,
-            traverseReaderIO(d.drawings, go),
-            IO.map(() => ctx)
-          )
+        return pipe(
+          traverseReaderIO(d.drawings, go),
+          R.chain(() => R.ask())
+        )
 
       case 'Outline':
         return C.withContext(
