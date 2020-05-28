@@ -1,6 +1,7 @@
 import * as assert from 'assert'
-import * as O from 'fp-ts/lib/Option'
+import * as R from 'fp-ts-contrib/lib/ReaderIO'
 import * as IO from 'fp-ts/lib/IO'
+import * as O from 'fp-ts/lib/Option'
 import { pipe } from 'fp-ts/lib/pipeable'
 
 import * as C from '../src/Canvas'
@@ -37,6 +38,8 @@ beforeEach(() => {
   ctx = canvas.getContext('2d') as CanvasRenderingContext2D
   testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D
 })
+
+const render: <A>(fa: C.Render<A>) => IO.IO<A> = (fa) => pipe(canvas, C.getContext2D, IO.chain(fa))
 
 describe('Canvas', () => {
   describe('unsafeGetCanvasElementById', () => {
@@ -129,7 +132,7 @@ describe('Canvas', () => {
     it('should set the current line width', () => {
       const lineWidth = 5
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setLineWidth(lineWidth)))()
+      render(C.setLineWidth(lineWidth))()
 
       assert.strictEqual(ctx.lineWidth, lineWidth)
     })
@@ -139,7 +142,7 @@ describe('Canvas', () => {
     it('should set the current fill style', () => {
       const fillStyle = '#00f'
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setFillStyle(fillStyle)))()
+      render(C.setFillStyle(fillStyle))()
 
       assert.strictEqual(ctx.fillStyle, fillStyle)
     })
@@ -149,7 +152,7 @@ describe('Canvas', () => {
     it('should set the current stroke style', () => {
       const strokeStyle = '#00f'
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setStrokeStyle(strokeStyle)))()
+      render(C.setStrokeStyle(strokeStyle))()
 
       assert.strictEqual(ctx.strokeStyle, strokeStyle)
     })
@@ -159,7 +162,7 @@ describe('Canvas', () => {
     it('should set the current shadow color', () => {
       const shadowColor = '#00f'
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setShadowColor(shadowColor)))()
+      render(C.setShadowColor(shadowColor))()
 
       assert.strictEqual(ctx.shadowColor, shadowColor)
     })
@@ -169,7 +172,7 @@ describe('Canvas', () => {
     it('should set the current shadow blur', () => {
       const blur = 10
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setShadowBlur(blur)))()
+      render(C.setShadowBlur(blur))()
 
       assert.strictEqual(ctx.shadowBlur, blur)
     })
@@ -179,7 +182,7 @@ describe('Canvas', () => {
     it('should set the current x-axis shadow offset', () => {
       const shadowOffsetX = 20
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setShadowOffsetX(shadowOffsetX)))()
+      render(C.setShadowOffsetX(shadowOffsetX))()
 
       assert.strictEqual(ctx.shadowOffsetX, shadowOffsetX)
     })
@@ -189,7 +192,7 @@ describe('Canvas', () => {
     it('should set the current y-axis shadow offset', () => {
       const shadowOffsetY = 20
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setShadowOffsetY(shadowOffsetY)))()
+      render(C.setShadowOffsetY(shadowOffsetY))()
 
       assert.strictEqual(ctx.shadowOffsetY, shadowOffsetY)
     })
@@ -199,7 +202,7 @@ describe('Canvas', () => {
     it('should set the current miter limit', () => {
       const miterLimit = 10
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setMiterLimit(miterLimit)))()
+      render(C.setMiterLimit(miterLimit))()
 
       assert.strictEqual(ctx.miterLimit, miterLimit)
     })
@@ -209,7 +212,7 @@ describe('Canvas', () => {
     it('should set the current line cap', () => {
       const lineCap = 'round'
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setLineCap(lineCap)))()
+      render(C.setLineCap(lineCap))()
 
       assert.strictEqual(ctx.lineCap, lineCap)
     })
@@ -219,7 +222,7 @@ describe('Canvas', () => {
     it('should set the current line join', () => {
       const lineJoin = 'round'
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setLineJoin(lineJoin)))()
+      render(C.setLineJoin(lineJoin))()
 
       assert.strictEqual(ctx.lineJoin, lineJoin)
     })
@@ -229,7 +232,7 @@ describe('Canvas', () => {
     it('should set the current global composite operation', () => {
       const globalCompositeOperation = 'multiply'
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setGlobalCompositeOperation(globalCompositeOperation)))()
+      render(C.setGlobalCompositeOperation(globalCompositeOperation))()
 
       assert.strictEqual(ctx.globalCompositeOperation, globalCompositeOperation)
     })
@@ -239,7 +242,7 @@ describe('Canvas', () => {
     it('should set the current global alpha', () => {
       const globalAlpha = 0.5
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setGlobalAlpha(globalAlpha)))()
+      render(C.setGlobalAlpha(globalAlpha))()
 
       assert.strictEqual(ctx.globalAlpha, globalAlpha)
     })
@@ -248,7 +251,7 @@ describe('Canvas', () => {
   describe('beginPath', () => {
     it('should begin drawing a path', () => {
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath))()
+      render(C.beginPath)()
 
       // Actual
       testCtx.beginPath()
@@ -262,7 +265,12 @@ describe('Canvas', () => {
   describe('stroke', () => {
     it('should stroke a path', () => {
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath), IO.chain(C.stroke()))()
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.stroke())
+        )
+      )()
 
       // Actual
       testCtx.beginPath()
@@ -278,7 +286,12 @@ describe('Canvas', () => {
       path.rect(10, 10, 100, 100)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath), IO.chain(C.stroke(path)))()
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.stroke(path))
+        )
+      )()
 
       // Actual
       testCtx.beginPath()
@@ -295,7 +308,12 @@ describe('Canvas', () => {
       const fillRule = 'nonzero'
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath), IO.chain(C.fill(fillRule)))()
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.fill(fillRule))
+        )
+      )()
 
       // Actual
       testCtx.beginPath()
@@ -312,7 +330,12 @@ describe('Canvas', () => {
       path.rect(10, 10, 100, 100)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath), IO.chain(C.fill(fillRule, path)))()
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.fill(fillRule, path))
+        )
+      )()
 
       // Actual
       testCtx.beginPath()
@@ -327,7 +350,12 @@ describe('Canvas', () => {
   describe('clip', () => {
     it('should clip a path', () => {
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath), IO.chain(C.clip()))()
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.clip())
+        )
+      )()
 
       // Actual
       testCtx.beginPath()
@@ -342,7 +370,12 @@ describe('Canvas', () => {
       const fillRule = 'nonzero'
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath), IO.chain(C.clip(fillRule)))()
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.clip(fillRule))
+        )
+      )()
 
       // Actual
       testCtx.beginPath()
@@ -359,7 +392,12 @@ describe('Canvas', () => {
       path.rect(10, 10, 100, 100)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath), IO.chain(C.clip(fillRule, path)))()
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.clip(fillRule, path))
+        )
+      )()
 
       // Actual
       testCtx.beginPath()
@@ -376,7 +414,13 @@ describe('Canvas', () => {
       const p = S.point(10, 10)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath), IO.chain(C.lineTo(p)), IO.chain(C.stroke()))()
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.lineTo(p)),
+          R.chain(() => C.stroke())
+        )
+      )()
 
       // Actual
       testCtx.beginPath()
@@ -394,7 +438,13 @@ describe('Canvas', () => {
       const p = S.point(10, 10)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath), IO.chain(C.moveTo(p)), IO.chain(C.stroke()))()
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.moveTo(p)),
+          R.chain(() => C.stroke())
+        )
+      )()
 
       // Actual
       testCtx.beginPath()
@@ -410,7 +460,13 @@ describe('Canvas', () => {
   describe('closePath', () => {
     it('should close the current path', () => {
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.beginPath), IO.chain(C.stroke()), IO.chain(C.closePath))()
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.stroke()),
+          R.chain(() => C.closePath)
+        )
+      )()
 
       // Actual
       testCtx.beginPath()
@@ -429,10 +485,14 @@ describe('Canvas', () => {
       const first = S.point(20, 20)
       const second = S.point(10, 10)
 
-      pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain(C.strokePath(flow(C.setStrokeStyle(color), IO.chain(C.moveTo(first)), IO.chain(C.lineTo(second)))))
+      render(
+        C.strokePath(
+          pipe(
+            C.setStrokeStyle(color),
+            R.chain(() => C.moveTo(first)),
+            R.chain(() => C.lineTo(second))
+          )
+        )
       )()
 
       // Actual
@@ -475,9 +535,10 @@ describe('Canvas', () => {
       const arc = S.arc(100, 75, 50, 0, 2 * Math.PI)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.arc(arc)), IO.chain(C.stroke()))()
+      render(C.strokePath(C.arc(arc)))()
 
       // Actual
+      testCtx.beginPath()
       testCtx.arc(arc.x, arc.y, arc.r, arc.start, arc.end)
       testCtx.stroke()
 
@@ -492,9 +553,10 @@ describe('Canvas', () => {
       const rect = S.rect(10, 20, 150, 100)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.rect(rect)), IO.chain(C.fill()))()
+      render(C.fillPath(C.rect(rect)))()
 
       // Actual
+      testCtx.beginPath()
       testCtx.rect(rect.x, rect.y, rect.width, rect.height)
       testCtx.fill()
 
@@ -509,7 +571,7 @@ describe('Canvas', () => {
       const rect = S.rect(10, 20, 150, 100)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.fillRect(rect)))()
+      render(C.fillRect(rect))()
 
       // Actual
       testCtx.fillRect(rect.x, rect.y, rect.width, rect.height)
@@ -525,7 +587,7 @@ describe('Canvas', () => {
       const rect = S.rect(10, 20, 150, 100)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.strokeRect(rect)))()
+      render(C.strokeRect(rect))()
 
       // Actual
       testCtx.strokeRect(rect.x, rect.y, rect.width, rect.height)
@@ -541,7 +603,7 @@ describe('Canvas', () => {
       const rect = S.rect(10, 20, 150, 100)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.clearRect(rect)))()
+      render(C.clearRect(rect))()
 
       // Actual
       testCtx.clearRect(rect.x, rect.y, rect.width, rect.height)
@@ -559,7 +621,12 @@ describe('Canvas', () => {
       const rect = S.rect(10, 10, 8, 20)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.scale(scaleX, scaleY)), IO.chain(C.fillRect(rect)))()
+      render(
+        pipe(
+          C.scale(scaleX, scaleY),
+          R.chain(() => C.fillRect(rect))
+        )
+      )()
 
       // Actual
       testCtx.scale(scaleX, scaleY)
@@ -577,7 +644,12 @@ describe('Canvas', () => {
       const rect = S.rect(10, 10, 8, 20)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.rotate(angle)), IO.chain(C.fillRect(rect)))()
+      render(
+        pipe(
+          C.rotate(angle),
+          R.chain(() => C.fillRect(rect))
+        )
+      )()
 
       // Actual
       testCtx.rotate(angle)
@@ -596,7 +668,12 @@ describe('Canvas', () => {
       const rect = S.rect(10, 10, 8, 20)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.translate(translateX, translateY)), IO.chain(C.fillRect(rect)))()
+      render(
+        pipe(
+          C.translate(translateX, translateY),
+          R.chain(() => C.fillRect(rect))
+        )
+      )()
 
       // Actual
       testCtx.translate(translateX, translateY)
@@ -619,7 +696,12 @@ describe('Canvas', () => {
       const rect = S.rect(10, 10, 8, 20)
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.transform(m11, m12, m21, m22, m31, m32)), IO.chain(C.fillRect(rect)))()
+      render(
+        pipe(
+          C.transform(m11, m12, m21, m22, m31, m32),
+          R.chain(() => C.fillRect(rect))
+        )
+      )()
 
       // Actual
       testCtx.transform(m11, m12, m21, m22, m31, m32)
@@ -633,7 +715,7 @@ describe('Canvas', () => {
 
   describe('getTextAlign', () => {
     it('should get the current text align', () => {
-      assert.strictEqual(pipe(canvas, C.getContext2D, IO.chain(C.getTextAlign))(), ctx.textAlign)
+      assert.strictEqual(render(C.getTextAlign)(), ctx.textAlign)
     })
   })
 
@@ -641,7 +723,7 @@ describe('Canvas', () => {
     it('should set the current text align', () => {
       const textAlign = 'center'
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setTextAlign(textAlign)))()
+      render(C.setTextAlign(textAlign))()
 
       assert.strictEqual(ctx.textAlign, textAlign)
     })
@@ -649,7 +731,7 @@ describe('Canvas', () => {
 
   describe('getFont', () => {
     it('should get the current font', () => {
-      assert.strictEqual(pipe(canvas, C.getContext2D, IO.chain(C.getFont))(), ctx.font)
+      assert.strictEqual(render(C.getFont)(), ctx.font)
     })
   })
 
@@ -657,7 +739,7 @@ describe('Canvas', () => {
     it('should set the current font', () => {
       const font = pipe(F.font('serif', 14), F.showFont.show)
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setFont(font)))()
+      render(C.setFont(font))()
 
       assert.strictEqual(ctx.font, font)
     })
@@ -671,7 +753,12 @@ describe('Canvas', () => {
       const y = 90
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.setFont(font)), IO.chain(C.fillText(fillText, x, y)))()
+      render(
+        pipe(
+          C.setFont(font),
+          R.chain(() => C.fillText(fillText, x, y))
+        )
+      )()
 
       // // Actual
       testCtx.font = font
@@ -690,7 +777,12 @@ describe('Canvas', () => {
       const maxWidth = 150
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.setFont(font)), IO.chain(C.fillText(fillText, x, y, maxWidth)))()
+      render(
+        pipe(
+          C.setFont(font),
+          R.chain(() => C.fillText(fillText, x, y, maxWidth))
+        )
+      )()
 
       // // Actual
       testCtx.font = font
@@ -710,7 +802,12 @@ describe('Canvas', () => {
       const y = 90
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.setFont(font)), IO.chain(C.strokeText(strokeText, x, y)))()
+      render(
+        pipe(
+          C.setFont(font),
+          R.chain(() => C.strokeText(strokeText, x, y))
+        )
+      )()
 
       // Actual
       testCtx.font = font
@@ -729,7 +826,12 @@ describe('Canvas', () => {
       const maxWidth = 150
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.setFont(font)), IO.chain(C.strokeText(strokeText, x, y, maxWidth)))()
+      render(
+        pipe(
+          C.setFont(font),
+          R.chain(() => C.strokeText(strokeText, x, y, maxWidth))
+        )
+      )()
 
       // Actual
       testCtx.font = font
@@ -746,7 +848,7 @@ describe('Canvas', () => {
       const text = 'Hello World!'
 
       // Test
-      const textMetrics = pipe(canvas, C.getContext2D, IO.chain(C.measureText(text)))()
+      const textMetrics = render(C.measureText(text))()
 
       // Actual
       const testTextMetrics = testCtx.measureText(text)
@@ -765,18 +867,18 @@ describe('Canvas', () => {
       const second = S.rect(150, 40, 100, 100)
 
       // Test
-      pipe(
-        canvas,
-        C.getContext2D,
-        // Save the context
-        IO.chain(C.save),
-        // Apply scale after saving
-        IO.chain(C.scale(scaleX, scaleY)),
-        IO.chain(C.fillRect(first)),
-        // Restore the previous context
-        IO.chain(C.restore),
-        // Scale is reset to default
-        IO.chain(C.fillRect(second))
+      render(
+        pipe(
+          // Save the context
+          C.save,
+          // Apply scale after saving
+          R.chain(() => C.scale(scaleX, scaleY)),
+          R.chain(() => C.fillRect(first)),
+          // Restore the previous context
+          R.chain(() => C.restore),
+          // Scale is reset to default
+          R.chain(() => C.fillRect(second))
+        )
       )()
 
       // Actual
@@ -801,11 +903,16 @@ describe('Canvas', () => {
       const second = S.rect(150, 40, 100, 100)
 
       // Test
-      pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain(C.withContext((ctx) => () => pipe(ctx, C.scale(scaleX, scaleY), IO.chain(C.fillRect(first)))())),
-        IO.chain(C.fillRect(second))
+      render(
+        pipe(
+          C.withContext(
+            pipe(
+              C.scale(scaleX, scaleY),
+              R.chain(() => C.fillRect(first))
+            )
+          ),
+          R.chain(() => C.fillRect(second))
+        )
       )()
 
       // Actual
@@ -828,12 +935,12 @@ describe('Canvas', () => {
       const second = S.rect(60, 60, 200, 100)
 
       // Test
-      const imageData = pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain(C.rect(first)),
-        IO.chain(C.fill()),
-        IO.chain(C.getImageData(second))
+      const imageData = render(
+        pipe(
+          C.rect(first),
+          R.chain(() => C.fill()),
+          R.chain(() => C.getImageData(second))
+        )
       )()
 
       // Actual
@@ -854,9 +961,14 @@ describe('Canvas', () => {
       const dy = 0
 
       // Test
-      const imageData = pipe(canvas, C.getContext2D, IO.chain(C.rect(rect)), IO.chain(C.getImageData(rect)))()
+      const imageData = render(
+        pipe(
+          C.rect(rect),
+          R.chain(() => C.getImageData(rect))
+        )
+      )()
 
-      pipe(canvas, C.getContext2D, IO.chain(C.putImageData(imageData, dx, dy)))()
+      render(C.putImageData(imageData, dx, dy))()
 
       testCtx.rect(rect.x, rect.y, rect.width, rect.height)
       const testImageData = testCtx.getImageData(rect.x, rect.y, rect.width, rect.height)
@@ -878,13 +990,14 @@ describe('Canvas', () => {
       const dirtyHeight = 50
 
       // Test
-      const imageData = pipe(canvas, C.getContext2D, IO.chain(C.rect(rect)), IO.chain(C.getImageData(rect)))()
-
-      pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain(C.putImageDataFull(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight))
+      const imageData = render(
+        pipe(
+          C.rect(rect),
+          R.chain(() => C.getImageData(rect))
+        )
       )()
+
+      render(C.putImageDataFull(imageData, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight))()
 
       // Test
       testCtx.rect(rect.x, rect.y, rect.width, rect.height)
@@ -903,7 +1016,7 @@ describe('Canvas', () => {
       const sh = 50
 
       // Test
-      const imageData = pipe(canvas, C.getContext2D, IO.chain(C.createImageData(sw, sh)))()
+      const imageData = render(C.createImageData(sw, sh))()
 
       // Actual
       const testImageData = testCtx.createImageData(sw, sh)
@@ -919,8 +1032,8 @@ describe('Canvas', () => {
       const sw = 100
       const sh = 50
 
-      const imageData = pipe(canvas, C.getContext2D, IO.chain(C.createImageData(sw, sh)))()
-      const imageDataCopy = pipe(canvas, C.getContext2D, IO.chain(C.createImageDataCopy(imageData)))()
+      const imageData = render(C.createImageData(sw, sh))()
+      const imageDataCopy = render(C.createImageDataCopy(imageData))()
 
       assert.notStrictEqual(imageData, imageDataCopy)
       assert.deepStrictEqual(imageData, imageDataCopy)
@@ -939,7 +1052,7 @@ describe('Canvas', () => {
       image.width = width
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.drawImage(image, offsetX, offsetY)))()
+      render(C.drawImage(image, offsetX, offsetY))()
 
       // Actual
       testCtx.drawImage(image, offsetX, offsetY)
@@ -964,7 +1077,7 @@ describe('Canvas', () => {
       image.width = width
 
       // Test
-      pipe(canvas, C.getContext2D, IO.chain(C.drawImageScale(image, offsetX, offsetY, canvasOffsetX, canvasOffsetY)))()
+      render(C.drawImageScale(image, offsetX, offsetY, canvasOffsetX, canvasOffsetY))()
 
       // Actual
       testCtx.drawImage(image, offsetX, offsetY, canvasOffsetX, canvasOffsetY)
@@ -993,21 +1106,17 @@ describe('Canvas', () => {
       image.width = width
 
       // Test
-      pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain(
-          C.drawImageFull(
-            image,
-            offsetX,
-            offsetY,
-            rectWidth,
-            rectHeight,
-            canvasOffsetX,
-            canvasOffsetY,
-            canvasImageWidth,
-            canvasImageHeight
-          )
+      render(
+        C.drawImageFull(
+          image,
+          offsetX,
+          offsetY,
+          rectWidth,
+          rectHeight,
+          canvasOffsetX,
+          canvasOffsetY,
+          canvasImageWidth,
+          canvasImageHeight
         )
       )()
 
@@ -1043,13 +1152,6 @@ describe('Canvas', () => {
 
   describe('createPattern', () => {
     it('should create a new canvas pattern', () => {
-      // var img = new Image();
-      // img.src = 'https://mdn.mozillademos.org/files/222/Canvas_createpattern.png';
-      // img.onload = function() {
-      //   var pattern = ctx.createPattern(img, 'repeat');
-      //   ctx.fillStyle = pattern;
-      //   ctx.fillRect(0, 0, 300, 300);
-      // };
       const height = 220
       const width = 440
       const repetition = 'repeat'
@@ -1060,13 +1162,14 @@ describe('Canvas', () => {
       image.width = width
 
       // Test
-      const pattern = pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain((ctx) => pipe(ctx, C.createPattern(image, repetition), IO.map(O.getOrElseW(() => ''))))
-      )()
+      const pattern = render(pipe(C.createPattern(image, repetition), R.map(O.getOrElseW(() => ''))))()
 
-      pipe(canvas, C.getContext2D, IO.chain(C.setFillStyle(pattern)), IO.chain(C.fillRect(rect)))()
+      render(
+        pipe(
+          C.setFillStyle(pattern),
+          R.chain(() => C.fillRect(rect))
+        )
+      )()
 
       // Actual
       const testPattern = testCtx.createPattern(image, repetition)
@@ -1090,7 +1193,7 @@ describe('Canvas', () => {
       const rect = S.rect(20, 20, 200, 100)
 
       // Test
-      const gradient = pipe(canvas, C.getContext2D, IO.chain(C.createLinearGradient(x0, y0, x1, y1)))()
+      const gradient = render(C.createLinearGradient(x0, y0, x1, y1))()
 
       pipe(
         canvas,
@@ -1133,7 +1236,7 @@ describe('Canvas', () => {
       const rect = S.rect(20, 20, 200, 100)
 
       // Test
-      const gradient = pipe(canvas, C.getContext2D, IO.chain(C.createRadialGradient(110, 90, 30, 100, 100, 70)))()
+      const gradient = render(C.createRadialGradient(110, 90, 30, 100, 100, 70))()
 
       pipe(
         canvas,
@@ -1172,10 +1275,13 @@ describe('Canvas', () => {
       const y = 100
 
       // Test
-      pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain(C.strokePath(flow(C.moveTo(point), IO.chain(C.quadraticCurveTo(cpx, cpy, x, y)))))
+      render(
+        C.strokePath(
+          pipe(
+            C.moveTo(point),
+            R.chain(() => C.quadraticCurveTo(cpx, cpy, x, y))
+          )
+        )
       )()
 
       // Actual
@@ -1201,11 +1307,12 @@ describe('Canvas', () => {
       const y = 100
 
       // Test
-      pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain(
-          C.strokePath((ctx) => pipe(ctx, C.moveTo(point), IO.chain(C.bezierCurveTo(cpx1, cpy1, cpx2, cpy2, x, y))))
+      render(
+        C.strokePath(
+          pipe(
+            C.moveTo(point),
+            R.chain(() => C.bezierCurveTo(cpx1, cpy1, cpx2, cpy2, x, y))
+          )
         )
       )()
 
