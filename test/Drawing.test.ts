@@ -5,7 +5,7 @@ import * as O from 'fp-ts/lib/Option'
 import * as ROA from 'fp-ts/lib/ReadonlyArray'
 import { pipe } from 'fp-ts/lib/pipeable'
 
-import { getContext2D } from '../src/Canvas'
+import { getContext2D, Render } from '../src/Canvas'
 import * as C from '../src/Color'
 import * as D from '../src/Drawing'
 import * as F from '../src/Font'
@@ -297,6 +297,8 @@ describe('Drawing', () => {
       testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D
     })
 
+    const render: <A>(fa: Render<A>) => IO.IO<A> = (fa) => pipe(canvas, getContext2D, IO.chain(fa))
+
     it('should render a clipped drawing', () => {
       const mask = S.rect(50, 50, 50, 50)
       const outline = S.rect(10, 20, 20, 20)
@@ -305,7 +307,7 @@ describe('Drawing', () => {
       const drawing = D.clipped(mask, outlineRect)
 
       // Test
-      pipe(canvas, getContext2D, IO.chain(D.render(drawing)))()
+      render(D.render(drawing))()
 
       // Actual
       testCtx.save()
@@ -328,7 +330,7 @@ describe('Drawing', () => {
       const drawing = D.fill(shape, D.fillStyle(C.white))
 
       // Test
-      pipe(canvas, getContext2D, IO.chain(D.render(drawing)))()
+      render(D.render(drawing))()
 
       // Actual
       testCtx.save()
@@ -353,7 +355,7 @@ describe('Drawing', () => {
       const many = D.many([fill, outline, emptyLine, line])
 
       // Test
-      pipe(canvas, getContext2D, IO.chain(D.render(many)))()
+      render(D.render(many))()
 
       // Actual
       testCtx.save()
@@ -391,7 +393,7 @@ describe('Drawing', () => {
       const drawing = D.outline(shape, D.outlineColor(C.white))
 
       // Test
-      pipe(canvas, getContext2D, IO.chain(D.render(drawing)))()
+      render(D.render(drawing))()
 
       // Actual
       testCtx.save()
@@ -409,7 +411,7 @@ describe('Drawing', () => {
       const drawing = D.rotate(90, D.outline(shape, D.outlineColor(C.white)))
 
       // Test
-      pipe(canvas, getContext2D, IO.chain(D.render(drawing)))()
+      render(D.render(drawing))()
 
       // Actual
       testCtx.save()
@@ -432,7 +434,7 @@ describe('Drawing', () => {
       const drawing = D.scale(scaleX, scaleY, D.outline(shape, D.outlineColor(C.white)))
 
       // Test
-      pipe(canvas, getContext2D, IO.chain(D.render(drawing)))()
+      render(D.render(drawing))()
 
       // Actual
       testCtx.save()
@@ -457,7 +459,7 @@ describe('Drawing', () => {
       const drawing = D.text(font, x, y, style, text)
 
       // Test
-      pipe(canvas, getContext2D, IO.chain(D.render(drawing)))()
+      render(D.render(drawing))()
 
       // Actual
       testCtx.save()
@@ -476,7 +478,7 @@ describe('Drawing', () => {
       const drawing = D.translate(translateX, translateY, D.outline(shape, D.outlineColor(C.white)))
 
       // Test
-      pipe(canvas, getContext2D, IO.chain(D.render(drawing)))()
+      render(D.render(drawing))()
 
       // Actual
       testCtx.save()
@@ -502,7 +504,7 @@ describe('Drawing', () => {
       const drawing = D.withShadow(shadow, D.outline(shape, D.outlineColor(C.white)))
 
       // Test
-      pipe(canvas, getContext2D, IO.chain(D.render(drawing)))()
+      render(D.render(drawing))()
 
       // Actual
       testCtx.save()
