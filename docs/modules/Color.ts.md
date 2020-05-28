@@ -14,8 +14,11 @@ Added in v1.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [Color (interface)](#color-interface)
+- [Hex (interface)](#hex-interface)
+- [Hsla (interface)](#hsla-interface)
+- [Color (type alias)](#color-type-alias)
 - [black](#black)
+- [hex](#hex)
 - [hsl](#hsl)
 - [hsla](#hsla)
 - [toCss](#tocss)
@@ -23,14 +26,35 @@ Added in v1.0.0
 
 ---
 
-# Color (interface)
+# Hex (interface)
+
+Represents a color using a hexadecimal value.
+
+**Signature**
+
+```ts
+export interface Hex {
+  readonly _tag: 'Hex'
+
+  /**
+   * The hexadecimal value of a color.
+   */
+  readonly value: string
+}
+```
+
+Added in v1.0.0
+
+# Hsla (interface)
 
 Represents a color using the HSL cylindrical-coordinate system.
 
 **Signature**
 
 ```ts
-export interface Color {
+export interface Hsla {
+  readonly _tag: 'Hsla'
+
   /**
    * A number between `0` and `360` representing the hue of the color in degrees.
    */
@@ -58,12 +82,36 @@ export interface Color {
 
 Added in v1.0.0
 
+# Color (type alias)
+
+Adapted from https://github.com/sharkdp/purescript-colors.
+
+**Signature**
+
+```ts
+export type Color = Hex | Hsla
+```
+
+Added in v1.0.0
+
 # black
 
 **Signature**
 
 ```ts
 export declare const black: Color
+```
+
+Added in v1.0.0
+
+# hex
+
+Constructs a `Color` using a hexadecimal value.
+
+**Signature**
+
+```ts
+export declare const hex: (value: string) => Hex
 ```
 
 Added in v1.0.0
@@ -75,7 +123,7 @@ Constructs a fully opaque `Color` using the specified hue, saturation, and light
 **Signature**
 
 ```ts
-export declare function hsl(h: number, s: number, l: number): Color
+export declare const hsl: (h: number, s: number, l: number) => Color
 ```
 
 Added in v1.0.0
@@ -87,7 +135,7 @@ Constructs a `Color` using the specified hue, saturation, lightness, and alpha.
 **Signature**
 
 ```ts
-export declare function hsla(h: number, s: number, l: number, a: number): Color
+export declare const hsla: (h: number, s: number, l: number, a: number) => Hsla
 ```
 
 Added in v1.0.0
@@ -99,7 +147,7 @@ Converts a `Color` into a valid CSS string.
 **Signature**
 
 ```ts
-export declare function toCss(color: Color): string
+export declare const toCss: (color: Color) => string
 ```
 
 Added in v1.0.0
