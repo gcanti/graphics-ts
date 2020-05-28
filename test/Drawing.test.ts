@@ -29,7 +29,7 @@ describe('Drawing', () => {
       const second = D.fillStyle(Color.white)
 
       assert.deepStrictEqual(M.fold(D.monoidFillStyle)([first, second]), {
-        color: O.some(first)
+        color: O.some(Color.black)
       })
     })
   })

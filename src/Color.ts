@@ -3,13 +3,37 @@
  *
  * @since 1.0.0
  */
+export type Color = Hex | Hsla
+
+/**
+ * Represents a color using a hexadecimal value.
+ *
+ * @since 1.0.0
+ */
+export interface Hex {
+  readonly _tag: 'Hex'
+
+  /**
+   * The hexadecimal value of a color.
+   */
+  readonly value: string
+}
+
+/**
+ * Constructs a `Color` using a hexadecimal value.
+ *
+ * @since 1.0.0
+ */
+export const hex: (value: string) => Hex = (value) => ({ _tag: 'Hex', value })
 
 /**
  * Represents a color using the HSL cylindrical-coordinate system.
  *
  * @since 1.0.0
  */
-export interface Color {
+export interface Hsla {
+  readonly _tag: 'Hsla'
+
   /**
    * A number between `0` and `360` representing the hue of the color in degrees.
    */
@@ -39,35 +63,40 @@ export interface Color {
  *
  * @since 1.0.0
  */
-export function hsla(h: number, s: number, l: number, a: number): Color {
-  return { h, s, l, a }
-}
+export const hsla: (h: number, s: number, l: number, a: number) => Hsla = (h, s, l, a) => ({ _tag: 'Hsla', h, s, l, a })
 
 /**
  * Constructs a fully opaque `Color` using the specified hue, saturation, and lightness.
  *
  * @since 1.0.0
  */
-export function hsl(h: number, s: number, l: number): Color {
-  return hsla(h, s, l, 1)
-}
+export const hsl: (h: number, s: number, l: number) => Color = (h, s, l) => hsla(h, s, l, 1)
 
 /**
  * Converts a `Color` into a valid CSS string.
  *
  * @since 1.0.0
  */
-export function toCss(color: Color): string {
-  const { h, s, l, a } = color
+export const toCss: (color: Color) => string = (c) => {
+  switch (c._tag) {
+    case 'Hex':
+      return c.value
 
-  const toString = (n: number): number => Math.round(n * 100.0) / 100
+    case 'Hsla': {
+      const { h, s, l, a } = c
 
-  const hue = toString(h)
-  const saturation = toString(s * 100.0) + '%'
-  const lightness = toString(l * 100.0) + '%'
-  const alpha = String(a)
+      const toString = (n: number): number => Math.round(n * 100.0) / 100
 
-  return a === 1 ? `hsl(${hue}, ${saturation}, ${lightness})` : `hsla(${hue}, ${saturation}, ${lightness}, ${alpha})`
+      const hue = toString(h)
+      const saturation = toString(s * 100.0) + '%'
+      const lightness = toString(l * 100.0) + '%'
+      const alpha = String(a)
+
+      return a === 1
+        ? `hsl(${hue}, ${saturation}, ${lightness})`
+        : `hsla(${hue}, ${saturation}, ${lightness}, ${alpha})`
+    }
+  }
 }
 
 /**
