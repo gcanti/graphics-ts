@@ -13,7 +13,7 @@ import * as M from 'fp-ts/lib/Monoid'
  *
  * @since 1.0.0
  */
-export type Shape = Path | Rect | Arc | Ellipse | Composite
+export type Shape = Arc | Composite | Ellipse | Path | Rect
 
 /**
  * A single point consisting of `x` and `y` coordinates on a two-dimensional plane.
@@ -38,114 +38,6 @@ export interface Point {
  * @since 1.0.0
  */
 export const point = (x: number, y: number): Point => ({ x, y })
-
-/**
- * A path is a list of points joined by line segments.
- *
- * @since 1.0.0
- */
-export interface Path {
-  readonly _tag: 'Path'
-
-  /**
-   * Indicates if the path is closed or open.
-   */
-  readonly closed: boolean
-
-  /**
-   * The list of points that make up the path.
-   */
-  readonly points: ReadonlyArray<Point>
-}
-
-/**
- * The `Monoid` instance for a `Path`.
- *
- * @since 1.0.0
- */
-export const monoidPath: M.Monoid<Path> = M.getStructMonoid({
-  _tag: { concat: () => 'Path', empty: 'Path' },
-  closed: M.monoidAny,
-  points: RA.getMonoid<Point>()
-})
-
-/**
- * Constructs an open `Path` shape from a `Foldable` of `Point`s.
- *
- * @since 1.0.0
- */
-export function path<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Path
-export function path<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Path
-export function path<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
-export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path
-export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path {
-  return (fa) =>
-    F.reduce(fa, monoidPath.empty, (b, a) => ({
-      _tag: 'Path',
-      closed: false,
-      points: RA.snoc(b.points, a)
-    }))
-}
-
-/**
- * Constructs a closed `Path` shape from a `Foldable` of `Point`s.
- *
- * @since 1.0.0
- */
-export function closed<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Path
-export function closed<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Path
-export function closed<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
-export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path
-export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path {
-  return (fa) =>
-    F.reduce(fa, monoidPath.empty, (b, a) => ({
-      _tag: 'Path',
-      closed: true,
-      points: RA.snoc(b.points, a)
-    }))
-}
-
-/**
- * Represents a rectangle with top-left corner coordinates at `x` and `y`.
- *
- * @since 1.0.0
- */
-export interface Rect {
-  readonly _tag: 'Rect'
-
-  /**
-   * The position of the top-left corner of the rectangle on the x-axis.
-   */
-  readonly x: number
-
-  /**
-   * The position of the top-left corner of the rectangle on the x-axis.
-   */
-  readonly y: number
-
-  /**
-   * The width of the rectangle.
-   */
-  readonly width: number
-
-  /**
-   * The height of the rectangle.
-   */
-  readonly height: number
-}
-
-/**
- * Constructs a `Rectangle` shape.
- *
- * @since 1.0.0
- */
-export const rect = (x: number, y: number, width: number, height: number): Rect => ({
-  _tag: 'Rect',
-  x,
-  y,
-  width,
-  height
-})
 
 /**
  * An arc with center coordinates `x` and `y`, radius `r`, and starting and ending angles `start` and `end`.
@@ -207,6 +99,30 @@ export const circle = (x: number, y: number, r: number): Arc => ({
   r,
   start: 0,
   end: Math.PI * 2
+})
+
+/**
+ * Represents a shape that is composed of several other shapes.
+ *
+ * @since 1.0.0
+ */
+export interface Composite {
+  readonly _tag: 'Composite'
+
+  /**
+   * The list of shapes that compose the composite shape.
+   */
+  readonly shapes: ReadonlyArray<Shape>
+}
+
+/**
+ * Constructs a `Composite` shape.
+ *
+ * @since 1.0.0
+ */
+export const composite = (shapes: ReadonlyArray<Shape>): Composite => ({
+  _tag: 'Composite',
+  shapes
 })
 
 /**
@@ -287,25 +203,109 @@ export const ellipse = (
 })
 
 /**
- * Represents a shape that is composed of several other shapes.
+ * A path is a list of points joined by line segments.
  *
  * @since 1.0.0
  */
-export interface Composite {
-  readonly _tag: 'Composite'
+export interface Path {
+  readonly _tag: 'Path'
 
   /**
-   * The list of shapes that compose the composite shape.
+   * Indicates if the path is closed or open.
    */
-  readonly shapes: ReadonlyArray<Shape>
+  readonly closed: boolean
+
+  /**
+   * The list of points that make up the path.
+   */
+  readonly points: ReadonlyArray<Point>
 }
 
 /**
- * Constructs a `Composite` shape.
+ * The `Monoid` instance for a `Path`.
  *
  * @since 1.0.0
  */
-export const composite = (shapes: ReadonlyArray<Shape>): Composite => ({
-  _tag: 'Composite',
-  shapes
+export const monoidPath: M.Monoid<Path> = M.getStructMonoid({
+  _tag: { concat: () => 'Path', empty: 'Path' },
+  closed: M.monoidAny,
+  points: RA.getMonoid<Point>()
+})
+
+/**
+ * Constructs a closed `Path` shape from a `Foldable` of `Point`s.
+ *
+ * @since 1.0.0
+ */
+export function closed<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Path
+export function closed<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Path
+export function closed<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
+export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path
+export function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path {
+  return (fa) =>
+    F.reduce(fa, monoidPath.empty, (b, a) => ({
+      _tag: 'Path',
+      closed: true,
+      points: RA.snoc(b.points, a)
+    }))
+}
+
+/**
+ * Constructs an open `Path` shape from a `Foldable` of `Point`s.
+ *
+ * @since 1.0.0
+ */
+export function path<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Path
+export function path<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Path
+export function path<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
+export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path
+export function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path {
+  return (fa) =>
+    F.reduce(fa, monoidPath.empty, (b, a) => ({
+      _tag: 'Path',
+      closed: false,
+      points: RA.snoc(b.points, a)
+    }))
+}
+
+/**
+ * Represents a rectangle with top-left corner coordinates at `x` and `y`.
+ *
+ * @since 1.0.0
+ */
+export interface Rect {
+  readonly _tag: 'Rect'
+
+  /**
+   * The position of the top-left corner of the rectangle on the x-axis.
+   */
+  readonly x: number
+
+  /**
+   * The position of the top-left corner of the rectangle on the x-axis.
+   */
+  readonly y: number
+
+  /**
+   * The width of the rectangle.
+   */
+  readonly width: number
+
+  /**
+   * The height of the rectangle.
+   */
+  readonly height: number
+}
+
+/**
+ * Constructs a `Rectangle` shape.
+ *
+ * @since 1.0.0
+ */
+export const rect = (x: number, y: number, width: number, height: number): Rect => ({
+  _tag: 'Rect',
+  x,
+  y,
+  width,
+  height
 })

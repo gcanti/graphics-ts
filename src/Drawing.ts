@@ -5,23 +5,14 @@
  * Taking the MDN example from the [Canvas][#canvas] documentation,
  *
  * ```ts
- * import * as R from 'fp-ts-contrib/lib/ReaderIO'
- * import * as Console from 'fp-ts/lib/Console'
- * import * as IO from 'fp-ts/lib/IO'
- * import * as O from 'fp-ts/lib/Option'
- * import { flow } from 'fp-ts/lib/function'
+ * import { error } from 'fp-ts/lib/Console'
  * import { pipe } from 'fp-ts/lib/pipeable'
+ * import * as R from 'fp-ts-contrib/lib/ReaderIO'
  * import * as C from 'graphics-ts/lib/Canvas'
  * import * as Color from 'graphics-ts/lib/Color'
  * import * as S from 'graphics-ts/lib/Shape'
  *
  * const canvasId = 'canvas'
- *
- * const render = (canvasId: string) => <A>(r: C.Render<A>): IO.IO<void> =>
- *   pipe(
- *     C.getCanvasElementById(canvasId),
- *     IO.chain(O.fold(() => Console.error(`[ERROR]: Unable to find canvas`), flow(C.getContext2D, IO.chain(r))))
- *   )
  *
  * const triangle: C.Render<void> = C.fillPath(
  *   pipe(
@@ -32,15 +23,20 @@
  *   )
  * )
  *
- * render(canvasId)(triangle)()
+ * C.renderTo(canvasId, () => error(`[ERROR]: Unable to find canvas with id ${canvasId}`))(triangle)()
  * ```
  *
  * the `triangle` renderer above becomes the following
  *
  * ```ts
- * (...)
- *
+ * import { error } from 'fp-ts/lib/Console'
+ * import * as RA from 'fp-ts/lib/ReadonlyArray'
+ * import * as C from 'graphics-ts/lib/Canvas'
+ * import * as Color from 'graphics-ts/lib/Color'
  * import * as D from 'graphics-ts/lib/Drawing'
+ * import * as S from 'graphics-ts/lib/Shape'
+ *
+ * const canvasId = 'canvas'
  *
  * const triangle: C.Render<void> = D.render(
  *   D.fill(
@@ -49,7 +45,7 @@
  *   )
  * )
  *
- * render(canvasId)(triangle)()
+ * C.renderTo(canvasId, () => error(`[ERROR]: Unable to find canvas with id ${canvasId}`))(triangle)()
  * ```
  *
  * Adapted from https://github.com/purescript-contrib/purescript-drawing
@@ -79,7 +75,7 @@ const getFirstMonoidPoint = O.getFirstMonoid<Point>()
  *
  * @since 1.0.0
  */
-export type Drawing = Fill | Outline | Text | Many | Scale | Translate | Rotate | Clipped | WithShadow
+export type Drawing = Clipped | Fill | Outline | Many | Rotate | Scale | Text | Translate | WithShadow
 
 /**
  * Represents the styles applied to a filled `Shape`.
@@ -127,34 +123,6 @@ export interface OutlineStyle {
 }
 
 /**
- * Gets a `Monoid` instance for `OutlineStyle`.
- *
- * @example
- * import * as O from 'fp-ts/lib/Option'
- * import * as M from 'fp-ts/lib/Monoid'
- * import * as C from 'graphics-ts/lib/Color'
- * import * as D from 'graphics-ts/lib/Drawing'
- *
- * assert.deepStrictEqual(
- *   M.fold(D.monoidOutlineStyle)([
- *     D.outlineColor(C.black),
- *     D.outlineColor(C.white),
- *     D.lineWidth(5)
- *   ]),
- *   {
- *     color: O.some(C.black),
- *     lineWidth: O.some(5)
- *   }
- * )
- *
- * @since 1.0.0
- */
-export const monoidOutlineStyle = M.getStructMonoid<OutlineStyle>({
-  color: getFirstMonoidColor,
-  lineWidth: getFirstMonoidNumber
-})
-
-/**
  * Constructs an `OutlineStyle` from a `Color`.
  *
  * @since 1.0.0
@@ -172,6 +140,34 @@ export const outlineColor: (color: Color) => OutlineStyle = (c) => ({
 export const lineWidth: (lineWidth: number) => OutlineStyle = (w) => ({
   color: O.none,
   lineWidth: O.some(w)
+})
+
+/**
+ * Gets a `Monoid` instance for `OutlineStyle`.
+ *
+ * @example
+ * import * as O from 'fp-ts/lib/Option'
+ * import * as M from 'fp-ts/lib/Monoid'
+ * import * as Color from 'graphics-ts/lib/Color'
+ * import * as D from 'graphics-ts/lib/Drawing'
+ *
+ * assert.deepStrictEqual(
+ *   M.fold(D.monoidOutlineStyle)([
+ *     D.outlineColor(Color.black),
+ *     D.outlineColor(Color.white),
+ *     D.lineWidth(5)
+ *   ]),
+ *   {
+ *     color: O.some(Color.black),
+ *     lineWidth: O.some(5)
+ *   }
+ * )
+ *
+ * @since 1.0.0
+ */
+export const monoidOutlineStyle = M.getStructMonoid<OutlineStyle>({
+  color: getFirstMonoidColor,
+  lineWidth: getFirstMonoidNumber
 })
 
 /**
@@ -197,14 +193,14 @@ export interface Shadow {
 }
 
 /**
- * Gets a `Monoid` instance for `Shadow`.
+ * Constructs a `Shadow` from a blur radius.
  *
  * @since 1.0.0
  */
-export const monoidShadow = M.getStructMonoid<Shadow>({
-  color: getFirstMonoidColor,
-  blur: getFirstMonoidNumber,
-  offset: getFirstMonoidPoint
+export const shadowBlur: (blurRadius: number) => Shadow = (b) => ({
+  color: O.none,
+  blur: O.some(b),
+  offset: O.none
 })
 
 /**
@@ -219,17 +215,6 @@ export const shadowColor: (color: Color) => Shadow = (c) => ({
 })
 
 /**
- * Constructs a `Shadow` from a blur radius.
- *
- * @since 1.0.0
- */
-export const shadowBlur: (blurRadius: number) => Shadow = (b) => ({
-  color: O.none,
-  blur: O.some(b),
-  offset: O.none
-})
-
-/**
  * Constructs a `Shadow` from an offset `Point`.
  *
  * @since 1.0.0
@@ -238,6 +223,47 @@ export const shadowOffset: (offsetPoint: Point) => Shadow = (o) => ({
   color: O.none,
   blur: O.none,
   offset: O.some(o)
+})
+
+/**
+ * Gets a `Monoid` instance for `Shadow`.
+ *
+ * @since 1.0.0
+ */
+export const monoidShadow = M.getStructMonoid<Shadow>({
+  color: getFirstMonoidColor,
+  blur: getFirstMonoidNumber,
+  offset: getFirstMonoidPoint
+})
+
+/**
+ * Represents a `Drawing` that has been clipped by a `Shape`.
+ *
+ * @since 1.0.0
+ */
+export interface Clipped {
+  readonly _tag: 'Clipped'
+
+  /**
+   * The shape to use for clipping.
+   */
+  readonly shape: Shape
+
+  /**
+   * The drawing to be clipped.
+   */
+  readonly drawing: Drawing
+}
+
+/**
+ * Clips a `Drawing` using the specified `Shape`.
+ *
+ * @since 1.0.0
+ */
+export const clipped: (shape: Shape, drawing: Drawing) => Drawing = (shape, drawing) => ({
+  _tag: 'Clipped',
+  shape,
+  drawing
 })
 
 /**
@@ -267,6 +293,27 @@ export interface Fill {
 export const fill: (shape: Shape, style: FillStyle) => Drawing = (shape, style) => ({ _tag: 'Fill', shape, style })
 
 /**
+ * Represents a collection of `Drawing`s that can be drawn to the canvas.
+ *
+ * @since 1.0.0
+ */
+export interface Many {
+  readonly _tag: 'Many'
+
+  /**
+   * The collection of drawings.
+   */
+  readonly drawings: ReadonlyArray<Drawing>
+}
+
+/**
+ * Construct a single `Drawing` from a collection of `Many` `Drawing`s.
+ *
+ * @since 1.0.0
+ */
+export const many: (drawings: ReadonlyArray<Drawing>) => Drawing = (drawings) => ({ _tag: 'Many', drawings })
+
+/**
  * Represents an outlined `Shape` that can be drawn to the canvas.
  *
  * @since 1.0.0
@@ -294,6 +341,72 @@ export const outline: (shape: Shape, style: OutlineStyle) => Drawing = (shape, s
   _tag: 'Outline',
   shape,
   style
+})
+
+/**
+ * Represents a `Drawing` that has had its transform rotated.
+ *
+ * @since 1.0.0
+ */
+export interface Rotate {
+  readonly _tag: 'Rotate'
+
+  /**
+   * The angle of rotation.
+   */
+  readonly angle: number
+
+  /**
+   * The drawing to be rotated.
+   */
+  readonly drawing: Drawing
+}
+
+/**
+ * Applies rotation to the transform of a `Drawing`.
+ *
+ * @since 1.0.0
+ */
+export const rotate: (angle: number, drawing: Drawing) => Drawing = (angle, drawing) => ({
+  _tag: 'Rotate',
+  angle,
+  drawing
+})
+
+/**
+ * Represents a `Drawing` that has had scale applied to its transform.
+ *
+ * @since 1.0.0
+ */
+export interface Scale {
+  readonly _tag: 'Scale'
+
+  /**
+   * The x-axis scale.
+   */
+  readonly scaleX: number
+
+  /**
+   * The y-axis scale.
+   */
+  readonly scaleY: number
+
+  /**
+   * The drawing to be scaled.
+   */
+  readonly drawing: Drawing
+}
+
+/**
+ * Applies scale to the transform of a `Drawing`.
+ *
+ * @since 1.0.0
+ */
+export const scale: (scaleX: number, scaleY: number, drawing: Drawing) => Drawing = (scaleX, scaleY, drawing) => ({
+  _tag: 'Scale',
+  scaleX,
+  scaleY,
+  drawing
 })
 
 /**
@@ -351,63 +464,6 @@ export const text: (font: Font, x: number, y: number, style: FillStyle, text: st
 })
 
 /**
- * Represents a collection of `Drawing`s that can be drawn to the canvas.
- *
- * @since 1.0.0
- */
-export interface Many {
-  readonly _tag: 'Many'
-
-  /**
-   * The collection of drawings.
-   */
-  readonly drawings: ReadonlyArray<Drawing>
-}
-
-/**
- * Construct a single `Drawing` from a collection of `Many` `Drawing`s.
- *
- * @since 1.0.0
- */
-export const many: (drawings: ReadonlyArray<Drawing>) => Drawing = (drawings) => ({ _tag: 'Many', drawings })
-
-/**
- * Represents a `Drawing` that has had scale applied to its transform.
- *
- * @since 1.0.0
- */
-export interface Scale {
-  readonly _tag: 'Scale'
-
-  /**
-   * The x-axis scale.
-   */
-  readonly scaleX: number
-
-  /**
-   * The y-axis scale.
-   */
-  readonly scaleY: number
-
-  /**
-   * The drawing to be scaled.
-   */
-  readonly drawing: Drawing
-}
-
-/**
- * Applies scale to the transform of a `Drawing`.
- *
- * @since 1.0.0
- */
-export const scale: (scaleX: number, scaleY: number, drawing: Drawing) => Drawing = (scaleX, scaleY, drawing) => ({
-  _tag: 'Scale',
-  scaleX,
-  scaleY,
-  drawing
-})
-
-/**
  * Represents a `Drawing` that has had its transform translated.
  *
  * @since 1.0.0
@@ -444,66 +500,6 @@ export const translate: (translateX: number, translateY: number, drawing: Drawin
   _tag: 'Translate',
   translateX,
   translateY,
-  drawing
-})
-
-/**
- * Represents a `Drawing` that has had its transform rotated.
- *
- * @since 1.0.0
- */
-export interface Rotate {
-  readonly _tag: 'Rotate'
-
-  /**
-   * The angle of rotation.
-   */
-  readonly angle: number
-
-  /**
-   * The drawing to be rotated.
-   */
-  readonly drawing: Drawing
-}
-
-/**
- * Applies rotation to the transform of a `Drawing`.
- *
- * @since 1.0.0
- */
-export const rotate: (angle: number, drawing: Drawing) => Drawing = (angle, drawing) => ({
-  _tag: 'Rotate',
-  angle,
-  drawing
-})
-
-/**
- * Represents a `Drawing` that has been clipped by a `Shape`.
- *
- * @since 1.0.0
- */
-export interface Clipped {
-  readonly _tag: 'Clipped'
-
-  /**
-   * The shape to use for clipping.
-   */
-  readonly shape: Shape
-
-  /**
-   * The drawing to be clipped.
-   */
-  readonly drawing: Drawing
-}
-
-/**
- * Clips a `Drawing` using the specified `Shape`.
- *
- * @since 1.0.0
- */
-export const clipped: (shape: Shape, drawing: Drawing) => Drawing = (shape, drawing) => ({
-  _tag: 'Clipped',
-  shape,
   drawing
 })
 
@@ -693,12 +689,3 @@ export const render: (drawing: Drawing) => C.Render<CanvasRenderingContext2D> = 
 
   return go(drawing)
 }
-
-/**
- * Executes a `Render` effect for a canvas with the specified `canvasId`, or `onCanvasNotFound()` if a canvas with
- * the specified `canvasId` does not exist.
- *
- * @since 1.0.0
- */
-export const renderTo = (canvasId: string, onCanvasNotFound: () => IO.IO<void>) => <A>(r: C.Render<A>): IO.IO<void> =>
-  pipe(C.getCanvasElementById(canvasId), IO.chain(O.fold(onCanvasNotFound, flow(C.getContext2D, IO.chain(r)))))

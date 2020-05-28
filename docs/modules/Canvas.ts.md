@@ -33,23 +33,14 @@ const draw = () => {
 With `graphics-ts`, the above code becomes
 
 ```ts
-import * as R from 'fp-ts-contrib/lib/ReaderIO'
-import * as Console from 'fp-ts/lib/Console'
-import * as IO from 'fp-ts/lib/IO'
-import * as O from 'fp-ts/lib/Option'
-import { flow } from 'fp-ts/lib/function'
+import { error } from 'fp-ts/lib/Console'
 import { pipe } from 'fp-ts/lib/pipeable'
+import * as R from 'fp-ts-contrib/lib/ReaderIO'
 import * as C from 'graphics-ts/lib/Canvas'
 import * as Color from 'graphics-ts/lib/Color'
 import * as S from 'graphics-ts/lib/Shape'
 
 const canvasId = 'canvas'
-
-const render = (canvasId: string) => <A>(r: C.Render<A>): IO.IO<void> =>
-  pipe(
-    C.getCanvasElementById(canvasId),
-    IO.chain(O.fold(() => Console.error(`[ERROR]: Unable to find canvas`), flow(C.getContext2D, IO.chain(r))))
-  )
 
 const triangle: C.Render<void> = C.fillPath(
   pipe(
@@ -60,7 +51,7 @@ const triangle: C.Render<void> = C.fillPath(
   )
 )
 
-render(canvasId)(triangle)()
+C.renderTo(canvasId, () => error(`[ERROR]: Unable to find canvas with id ${canvasId}`))(triangle)()
 ```
 
 While this may seem somewhat verbose compared to its non-functional counterpart above,
@@ -87,8 +78,10 @@ Added in v1.0.0
 - [LineJoin (type alias)](#linejoin-type-alias)
 - [PatternRepetition (type alias)](#patternrepetition-type-alias)
 - [TextAlign (type alias)](#textalign-type-alias)
+- [TextBaseline (type alias)](#textbaseline-type-alias)
 - [addColorStop](#addcolorstop)
 - [arc](#arc)
+- [arcTo](#arcto)
 - [beginPath](#beginpath)
 - [bezierCurveTo](#beziercurveto)
 - [clearRect](#clearrect)
@@ -99,9 +92,11 @@ Added in v1.0.0
 - [createLinearGradient](#createlineargradient)
 - [createPattern](#createpattern)
 - [createRadialGradient](#createradialgradient)
+- [drawFocusIfNeeded](#drawfocusifneeded)
 - [drawImage](#drawimage)
 - [drawImageFull](#drawimagefull)
 - [drawImageScale](#drawimagescale)
+- [ellipse](#ellipse)
 - [fill](#fill)
 - [fillPath](#fillpath)
 - [fillRect](#fillrect)
@@ -112,8 +107,13 @@ Added in v1.0.0
 - [getFont](#getfont)
 - [getHeight](#getheight)
 - [getImageData](#getimagedata)
+- [getLineDash](#getlinedash)
 - [getTextAlign](#gettextalign)
+- [getTextBaseline](#gettextbaseline)
+- [getTransform](#gettransform)
 - [getWidth](#getwidth)
+- [isPointInPath](#ispointinpath)
+- [isPointInStroke](#ispointinstroke)
 - [lineTo](#lineto)
 - [measureText](#measuretext)
 - [moveTo](#moveto)
@@ -121,6 +121,7 @@ Added in v1.0.0
 - [putImageDataFull](#putimagedatafull)
 - [quadraticCurveTo](#quadraticcurveto)
 - [rect](#rect)
+- [renderTo](#renderto)
 - [restore](#restore)
 - [rotate](#rotate)
 - [save](#save)
@@ -131,7 +132,10 @@ Added in v1.0.0
 - [setGlobalAlpha](#setglobalalpha)
 - [setGlobalCompositeOperation](#setglobalcompositeoperation)
 - [setHeight](#setheight)
+- [setImageSmoothingEnabled](#setimagesmoothingenabled)
 - [setLineCap](#setlinecap)
+- [setLineDash](#setlinedash)
+- [setLineDashOffset](#setlinedashoffset)
 - [setLineJoin](#setlinejoin)
 - [setLineWidth](#setlinewidth)
 - [setMiterLimit](#setmiterlimit)
@@ -141,6 +145,9 @@ Added in v1.0.0
 - [setShadowOffsetY](#setshadowoffsety)
 - [setStrokeStyle](#setstrokestyle)
 - [setTextAlign](#settextalign)
+- [setTextBaseline](#settextbaseline)
+- [setTransform](#settransform)
+- [setTransformMatrix](#settransformmatrix)
 - [setWidth](#setwidth)
 - [stroke](#stroke)
 - [strokePath](#strokepath)
@@ -189,7 +196,7 @@ a `CanvasGradient` we are yielding an `Gradient` effect.
 export interface Gradient<A> extends R.ReaderIO<CanvasGradient, A> {}
 ```
 
-Added in v0.0.1
+Added in v1.0.0
 
 # Html (interface)
 
@@ -203,7 +210,7 @@ managing an `HTMLCanvasElement` we are yielding an `Html` effect.
 export interface Html<A> extends R.ReaderIO<HTMLCanvasElement, A> {}
 ```
 
-Added in v0.0.1
+Added in v1.0.0
 
 # Render (interface)
 
@@ -217,7 +224,7 @@ say that when we are managing a `CanvasRenderingContext2D` we are yielding an `R
 export interface Render<A> extends R.ReaderIO<CanvasRenderingContext2D, A> {}
 ```
 
-Added in v0.0.1
+Added in v1.0.0
 
 # TextMetrics (interface)
 
@@ -227,11 +234,6 @@ The dimensions of a piece of text in the canvas.
 
 ```ts
 export interface TextMetrics {
-  /**
-   * The calculated width of a segment of inline text in CSS pixels.
-   */
-  readonly width: number
-
   /**
    * The distance from the alignment point given by the `text-align` property to the left side
    * of the bounding rectangle of the given text in CSS pixels.
@@ -297,6 +299,11 @@ export interface TextMetrics {
    * baseline of the line box in CSS pixels.
    */
   readonly ideographicBaseline: number
+
+  /**
+   * The calculated width of a segment of inline text in CSS pixels.
+   */
+  readonly width: number
 }
 ```
 
@@ -322,32 +329,32 @@ The type of compositing operation to apply when drawing new shapes. Defaults to 
 
 ```ts
 export type GlobalCompositeOperation =
-  | 'source-over'
-  | 'source-in'
-  | 'source-out'
-  | 'source-atop'
-  | 'destination-over'
+  | 'color'
+  | 'color-burn'
+  | 'color-dodge'
+  | 'copy'
+  | 'darken'
+  | 'destination-atop'
   | 'destination-in'
   | 'destination-out'
-  | 'destination-atop'
-  | 'lighter'
-  | 'copy'
-  | 'xor'
-  | 'multiply'
-  | 'screen'
-  | 'overlay'
-  | 'darken'
-  | 'lighten'
-  | 'color-dodge'
-  | 'color-burn'
-  | 'hard-light'
-  | 'soft-light'
+  | 'destination-over'
   | 'difference'
   | 'exclusion'
+  | 'hard-light'
   | 'hue'
-  | 'saturation'
-  | 'color'
+  | 'lighten'
+  | 'lighter'
   | 'luminosity'
+  | 'multiply'
+  | 'overlay'
+  | 'saturation'
+  | 'screen'
+  | 'soft-light'
+  | 'source-atop'
+  | 'source-in'
+  | 'source-out'
+  | 'source-over'
+  | 'xor'
 ```
 
 Added in v1.0.0
@@ -359,7 +366,7 @@ An element to draw into the HTML canvas context.
 **Signature**
 
 ```ts
-export type ImageSource = HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
+export type ImageSource = HTMLCanvasElement | HTMLImageElement | HTMLVideoElement
 ```
 
 Added in v1.0.0
@@ -371,7 +378,7 @@ The shape used to draw the end points of lines.
 **Signature**
 
 ```ts
-export type LineCap = 'round' | 'square' | 'butt'
+export type LineCap = 'butt' | 'round' | 'square'
 ```
 
 Added in v1.0.0
@@ -383,7 +390,7 @@ The shape used to draw two line segments where they meet.
 **Signature**
 
 ```ts
-export type LineJoin = 'bevel' | 'round' | 'miter'
+export type LineJoin = 'bevel' | 'miter' | 'round'
 ```
 
 Added in v1.0.0
@@ -395,7 +402,7 @@ The repetition pattern used to repeat a pattern's image.
 **Signature**
 
 ```ts
-export type PatternRepetition = 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'
+export type PatternRepetition = 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y'
 ```
 
 Added in v1.0.0
@@ -407,7 +414,19 @@ The text alignment used when drawing text.
 **Signature**
 
 ```ts
-export type TextAlign = 'left' | 'right' | 'center' | 'start' | 'end'
+export type TextAlign = 'center' | 'end' | 'left' | 'right' | 'start'
+```
+
+Added in v1.0.0
+
+# TextBaseline (type alias)
+
+The text baseline used when drawing text.
+
+**Signature**
+
+```ts
+export type TextBaseline = 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
 ```
 
 Added in v1.0.0
@@ -432,6 +451,24 @@ Render an arc.
 
 ```ts
 export declare const arc: (arc: Arc) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
+# arcTo
+
+Render an arc that is automatically connected to the path's latest point.
+
+**Signature**
+
+```ts
+export declare const arcTo: (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  radius: number
+) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -573,6 +610,18 @@ export declare const createRadialGradient: (
 
 Added in v1.0.0
 
+# drawFocusIfNeeded
+
+Draws a focus ring around the current or given path, if the specified element is focused.
+
+**Signature**
+
+```ts
+export declare const drawFocusIfNeeded: (element: HTMLElement, path?: Path2D) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
 # drawImage
 
 Render an image.
@@ -625,6 +674,18 @@ export declare const drawImageScale: (
   width: number,
   height: number
 ) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
+# ellipse
+
+Render an ellipse.
+
+**Signature**
+
+```ts
+export declare const ellipse: (ellipse: Ellipse) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -755,6 +816,18 @@ export declare const getImageData: (rect: Rect) => Render<ImageData>
 
 Added in v1.0.0
 
+# getLineDash
+
+Gets the current line dash pattern for the canvas context.
+
+**Signature**
+
+```ts
+export declare const getLineDash: Render<readonly number[]>
+```
+
+Added in v1.0.0
+
 # getTextAlign
 
 Gets the current text alignment.
@@ -767,6 +840,30 @@ export declare const getTextAlign: Render<TextAlign>
 
 Added in v1.0.0
 
+# getTextBaseline
+
+Gets the current text baseline.
+
+**Signature**
+
+```ts
+export declare const getTextBaseline: Render<TextBaseline>
+```
+
+Added in v1.0.0
+
+# getTransform
+
+Gets the current transformation matrix being applied to the canvas context.
+
+**Signature**
+
+```ts
+export declare const getTransform: Render<DOMMatrix>
+```
+
+Added in v1.0.0
+
 # getWidth
 
 Gets the canvas width in pixels.
@@ -775,6 +872,30 @@ Gets the canvas width in pixels.
 
 ```ts
 export declare const getWidth: Html<number>
+```
+
+Added in v1.0.0
+
+# isPointInPath
+
+Determines if the specified point is contained in the current path.
+
+**Signature**
+
+```ts
+export declare const isPointInPath: (point: Point, fillRule?: FillRule, path?: Path2D) => Render<boolean>
+```
+
+Added in v1.0.0
+
+# isPointInStroke
+
+Determines if the specified point is inside the area contained by the stroking of a path.
+
+**Signature**
+
+```ts
+export declare const isPointInStroke: (point: Point, path?: Path2D) => Render<boolean>
 ```
 
 Added in v1.0.0
@@ -872,6 +993,22 @@ Render a rectangle.
 
 ```ts
 export declare const rect: (rect: Rect) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
+# renderTo
+
+Executes a `Render` effect for a canvas with the specified `canvasId`, or `onCanvasNotFound()` if a canvas with
+the specified `canvasId` does not exist.
+
+**Signature**
+
+```ts
+export declare const renderTo: (
+  canvasId: string,
+  onCanvasNotFound: () => IO.IO<void>
+) => <A>(r: Render<A>) => IO.IO<void>
 ```
 
 Added in v1.0.0
@@ -998,6 +1135,19 @@ export declare const setHeight: (height: number) => Html<HTMLCanvasElement>
 
 Added in v1.0.0
 
+# setImageSmoothingEnabled
+
+Sets the current image smoothing property for the canvas context. Determines whether scaled images are smoothed
+(`true`, default) or not (`false`).
+
+**Signature**
+
+```ts
+export declare const setImageSmoothingEnabled: (value: boolean) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
 # setLineCap
 
 Sets the current line cap type for the canvas context.
@@ -1006,6 +1156,30 @@ Sets the current line cap type for the canvas context.
 
 ```ts
 export declare const setLineCap: (cap: LineCap) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
+# setLineDash
+
+Sets the current line dash pattern used when stroking lines.
+
+**Signature**
+
+```ts
+export declare const setLineDash: (segments: readonly number[]) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
+# setLineDashOffset
+
+Sets the current line dash offset, or "phase", for the canvas context.
+
+**Signature**
+
+```ts
+export declare const setLineDashOffset: (offset: number) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0
@@ -1114,6 +1288,51 @@ Sets the current text alignment.
 
 ```ts
 export declare const setTextAlign: (textAlign: TextAlign) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
+# setTextBaseline
+
+Sets the current text baseline.
+
+**Signature**
+
+```ts
+export declare const setTextBaseline: (textBaseline: TextBaseline) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
+# setTransform
+
+Resets the current transformation to the identity matrix, and then applies the transform specified
+to the current canvas context.
+
+**Signature**
+
+```ts
+export declare const setTransform: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number,
+  f: number
+) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
+# setTransformMatrix
+
+Resets the current transformation to the identity matrix, and then applies the transform specified
+to the current canvas context.
+
+**Signature**
+
+```ts
+export declare const setTransformMatrix: (matrix: DOMMatrix) => Render<CanvasRenderingContext2D>
 ```
 
 Added in v1.0.0

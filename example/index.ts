@@ -30,12 +30,6 @@ const colors: ReadonlyArray<Color.Color> = [
   Color.hsla(240, 1, 0.01, 1)
 ]
 
-const render = (canvasId: string) => <A>(r: C.Render<A>): IO.IO<void> =>
-  pipe(
-    C.getCanvasElementById(canvasId),
-    IO.chain(O.fold(() => error(`[ERROR]: Unable to find canvas`), flow(C.getContext2D, IO.chain(r))))
-  )
-
 const pentagon: S.Path = pipe(
   RA.range(0, 5),
   RA.map((n) => {
@@ -71,9 +65,9 @@ const snowflake: C.Render<CanvasRenderingContext2D> = D.render(
 )
 
 /* tslint:disable no-console */
-console.time('ioSnowflake')
-render(CANVAS_ONE_ID)(snowflake)()
-console.timeEnd('ioSnowflake')
+console.time('snowflake')
+C.renderTo(CANVAS_ONE_ID, () => error(`[ERROR]: Unable to find canvas with id ${CANVAS_ONE_ID}`))(snowflake)()
+console.timeEnd('snowflake')
 /* tslint:enable no-console */
 
 /**
@@ -91,6 +85,6 @@ const clippedRect: C.Render<CanvasRenderingContext2D> = D.render(
 
 /* tslint:disable no-console */
 console.time('clippedRect')
-render(CANVAS_TWO_ID)(clippedRect)()
+C.renderTo(CANVAS_TWO_ID, () => error(`[ERROR]: Unable to find canvas with id ${CANVAS_TWO_ID}`))(clippedRect)()
 console.timeEnd('clippedRect')
 /* tslint:enable no-console */

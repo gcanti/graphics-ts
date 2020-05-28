@@ -3,19 +3,19 @@ import * as IO from 'fp-ts/lib/IO'
 import * as M from 'fp-ts/lib/Monoid'
 import * as O from 'fp-ts/lib/Option'
 import * as ROA from 'fp-ts/lib/ReadonlyArray'
+import { constVoid } from 'fp-ts/lib/function'
 import { pipe } from 'fp-ts/lib/pipeable'
 
-import { getContext2D, Render } from '../src/Canvas'
-import * as C from '../src/Color'
+import * as C from '../src/Canvas'
+import * as Color from '../src/Color'
 import * as D from '../src/Drawing'
 import * as F from '../src/Font'
 import * as S from '../src/Shape'
-import { constVoid } from 'fp-ts/lib/function'
 
 describe('Drawing', () => {
   describe('fillStyle', () => {
     it('should construct a fill style', () => {
-      const color = C.hsla(140, 0.3, 0.5, 0.9)
+      const color = Color.hsla(140, 0.3, 0.5, 0.9)
 
       assert.deepStrictEqual(D.fillStyle(color), {
         color: O.some(color)
@@ -23,21 +23,20 @@ describe('Drawing', () => {
     })
   })
 
-  describe('monoidOutlineStyle', () => {
-    it('should combine outline styles', () => {
-      const color = C.hsla(140, 0.3, 0.5, 0.9)
-      const lineWidth = 10
+  describe('monoidFillStyle', () => {
+    it('should combine fill styles', () => {
+      const first = D.fillStyle(Color.black)
+      const second = D.fillStyle(Color.white)
 
-      assert.deepStrictEqual(D.monoidOutlineStyle.concat(D.outlineColor(color), D.lineWidth(lineWidth)), {
-        color: O.some(color),
-        lineWidth: O.some(lineWidth)
+      assert.deepStrictEqual(M.fold(D.monoidFillStyle)([first, second]), {
+        color: O.some(first)
       })
     })
   })
 
   describe('outlineColor', () => {
     it('should construct an outline style from a color', () => {
-      const color = C.hsla(140, 0.3, 0.5, 0.9)
+      const color = Color.hsla(140, 0.3, 0.5, 0.9)
 
       assert.deepStrictEqual(D.outlineColor(color), {
         color: O.some(color),
@@ -57,31 +56,14 @@ describe('Drawing', () => {
     })
   })
 
-  describe('monoidShadow', () => {
-    it('should combine shadow styles', () => {
-      const color = C.hsla(140, 0.3, 0.5, 0.9)
-      const blur = 5
-      const offset = S.point(5, 5)
+  describe('monoidOutlineStyle', () => {
+    it('should combine outline styles', () => {
+      const color = Color.hsla(140, 0.3, 0.5, 0.9)
+      const lineWidth = 10
 
-      assert.deepStrictEqual(
-        M.fold(D.monoidShadow)([D.shadowColor(color), D.shadowBlur(blur), D.shadowOffset(offset)]),
-        {
-          color: O.some(color),
-          blur: O.some(blur),
-          offset: O.some(offset)
-        }
-      )
-    })
-  })
-
-  describe('shadowColor', () => {
-    it('should construct a shadow from a color', () => {
-      const color = C.hsla(140, 0.3, 0.5, 0.9)
-
-      assert.deepStrictEqual(D.shadowColor(color), {
+      assert.deepStrictEqual(D.monoidOutlineStyle.concat(D.outlineColor(color), D.lineWidth(lineWidth)), {
         color: O.some(color),
-        blur: O.none,
-        offset: O.none
+        lineWidth: O.some(lineWidth)
       })
     })
   })
@@ -93,6 +75,18 @@ describe('Drawing', () => {
       assert.deepStrictEqual(D.shadowBlur(blur), {
         color: O.none,
         blur: O.some(blur),
+        offset: O.none
+      })
+    })
+  })
+
+  describe('shadowColor', () => {
+    it('should construct a shadow from a color', () => {
+      const color = Color.hsla(140, 0.3, 0.5, 0.9)
+
+      assert.deepStrictEqual(D.shadowColor(color), {
+        color: O.some(color),
+        blur: O.none,
         offset: O.none
       })
     })
@@ -110,9 +104,40 @@ describe('Drawing', () => {
     })
   })
 
+  describe('monoidShadow', () => {
+    it('should combine shadow styles', () => {
+      const color = Color.hsla(140, 0.3, 0.5, 0.9)
+      const blur = 5
+      const offset = S.point(5, 5)
+
+      assert.deepStrictEqual(
+        M.fold(D.monoidShadow)([D.shadowColor(color), D.shadowBlur(blur), D.shadowOffset(offset)]),
+        {
+          color: O.some(color),
+          blur: O.some(blur),
+          offset: O.some(offset)
+        }
+      )
+    })
+  })
+
+  describe('clipped', () => {
+    it('should construct a clipped drawing', () => {
+      const shape = S.rect(50, 50, 100, 100)
+      const drawing = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(Color.black))
+      const clipped = D.clipped(shape, drawing)
+
+      assert.deepStrictEqual(clipped, {
+        _tag: 'Clipped',
+        shape,
+        drawing
+      })
+    })
+  })
+
   describe('fill', () => {
     it('should construct a fill', () => {
-      const color = C.hsla(150, 0.5, 0.5, 0.8)
+      const color = Color.hsla(150, 0.5, 0.5, 0.8)
       const shape = S.rect(10, 20, 100, 200)
       const style = D.fillStyle(color)
 
@@ -124,9 +149,22 @@ describe('Drawing', () => {
     })
   })
 
+  describe('many', () => {
+    it('should construct an object containing many drawings', () => {
+      const fill = D.fill(S.rect(10, 20, 100, 200), D.fillStyle(Color.white))
+      const outline = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(Color.black))
+      const text = D.text(F.font('serif', 28), 10, 100, D.fillStyle(Color.black), 'Hello world!')
+
+      assert.deepStrictEqual(D.many([fill, outline, text]), {
+        _tag: 'Many',
+        drawings: [fill, outline, text]
+      })
+    })
+  })
+
   describe('outline', () => {
     it('should construct an outline', () => {
-      const color = C.hsla(150, 0.5, 0.5, 0.8)
+      const color = Color.hsla(150, 0.5, 0.5, 0.8)
       const shape = S.rect(10, 20, 100, 200)
       const style = D.outlineColor(color)
 
@@ -138,10 +176,37 @@ describe('Drawing', () => {
     })
   })
 
+  describe('rotate', () => {
+    it('should construct a rotated drawing', () => {
+      const drawing = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(Color.black))
+      const rotate = D.rotate(90, drawing)
+
+      assert.deepStrictEqual(rotate, {
+        _tag: 'Rotate',
+        angle: 90,
+        drawing
+      })
+    })
+  })
+
+  describe('scale', () => {
+    it('should construct a scaled drawing', () => {
+      const drawing = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(Color.black))
+      const scale = D.scale(10, 20, drawing)
+
+      assert.deepStrictEqual(scale, {
+        _tag: 'Scale',
+        scaleX: 10,
+        scaleY: 20,
+        drawing
+      })
+    })
+  })
+
   describe('text', () => {
     it('should construct a text', () => {
       const font = F.font('serif', 28)
-      const style = D.fillStyle(C.black)
+      const style = D.fillStyle(Color.black)
 
       assert.deepStrictEqual(D.text(font, 10, 100, style, 'Hello world!'), {
         _tag: 'Text',
@@ -154,36 +219,9 @@ describe('Drawing', () => {
     })
   })
 
-  describe('many', () => {
-    it('should construct an object containing many drawings', () => {
-      const fill = D.fill(S.rect(10, 20, 100, 200), D.fillStyle(C.white))
-      const outline = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(C.black))
-      const text = D.text(F.font('serif', 28), 10, 100, D.fillStyle(C.black), 'Hello world!')
-
-      assert.deepStrictEqual(D.many([fill, outline, text]), {
-        _tag: 'Many',
-        drawings: [fill, outline, text]
-      })
-    })
-  })
-
-  describe('scale', () => {
-    it('should construct a scaled drawing', () => {
-      const drawing = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(C.black))
-      const scale = D.scale(10, 20, drawing)
-
-      assert.deepStrictEqual(scale, {
-        _tag: 'Scale',
-        scaleX: 10,
-        scaleY: 20,
-        drawing
-      })
-    })
-  })
-
   describe('translate', () => {
     it('should construct a translated drawing', () => {
-      const drawing = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(C.black))
+      const drawing = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(Color.black))
       const translate = D.translate(10, 20, drawing)
 
       assert.deepStrictEqual(translate, {
@@ -195,37 +233,14 @@ describe('Drawing', () => {
     })
   })
 
-  describe('rotate', () => {
-    it('should construct a rotated drawing', () => {
-      const drawing = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(C.black))
-      const rotate = D.rotate(90, drawing)
-
-      assert.deepStrictEqual(rotate, {
-        _tag: 'Rotate',
-        angle: 90,
-        drawing
-      })
-    })
-  })
-
-  describe('clipped', () => {
-    it('should construct a clipped drawing', () => {
-      const shape = S.rect(50, 50, 100, 100)
-      const drawing = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(C.black))
-      const clipped = D.clipped(shape, drawing)
-
-      assert.deepStrictEqual(clipped, {
-        _tag: 'Clipped',
-        shape,
-        drawing
-      })
-    })
-  })
-
   describe('withShadow', () => {
     it('should construct a drawing with a shadow', () => {
-      const shadow = M.fold(D.monoidShadow)([D.shadowColor(C.black), D.shadowBlur(5), D.shadowOffset(S.point(5, 5))])
-      const drawing = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(C.black))
+      const shadow = M.fold(D.monoidShadow)([
+        D.shadowColor(Color.black),
+        D.shadowBlur(5),
+        D.shadowOffset(S.point(5, 5))
+      ])
+      const drawing = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(Color.black))
       const withShadow = D.withShadow(shadow, drawing)
 
       assert.deepStrictEqual(withShadow, {
@@ -238,9 +253,9 @@ describe('Drawing', () => {
 
   describe('monoidDrawing', () => {
     it('should combine several drawings', () => {
-      const fill = D.fill(S.rect(10, 20, 100, 200), D.fillStyle(C.white))
-      const outline = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(C.black))
-      const text = D.text(F.font('serif', 28), 10, 100, D.fillStyle(C.black), 'Hello world!')
+      const fill = D.fill(S.rect(10, 20, 100, 200), D.fillStyle(Color.white))
+      const outline = D.outline(S.rect(10, 20, 100, 200), D.outlineColor(Color.black))
+      const text = D.text(F.font('serif', 28), 10, 100, D.fillStyle(Color.black), 'Hello world!')
       const many = D.many([fill, outline])
 
       // concat(Drawing, Drawing)
@@ -298,12 +313,12 @@ describe('Drawing', () => {
       testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D
     })
 
-    const render: <A>(fa: Render<A>) => IO.IO<A> = (fa) => pipe(canvas, getContext2D, IO.chain(fa))
+    const render: <A>(fa: C.Render<A>) => IO.IO<A> = (fa) => pipe(canvas, C.getContext2D, IO.chain(fa))
 
     it('should render a clipped drawing', () => {
       const mask = S.rect(50, 50, 50, 50)
       const outline = S.rect(10, 20, 20, 20)
-      const color = D.outlineColor(C.black)
+      const color = D.outlineColor(Color.black)
       const outlineRect = D.outline(outline, color)
       const drawing = D.clipped(mask, outlineRect)
 
@@ -316,7 +331,7 @@ describe('Drawing', () => {
       testCtx.rect(mask.x, mask.y, mask.width, mask.height)
       testCtx.clip()
       testCtx.save()
-      testCtx.strokeStyle = pipe(C.black, C.toCss)
+      testCtx.strokeStyle = pipe(Color.black, Color.toCss)
       testCtx.beginPath()
       testCtx.rect(outline.x, outline.y, outline.width, outline.height)
       testCtx.stroke()
@@ -328,14 +343,14 @@ describe('Drawing', () => {
 
     it('should render a filled drawing', () => {
       const shape = S.ellipse(10, 20, 2, 5, 45, 180, 0, true)
-      const drawing = D.fill(shape, D.fillStyle(C.white))
+      const drawing = D.fill(shape, D.fillStyle(Color.white))
 
       // Test
       render(D.render(drawing))()
 
       // Actual
       testCtx.save()
-      testCtx.fillStyle = pipe(C.white, C.toCss)
+      testCtx.fillStyle = pipe(Color.white, Color.toCss)
       testCtx.beginPath()
       testCtx.ellipse(shape.x, shape.y, shape.rx, shape.ry, shape.rotation, shape.start, shape.end, shape.anticlockwise)
       testCtx.fill()
@@ -346,12 +361,12 @@ describe('Drawing', () => {
 
     it('should render many drawings', () => {
       const rect = S.rect(10, 20, 100, 200)
-      const fill = D.fill(rect, D.fillStyle(C.white))
-      const outline = D.outline(rect, D.outlineColor(C.black))
-      const emptyLine = D.fill(S.path(ROA.readonlyArray)([]), D.fillStyle(C.black))
+      const fill = D.fill(rect, D.fillStyle(Color.white))
+      const outline = D.outline(rect, D.outlineColor(Color.black))
+      const emptyLine = D.fill(S.path(ROA.readonlyArray)([]), D.fillStyle(Color.black))
       const line = D.fill(
         S.closed(ROA.readonlyArray)([S.point(1, 2), S.point(3, 4), S.point(5, 6)]),
-        D.fillStyle(C.black)
+        D.fillStyle(Color.black)
       )
       const many = D.many([fill, outline, emptyLine, line])
 
@@ -360,24 +375,24 @@ describe('Drawing', () => {
 
       // Actual
       testCtx.save()
-      testCtx.fillStyle = pipe(C.white, C.toCss)
+      testCtx.fillStyle = pipe(Color.white, Color.toCss)
       testCtx.beginPath()
       testCtx.rect(rect.x, rect.y, rect.width, rect.height)
       testCtx.fill()
       testCtx.restore()
       testCtx.save()
-      testCtx.strokeStyle = pipe(C.black, C.toCss)
+      testCtx.strokeStyle = pipe(Color.black, Color.toCss)
       testCtx.beginPath()
       testCtx.rect(rect.x, rect.y, rect.width, rect.height)
       testCtx.stroke()
       testCtx.restore()
       testCtx.save()
-      testCtx.fillStyle = pipe(C.black, C.toCss)
+      testCtx.fillStyle = pipe(Color.black, Color.toCss)
       testCtx.beginPath()
       testCtx.fill()
       testCtx.restore()
       testCtx.save()
-      testCtx.fillStyle = pipe(C.black, C.toCss)
+      testCtx.fillStyle = pipe(Color.black, Color.toCss)
       testCtx.beginPath()
       testCtx.moveTo(1, 2)
       testCtx.lineTo(3, 4)
@@ -391,14 +406,14 @@ describe('Drawing', () => {
 
     it('should render an outlined drawing', () => {
       const shape = S.rect(50, 50, 100, 100)
-      const drawing = D.outline(shape, D.outlineColor(C.white))
+      const drawing = D.outline(shape, D.outlineColor(Color.white))
 
       // Test
       render(D.render(drawing))()
 
       // Actual
       testCtx.save()
-      testCtx.strokeStyle = pipe(C.white, C.toCss)
+      testCtx.strokeStyle = pipe(Color.white, Color.toCss)
       testCtx.beginPath()
       testCtx.rect(shape.x, shape.y, shape.width, shape.height)
       testCtx.stroke()
@@ -409,7 +424,7 @@ describe('Drawing', () => {
 
     it('should render a rotated drawing', () => {
       const shape = S.rect(50, 50, 100, 100)
-      const drawing = D.rotate(90, D.outline(shape, D.outlineColor(C.white)))
+      const drawing = D.rotate(90, D.outline(shape, D.outlineColor(Color.white)))
 
       // Test
       render(D.render(drawing))()
@@ -418,7 +433,7 @@ describe('Drawing', () => {
       testCtx.save()
       testCtx.rotate(90)
       testCtx.save()
-      testCtx.strokeStyle = pipe(C.white, C.toCss)
+      testCtx.strokeStyle = pipe(Color.white, Color.toCss)
       testCtx.beginPath()
       testCtx.rect(shape.x, shape.y, shape.width, shape.height)
       testCtx.stroke()
@@ -432,7 +447,7 @@ describe('Drawing', () => {
       const scaleX = 5
       const scaleY = 5
       const shape = S.arc(10, 20, 5, 100, 200)
-      const drawing = D.scale(scaleX, scaleY, D.outline(shape, D.outlineColor(C.white)))
+      const drawing = D.scale(scaleX, scaleY, D.outline(shape, D.outlineColor(Color.white)))
 
       // Test
       render(D.render(drawing))()
@@ -441,7 +456,7 @@ describe('Drawing', () => {
       testCtx.save()
       testCtx.scale(scaleX, scaleY)
       testCtx.save()
-      testCtx.strokeStyle = pipe(C.white, C.toCss)
+      testCtx.strokeStyle = pipe(Color.white, Color.toCss)
       testCtx.beginPath()
       testCtx.arc(shape.x, shape.y, shape.r, shape.start, shape.end)
       testCtx.stroke()
@@ -456,7 +471,7 @@ describe('Drawing', () => {
       const y = 100
       const text = 'Hello world!'
       const font = F.font('serif', 28)
-      const style = D.fillStyle(C.black)
+      const style = D.fillStyle(Color.black)
       const drawing = D.text(font, x, y, style, text)
 
       // Test
@@ -465,7 +480,7 @@ describe('Drawing', () => {
       // Actual
       testCtx.save()
       testCtx.font = pipe(font, F.showFont.show)
-      testCtx.fillStyle = pipe(C.black, C.toCss)
+      testCtx.fillStyle = pipe(Color.black, Color.toCss)
       testCtx.fillText(text, x, y)
       testCtx.restore()
 
@@ -476,7 +491,7 @@ describe('Drawing', () => {
       const translateX = 5
       const translateY = 5
       const shape = S.rect(50, 50, 100, 100)
-      const drawing = D.translate(translateX, translateY, D.outline(shape, D.outlineColor(C.white)))
+      const drawing = D.translate(translateX, translateY, D.outline(shape, D.outlineColor(Color.white)))
 
       // Test
       render(D.render(drawing))()
@@ -485,7 +500,7 @@ describe('Drawing', () => {
       testCtx.save()
       testCtx.translate(translateX, translateY)
       testCtx.save()
-      testCtx.strokeStyle = pipe(C.white, C.toCss)
+      testCtx.strokeStyle = pipe(Color.white, Color.toCss)
       testCtx.beginPath()
       testCtx.rect(shape.x, shape.y, shape.width, shape.height)
       testCtx.stroke()
@@ -501,20 +516,24 @@ describe('Drawing', () => {
       const rect = S.rect(10, 20, 100, 200)
       const path = S.path(ROA.readonlyArray)([S.point(1, 2), S.point(3, 4), S.point(5, 6)])
       const shape = S.composite([rect, path])
-      const shadow = M.fold(D.monoidShadow)([D.shadowColor(C.black), D.shadowBlur(blurRadius), D.shadowOffset(offset)])
-      const drawing = D.withShadow(shadow, D.outline(shape, D.outlineColor(C.white)))
+      const shadow = M.fold(D.monoidShadow)([
+        D.shadowColor(Color.black),
+        D.shadowBlur(blurRadius),
+        D.shadowOffset(offset)
+      ])
+      const drawing = D.withShadow(shadow, D.outline(shape, D.outlineColor(Color.white)))
 
       // Test
       render(D.render(drawing))()
 
       // Actual
       testCtx.save()
-      testCtx.shadowColor = pipe(C.black, C.toCss)
+      testCtx.shadowColor = pipe(Color.black, Color.toCss)
       testCtx.shadowBlur = blurRadius
       testCtx.shadowOffsetX = offset.x
       testCtx.shadowOffsetY = offset.y
       testCtx.save()
-      testCtx.strokeStyle = pipe(C.white, C.toCss)
+      testCtx.strokeStyle = pipe(Color.white, Color.toCss)
       testCtx.beginPath()
       testCtx.rect(rect.x, rect.y, rect.width, rect.height)
       testCtx.moveTo(1, 2)
@@ -561,14 +580,14 @@ describe('Drawing', () => {
       const y = 20
       const width = 100
       const height = 200
-      const drawing = D.fill(S.rect(x, y, width, height), D.fillStyle(C.black))
+      const drawing = D.fill(S.rect(x, y, width, height), D.fillStyle(Color.black))
 
       // Test
-      D.renderTo(CANVAS_ID, IO.of(constVoid))(D.render(drawing))()
+      C.renderTo(CANVAS_ID, IO.of(constVoid))(D.render(drawing))()
 
       // Actual
       testCtx.save()
-      testCtx.fillStyle = pipe(C.black, C.toCss)
+      testCtx.fillStyle = pipe(Color.black, Color.toCss)
       testCtx.beginPath()
       testCtx.rect(x, y, width, height)
       testCtx.fill()
@@ -582,10 +601,10 @@ describe('Drawing', () => {
       const y = 20
       const width = 100
       const height = 200
-      const drawing = D.fill(S.rect(x, y, width, height), D.fillStyle(C.black))
+      const drawing = D.fill(S.rect(x, y, width, height), D.fillStyle(Color.black))
       const onCanvasNotFound = jest.fn()
 
-      D.renderTo('canvas-not-exists', IO.of(onCanvasNotFound))(D.render(drawing))()
+      C.renderTo('canvas-not-exists', IO.of(onCanvasNotFound))(D.render(drawing))()
 
       assert.strictEqual(onCanvasNotFound.mock.calls.length, 1)
     })

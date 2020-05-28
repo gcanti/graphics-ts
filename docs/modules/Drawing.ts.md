@@ -12,23 +12,14 @@ when using the `Canvas` module directly and instead allows us to be more declara
 Taking the MDN example from the [Canvas][#canvas] documentation,
 
 ```ts
-import * as R from 'fp-ts-contrib/lib/ReaderIO'
-import * as Console from 'fp-ts/lib/Console'
-import * as IO from 'fp-ts/lib/IO'
-import * as O from 'fp-ts/lib/Option'
-import { flow } from 'fp-ts/lib/function'
+import { error } from 'fp-ts/lib/Console'
 import { pipe } from 'fp-ts/lib/pipeable'
+import * as R from 'fp-ts-contrib/lib/ReaderIO'
 import * as C from 'graphics-ts/lib/Canvas'
 import * as Color from 'graphics-ts/lib/Color'
 import * as S from 'graphics-ts/lib/Shape'
 
 const canvasId = 'canvas'
-
-const render = (canvasId: string) => <A>(r: C.Render<A>): IO.IO<void> =>
-  pipe(
-    C.getCanvasElementById(canvasId),
-    IO.chain(O.fold(() => Console.error(`[ERROR]: Unable to find canvas`), flow(C.getContext2D, IO.chain(r))))
-  )
 
 const triangle: C.Render<void> = C.fillPath(
   pipe(
@@ -39,24 +30,26 @@ const triangle: C.Render<void> = C.fillPath(
   )
 )
 
-render(canvasId)(triangle)()
+C.renderTo(canvasId, () => error(`[ERROR]: Unable to find canvas with id ${canvasId}`))(triangle)()
 ```
 
 the `triangle` renderer above becomes the following
 
 ```ts
-(...)
-
+import { error } from 'fp-ts/lib/Console'
+import * as RA from 'fp-ts/lib/ReadonlyArray'
+import * as C from 'graphics-ts/lib/Canvas'
+import * as Color from 'graphics-ts/lib/Color'
 import * as D from 'graphics-ts/lib/Drawing'
+import * as S from 'graphics-ts/lib/Shape'
+
+const canvasId = 'canvas'
 
 const triangle: C.Render<void> = D.render(
-  D.fill(
-    S.path(RA.readonlyArray)([S.point(75, 50), S.point(100, 75), S.point(100, 25)]),
-    D.fillStyle(Color.black)
-  )
+  D.fill(S.path(RA.readonlyArray)([S.point(75, 50), S.point(100, 75), S.point(100, 25)]), D.fillStyle(Color.black))
 )
 
-render(canvasId)(triangle)()
+C.renderTo(canvasId, () => error(`[ERROR]: Unable to find canvas with id ${canvasId}`))(triangle)()
 ```
 
 Adapted from https://github.com/purescript-contrib/purescript-drawing
@@ -412,7 +405,7 @@ Represents a shape that can be drawn to the canvas.
 **Signature**
 
 ```ts
-export type Drawing = Fill | Outline | Text | Many | Scale | Translate | Rotate | Clipped | WithShadow
+export type Drawing = Clipped | Fill | Outline | Many | Rotate | Scale | Text | Translate | WithShadow
 ```
 
 Added in v1.0.0
@@ -516,13 +509,13 @@ export declare const monoidOutlineStyle: M.Monoid<OutlineStyle>
 ```ts
 import * as O from 'fp-ts/lib/Option'
 import * as M from 'fp-ts/lib/Monoid'
-import * as C from 'graphics-ts/lib/Color'
+import * as Color from 'graphics-ts/lib/Color'
 import * as D from 'graphics-ts/lib/Drawing'
 
 assert.deepStrictEqual(
-  M.fold(D.monoidOutlineStyle)([D.outlineColor(C.black), D.outlineColor(C.white), D.lineWidth(5)]),
+  M.fold(D.monoidOutlineStyle)([D.outlineColor(Color.black), D.outlineColor(Color.white), D.lineWidth(5)]),
   {
-    color: O.some(C.black),
+    color: O.some(Color.black),
     lineWidth: O.some(5),
   }
 )

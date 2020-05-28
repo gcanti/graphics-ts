@@ -16,6 +16,7 @@ Added in v1.0.0
 
 - [Arc (interface)](#arc-interface)
 - [Composite (interface)](#composite-interface)
+- [Ellipse (interface)](#ellipse-interface)
 - [Path (interface)](#path-interface)
 - [Point (interface)](#point-interface)
 - [Rect (interface)](#rect-interface)
@@ -24,6 +25,7 @@ Added in v1.0.0
 - [circle](#circle)
 - [closed](#closed)
 - [composite](#composite)
+- [ellipse](#ellipse)
 - [monoidPath](#monoidpath)
 - [path](#path)
 - [point](#point)
@@ -84,6 +86,62 @@ export interface Composite {
    * The list of shapes that compose the composite shape.
    */
   readonly shapes: ReadonlyArray<Shape>
+}
+```
+
+Added in v1.0.0
+
+# Ellipse (interface)
+
+An elliptical arc centered at (`x`, `y`) with the radii radiusX and radiusY specified by `rx` and `ry`.
+The path starts at startAngle and ends at endAngle, specified by `start` and `end`, with the specified
+`rotation` and travels in the direction given by `anticlockwise` (defaulting to clockwise).
+
+**Signature**
+
+```ts
+export interface Ellipse {
+  readonly _tag: 'Ellipse'
+
+  /**
+   * The position of the center of the ellipse on the x-axis.
+   */
+  readonly x: number
+
+  /**
+   * The position of the center of the ellipse on the y-axis.
+   */
+  readonly y: number
+
+  /**
+   * The major-axis radius of the ellipse.
+   */
+  readonly rx: number
+
+  /**
+   * The minor-axis radius of the ellipse.
+   */
+  readonly ry: number
+
+  /**
+   * The starting angle of the arc.
+   */
+  readonly start: number
+
+  /**
+   * The ending angle of the arc.
+   */
+  readonly end: number
+
+  /**
+   * The rotation of the ellipse (specified in radians).
+   */
+  readonly rotation: number
+
+  /**
+   * If `true`, draws the `Ellipse` in a counter-clockwise direction. Defaults to `false` (clockwise).
+   */
+  readonly anticlockwise: boolean
 }
 ```
 
@@ -176,7 +234,7 @@ Represents a shape that can be drawn.
 **Signature**
 
 ```ts
-export type Shape = Path | Rect | Arc | Composite
+export type Shape = Arc | Composite | Ellipse | Path | Rect
 ```
 
 Added in v1.0.0
@@ -228,6 +286,27 @@ Constructs a `Composite` shape.
 
 ```ts
 export declare const composite: (shapes: readonly Shape[]) => Composite
+```
+
+Added in v1.0.0
+
+# ellipse
+
+Constructs an `Ellipse` shape.
+
+**Signature**
+
+```ts
+export declare const ellipse: (
+  x: number,
+  y: number,
+  rx: number,
+  ry: number,
+  rotation: number,
+  start: number,
+  end: number,
+  anticlockwise?: boolean
+) => Ellipse
 ```
 
 Added in v1.0.0
