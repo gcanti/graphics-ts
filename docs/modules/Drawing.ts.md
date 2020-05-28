@@ -9,7 +9,7 @@ parent: Modules
 The `Drawing` module abstracts away the repetitive calls to the HTML Canvas API that are required
 when using the `Canvas` module directly and instead allows us to be more declarative with our code.
 
-Taking the MDN example from the [Canvas][#canvas] documentation,
+Taking the MDN example from the `Canvas` documentation,
 
 ```ts
 import { error } from 'fp-ts/lib/Console'

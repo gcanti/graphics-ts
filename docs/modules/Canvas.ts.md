@@ -56,7 +56,7 @@ C.renderTo(canvasId, () => error(`[ERROR]: Unable to find canvas with id ${canva
 
 While this may seem somewhat verbose compared to its non-functional counterpart above,
 the real power of the `Canvas` module is apparent when it is abstracted away by the
-[Drawing](#drawing) module.
+`Drawing` module.
 
 Adapted from https://github.com/purescript-contrib/purescript-canvas.
 
