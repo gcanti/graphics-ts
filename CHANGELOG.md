@@ -31,6 +31,7 @@ high state of flux, you're at risk of it changing without notice.
   - rename `color` module to `Color` (@IMax153)
     - fix implementation of `toCss` (@IMax153)
     - fix `white` color
+    - add `hex` (@IMax153)
   - rename `drawing` module to `Drawing` (@IMax153)
     - convert from classes to static interfaces with associated constructors for all `Drawings`s
     - fixed implementation of `Clipped` drawings (@IMax153)
