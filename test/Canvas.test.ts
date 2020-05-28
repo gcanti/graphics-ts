@@ -9,7 +9,6 @@ import * as Color from '../src/Color'
 import * as F from '../src/Font'
 import * as S from '../src/Shape'
 import { assertCalledWith } from './utils'
-import { flow } from 'fp-ts/lib/function'
 
 const CANVAS_ID = 'canvas'
 const TEST_CANVAS_ID = 'test-canvas'
@@ -513,10 +512,14 @@ describe('Canvas', () => {
       const second = S.point(10, 10)
 
       // Test
-      pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain(C.fillPath(flow(C.setFillStyle(color), IO.chain(C.moveTo(first)), IO.chain(C.lineTo(second)))))
+      render(
+        C.fillPath(
+          pipe(
+            C.setFillStyle(color),
+            R.chain(() => C.moveTo(first)),
+            R.chain(() => C.lineTo(second))
+          )
+        )
       )()
 
       // Actual
@@ -1193,28 +1196,27 @@ describe('Canvas', () => {
       const rect = S.rect(20, 20, 200, 100)
 
       // Test
-      const gradient = render(C.createLinearGradient(x0, y0, x1, y1))()
+      const g: C.Gradient<CanvasGradient> = pipe(
+        C.addColorStop(0, acqua),
+        R.chain(() => C.addColorStop(0.5, green)),
+        R.chain(() => C.addColorStop(1, green))
+      )
 
-      pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain((ctx) =>
-          pipe(
-            gradient,
-            C.addColorStop(0, acqua),
-            IO.chain(C.addColorStop(0.5, green)),
-            IO.chain(C.addColorStop(1, green)),
-            IO.chain((g) => pipe(ctx, C.setFillStyle(g), IO.chain(C.fillRect(rect))))
-          )
-        )
-      )()
+      const r: C.Render<CanvasRenderingContext2D> = pipe(
+        C.createLinearGradient(x0, y0, x1, y1),
+        R.chain((cg) => R.fromIO(g(cg))),
+        R.chain(C.setFillStyle),
+        R.chain(() => C.fillRect(rect))
+      )
+
+      render(r)()
 
       // Actual
       const testGradient = testCtx.createLinearGradient(x0, y0, x1, y1)
       testGradient.addColorStop(0, acqua)
       testGradient.addColorStop(0.5, green)
       testGradient.addColorStop(1, green)
-      testCtx.fillStyle = gradient
+      testCtx.fillStyle = testGradient
       testCtx.fillRect(rect.x, rect.y, rect.width, rect.height)
 
       assertCalledWith(ctx.createLinearGradient as jest.Mock, x0, y0, x1, y1)
@@ -1236,28 +1238,27 @@ describe('Canvas', () => {
       const rect = S.rect(20, 20, 200, 100)
 
       // Test
-      const gradient = render(C.createRadialGradient(110, 90, 30, 100, 100, 70))()
+      const g: C.Gradient<CanvasGradient> = pipe(
+        C.addColorStop(0, acqua),
+        R.chain(() => C.addColorStop(0.5, green)),
+        R.chain(() => C.addColorStop(1, green))
+      )
 
-      pipe(
-        canvas,
-        C.getContext2D,
-        IO.chain((ctx) =>
-          pipe(
-            gradient,
-            C.addColorStop(0, acqua),
-            IO.chain(C.addColorStop(0.5, green)),
-            IO.chain(C.addColorStop(1, green)),
-            IO.chain((g) => pipe(ctx, C.setFillStyle(g), IO.chain(C.fillRect(rect))))
-          )
-        )
-      )()
+      const r: C.Render<CanvasRenderingContext2D> = pipe(
+        C.createRadialGradient(x0, y0, r0, x1, y1, r1),
+        R.chain((cg) => R.fromIO(g(cg))),
+        R.chain(C.setFillStyle),
+        R.chain(() => C.fillRect(rect))
+      )
+
+      render(r)()
 
       // Actual
       const testGradient = testCtx.createRadialGradient(x0, y0, r0, x1, y1, r1)
       testGradient.addColorStop(0, acqua)
       testGradient.addColorStop(0.5, green)
       testGradient.addColorStop(1, green)
-      testCtx.fillStyle = gradient
+      testCtx.fillStyle = testGradient
       testCtx.fillRect(rect.x, rect.y, rect.width, rect.height)
 
       assertCalledWith(ctx.createRadialGradient as jest.Mock, x0, y0, r0, x1, y1, r1)
