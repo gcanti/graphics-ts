@@ -2,6 +2,7 @@ import * as assert from 'assert'
 import * as R from 'fp-ts-contrib/lib/ReaderIO'
 import * as IO from 'fp-ts/lib/IO'
 import * as O from 'fp-ts/lib/Option'
+import * as RA from 'fp-ts/lib/ReadonlyArray'
 import { pipe } from 'fp-ts/lib/pipeable'
 
 import * as C from '../src/Canvas'
@@ -12,10 +13,12 @@ import { assertCalledWith } from './utils'
 
 const CANVAS_ID = 'canvas'
 const TEST_CANVAS_ID = 'test-canvas'
+const FOCUS_TARGET = 'focus-target'
 const CANVAS_WIDTH = 400
 const CANVAS_HEIGHT = 600
 
 let canvas: HTMLCanvasElement
+let focusTarget: HTMLElement
 let ctx: CanvasRenderingContext2D
 let testCtx: CanvasRenderingContext2D
 
@@ -25,7 +28,14 @@ beforeEach(() => {
       id="${CANVAS_ID}"
       width="${CANVAS_WIDTH}"
       height="${CANVAS_HEIGHT}"
-    />
+    >
+      <input
+        id="${FOCUS_TARGET}"
+        type="range"
+        min="1"
+        max="12"
+      />
+    </canvas>
     <canvas
       id="${TEST_CANVAS_ID}"
       width="${CANVAS_WIDTH}"
@@ -34,6 +44,8 @@ beforeEach(() => {
   `
   canvas = document.getElementById(CANVAS_ID) as HTMLCanvasElement
   const testCanvas = document.getElementById(TEST_CANVAS_ID) as HTMLCanvasElement
+  focusTarget = document.getElementById(FOCUS_TARGET) as HTMLElement
+  focusTarget.focus()
   ctx = canvas.getContext('2d') as CanvasRenderingContext2D
   testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D
 })
@@ -134,6 +146,36 @@ describe('Canvas', () => {
       render(C.setLineWidth(lineWidth))()
 
       assert.strictEqual(ctx.lineWidth, lineWidth)
+    })
+  })
+
+  describe('setLineDash', () => {
+    it('should set the current line dash', () => {
+      const lineDash = RA.fromArray([5, 15])
+
+      render(C.setLineDash(lineDash))()
+
+      assert.deepStrictEqual(ctx.getLineDash(), lineDash)
+    })
+  })
+
+  describe('getLineDash', () => {
+    it('should get the current line dash', () => {
+      const lineDash = RA.fromArray([5, 15])
+
+      render(C.setLineDash(lineDash))()
+
+      assert.deepStrictEqual(render(C.getLineDash)(), lineDash)
+    })
+  })
+
+  describe('setLineDashOffset', () => {
+    it('should set the current line dash offset', () => {
+      const lineDashOffset = 4
+
+      render(C.setLineDashOffset(lineDashOffset))()
+
+      assert.strictEqual(ctx.lineDashOffset, lineDashOffset)
     })
   })
 
@@ -247,6 +289,16 @@ describe('Canvas', () => {
     })
   })
 
+  describe('setImageSmoothingEnabled', () => {
+    it('should set the image smoothing property', () => {
+      const imageSmoothingEnabled = true
+
+      render(C.setImageSmoothingEnabled(imageSmoothingEnabled))()
+
+      assert.strictEqual(ctx.imageSmoothingEnabled, imageSmoothingEnabled)
+    })
+  })
+
   describe('beginPath', () => {
     it('should begin drawing a path', () => {
       // Test
@@ -256,6 +308,89 @@ describe('Canvas', () => {
       testCtx.beginPath()
 
       assertCalledWith(ctx.beginPath as jest.Mock)
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+  })
+
+  describe('isPointInPath', () => {
+    // Jest Canvas Mock will always return `false` in a mock environment for `isPointInPath`.
+    // Therefore, we can only check that the correct function was called and with the appropriate arguments
+    // in our tests.
+    // See https://github.com/hustcc/jest-canvas-mock/blob/df7a9fb608550a9440ee37a03949799f3aa1a532/src/classes/CanvasRenderingContext2D.js#L1170
+
+    it('should determine if a point is in the current path', () => {
+      const x = 10
+      const y = 10
+      const width = 100
+      const height = 100
+      const point = S.point(30, 70)
+
+      render(
+        pipe(
+          C.rect(S.rect(10, 10, 100, 100)),
+          R.chain(() => C.fill()),
+          R.chain(() => C.isPointInPath(point))
+        )
+      )()
+
+      testCtx.rect(x, y, width, height)
+      testCtx.fill()
+      testCtx.isPointInPath(point.x, point.y)
+
+      assertCalledWith(ctx.isPointInPath as jest.Mock, point.x, point.y)
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+
+    it('should determine if a point is in the current path with a fill rule', () => {
+      const x = 10
+      const y = 10
+      const width = 100
+      const height = 100
+      const point = S.point(30, 70)
+      const fillRule = 'evenodd'
+
+      render(
+        pipe(
+          C.rect(S.rect(10, 10, 100, 100)),
+          R.chain(() => C.fill()),
+          R.chain(() => C.isPointInPath(point, fillRule))
+        )
+      )()
+
+      testCtx.rect(x, y, width, height)
+      testCtx.fill()
+      testCtx.isPointInPath(point.x, point.y, fillRule)
+
+      assertCalledWith(ctx.isPointInPath as jest.Mock, point.x, point.y, fillRule)
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+
+    it('should determine if a point is in a specified path with a fill rule', () => {
+      const x = 10
+      const y = 10
+      const width = 100
+      const height = 100
+      const point = S.point(30, 70)
+      const fillRule = 'evenodd'
+      const path = new Path2D()
+      path.rect(10, 10, 100, 100)
+
+      render(
+        pipe(
+          C.rect(S.rect(10, 10, 100, 100)),
+          R.chain(() => C.fill()),
+          R.chain(() => C.isPointInPath(point, fillRule, path))
+        )
+      )()
+
+      testCtx.rect(x, y, width, height)
+      testCtx.fill()
+      testCtx.isPointInPath(path, point.x, point.y, fillRule)
+
+      assertCalledWith(ctx.isPointInPath as jest.Mock, path, point.x, point.y, fillRule)
 
       assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
     })
@@ -299,6 +434,63 @@ describe('Canvas', () => {
       assertCalledWith(ctx.stroke as jest.Mock, path)
 
       assert.deepStrictEqual(ctx.__getDrawCalls(), testCtx.__getDrawCalls())
+    })
+  })
+
+  describe('isPointInStroke', () => {
+    // Jest Canvas Mock will always return `false` in a mock environment for `isPointInStroke`.
+    // Therefore, we can only check that the correct function was called and with the appropriate arguments
+    // in our tests.
+    // See https://github.com/hustcc/jest-canvas-mock/blob/df7a9fb608550a9440ee37a03949799f3aa1a532/src/classes/CanvasRenderingContext2D.js#L1192
+
+    it('should determine if a point is in the current stroke', () => {
+      const x = 10
+      const y = 10
+      const width = 100
+      const height = 100
+      const point = S.point(30, 70)
+
+      render(
+        pipe(
+          C.rect(S.rect(10, 10, 100, 100)),
+          R.chain(() => C.stroke()),
+          R.chain(() => C.isPointInStroke(point))
+        )
+      )()
+
+      testCtx.rect(x, y, width, height)
+      testCtx.stroke()
+      testCtx.isPointInStroke(point.x, point.y)
+
+      assertCalledWith(ctx.isPointInStroke as jest.Mock, point.x, point.y)
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+
+    it('should determine if a point is in a specified stroke path', () => {
+      const x = 10
+      const y = 10
+      const width = 100
+      const height = 100
+      const point = S.point(30, 70)
+      const path = new Path2D()
+      path.rect(10, 10, 100, 100)
+
+      render(
+        pipe(
+          C.rect(S.rect(10, 10, 100, 100)),
+          R.chain(() => C.stroke()),
+          R.chain(() => C.isPointInStroke(point, path))
+        )
+      )()
+
+      testCtx.rect(x, y, width, height)
+      testCtx.stroke()
+      testCtx.isPointInStroke(path, point.x, point.y)
+
+      assertCalledWith(ctx.isPointInStroke as jest.Mock, path, point.x, point.y)
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
     })
   })
 
@@ -551,6 +743,68 @@ describe('Canvas', () => {
     })
   })
 
+  describe('arcTo', () => {
+    it('should render an arc that is automatically connected to the latest point in the path', () => {
+      const x1 = 200
+      const y1 = 130
+      const x2 = 50
+      const y2 = 20
+      const r = 40
+      const lineWidth = 5
+      const point = S.point(200, 20)
+      const strokeStyle = pipe(Color.black, Color.toCss)
+
+      // Test
+      render(
+        C.strokePath(
+          pipe(
+            C.setStrokeStyle(strokeStyle),
+            R.chain(() => C.setLineWidth(5)),
+            R.chain(() => C.moveTo(S.point(200, 20))),
+            R.chain(() => C.arcTo(x1, y1, x2, y2, r))
+          )
+        )
+      )()
+
+      // Actual
+      testCtx.beginPath()
+      testCtx.strokeStyle = strokeStyle
+      testCtx.lineWidth = lineWidth
+      testCtx.moveTo(point.x, point.y)
+      testCtx.arcTo(x1, y1, x2, y2, r)
+      testCtx.stroke()
+
+      assertCalledWith(ctx.arcTo as jest.Mock, x1, y1, x2, y2, r)
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+  })
+
+  describe('ellipse', () => {
+    it('should render an ellipse to the canvas', () => {
+      const x = 100
+      const y = 100
+      const rx = 50
+      const ry = 75
+      const rotation = Math.PI / 4
+      const start = 0
+      const end = 2 * Math.PI
+      const anticlockwise = true
+
+      // Test
+      render(C.strokePath(C.ellipse(S.ellipse(x, y, rx, ry, rotation, start, end, anticlockwise))))()
+
+      // Actual
+      testCtx.beginPath()
+      testCtx.ellipse(x, y, rx, ry, rotation, start, end, anticlockwise)
+      testCtx.stroke()
+
+      assertCalledWith(ctx.ellipse as jest.Mock, x, y, rx, ry, rotation, start, end, anticlockwise)
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+  })
+
   describe('rect', () => {
     it('should render a rectangle to the canvas', () => {
       const rect = S.rect(10, 20, 150, 100)
@@ -716,6 +970,53 @@ describe('Canvas', () => {
     })
   })
 
+  describe('setTransform', () => {
+    it('should set the current transform', () => {
+      const a = 1
+      const b = 0.2
+      const c = 0.8
+      const d = 1
+      const e = 0
+      const f = 0
+
+      render(C.setTransform(a, b, c, d, e, f))()
+
+      assert.deepStrictEqual(ctx.getTransform().a, a)
+      assert.deepStrictEqual(ctx.getTransform().b, b)
+      assert.deepStrictEqual(ctx.getTransform().c, c)
+      assert.deepStrictEqual(ctx.getTransform().d, d)
+      assert.deepStrictEqual(ctx.getTransform().e, e)
+      assert.deepStrictEqual(ctx.getTransform().f, f)
+    })
+  })
+
+  describe('setTransformMatrix', () => {
+    it('should set the current transform', () => {
+      const a = 1
+      const b = 0.2
+      const c = 0.8
+      const d = 1
+      const e = 0
+      const f = 0
+      const matrix = new DOMMatrix([a, b, c, d, e, f])
+
+      render(C.setTransformMatrix(matrix))()
+
+      assert.deepStrictEqual(ctx.getTransform().a, a)
+      assert.deepStrictEqual(ctx.getTransform().b, b)
+      assert.deepStrictEqual(ctx.getTransform().c, c)
+      assert.deepStrictEqual(ctx.getTransform().d, d)
+      assert.deepStrictEqual(ctx.getTransform().e, e)
+      assert.deepStrictEqual(ctx.getTransform().f, f)
+    })
+  })
+
+  describe('getTransform', () => {
+    it('should get the current transform', () => {
+      assert.deepStrictEqual(render(C.getTransform)(), ctx.getTransform())
+    })
+  })
+
   describe('getTextAlign', () => {
     it('should get the current text align', () => {
       assert.strictEqual(render(C.getTextAlign)(), ctx.textAlign)
@@ -729,6 +1030,22 @@ describe('Canvas', () => {
       render(C.setTextAlign(textAlign))()
 
       assert.strictEqual(ctx.textAlign, textAlign)
+    })
+  })
+
+  describe('getTextBaseline', () => {
+    it('should get the current text baseline', () => {
+      assert.strictEqual(render(C.getTextBaseline)(), ctx.textBaseline)
+    })
+  })
+
+  describe('setTextBaseline', () => {
+    it('should set the current text baseline', () => {
+      const textBaseline = 'top'
+
+      render(C.setTextBaseline(textBaseline))()
+
+      assert.strictEqual(ctx.textBaseline, textBaseline)
     })
   })
 
@@ -1040,6 +1357,54 @@ describe('Canvas', () => {
 
       assert.notStrictEqual(imageData, imageDataCopy)
       assert.deepStrictEqual(imageData, imageDataCopy)
+    })
+  })
+
+  describe('drawFocusIfNeeded', () => {
+    it('should draw a focus ring around the current path if the element is focused', () => {
+      const rect = S.rect(10, 10, 30, 30)
+
+      // Test
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.rect(rect)),
+          R.chain(() => C.drawFocusIfNeeded(focusTarget))
+        )
+      )()
+
+      // Actual
+      testCtx.beginPath()
+      testCtx.rect(rect.x, rect.y, rect.width, rect.height)
+      testCtx.drawFocusIfNeeded(focusTarget)
+
+      assertCalledWith(ctx.drawFocusIfNeeded as jest.Mock, focusTarget)
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+
+    it('should draw a focus ring around the specified path if the element is focused', () => {
+      const rect = S.rect(10, 10, 30, 30)
+      const path = new Path2D()
+      path.rect(rect.x, rect.y, rect.width, rect.height)
+
+      // Test
+      render(
+        pipe(
+          C.beginPath,
+          R.chain(() => C.rect(rect)),
+          R.chain(() => C.drawFocusIfNeeded(focusTarget, path))
+        )
+      )()
+
+      // Actual
+      testCtx.beginPath()
+      testCtx.rect(rect.x, rect.y, rect.width, rect.height)
+      testCtx.drawFocusIfNeeded(path, focusTarget)
+
+      assertCalledWith(ctx.drawFocusIfNeeded as jest.Mock, path, focusTarget)
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
     })
   })
 

@@ -576,6 +576,9 @@ const renderShape: (shape: Shape) => C.Render<CanvasRenderingContext2D> = (shape
         R.chain(() => R.ask())
       )
 
+    case 'Ellipse':
+      return C.ellipse(shape)
+
     case 'Path':
       return pipe(
         shape.points,

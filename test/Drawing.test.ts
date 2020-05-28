@@ -327,7 +327,7 @@ describe('Drawing', () => {
     })
 
     it('should render a filled drawing', () => {
-      const shape = S.rect(50, 50, 100, 100)
+      const shape = S.ellipse(10, 20, 2, 5, 45, 180, 0, true)
       const drawing = D.fill(shape, D.fillStyle(C.white))
 
       // Test
@@ -337,7 +337,7 @@ describe('Drawing', () => {
       testCtx.save()
       testCtx.fillStyle = pipe(C.white, C.toCss)
       testCtx.beginPath()
-      testCtx.rect(shape.x, shape.y, shape.width, shape.height)
+      testCtx.ellipse(shape.x, shape.y, shape.rx, shape.ry, shape.rotation, shape.start, shape.end, shape.anticlockwise)
       testCtx.fill()
       testCtx.restore()
 

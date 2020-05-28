@@ -97,6 +97,36 @@ describe('circle', () => {
   })
 })
 
+describe('ellipse', () => {
+  it('should construct an ellipse', () => {
+    const clockwiseEllipse = S.ellipse(10, 20, 2, 5, 0, 45, 60)
+    const anticlockwiseEllipse = S.ellipse(10, 20, 2, 5, 0, 45, 60, true)
+
+    assert.deepStrictEqual(clockwiseEllipse, {
+      _tag: 'Ellipse',
+      x: 10,
+      y: 20,
+      rx: 2,
+      ry: 5,
+      rotation: 0,
+      start: 45,
+      end: 60,
+      anticlockwise: false
+    })
+    assert.deepStrictEqual(anticlockwiseEllipse, {
+      _tag: 'Ellipse',
+      x: 10,
+      y: 20,
+      rx: 2,
+      ry: 5,
+      rotation: 0,
+      start: 45,
+      end: 60,
+      anticlockwise: true
+    })
+  })
+})
+
 describe('composite', () => {
   it('should construct a composite of shapes', () => {
     const firstPath = S.path(ROA.readonlyArray)([S.point(10, 20), S.point(30, 40), S.point(50, 60)])

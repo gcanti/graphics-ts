@@ -67,17 +67,18 @@
 import * as R from 'fp-ts-contrib/lib/ReaderIO'
 import * as IO from 'fp-ts/lib/IO'
 import * as O from 'fp-ts/lib/Option'
+import * as RA from 'fp-ts/lib/ReadonlyArray'
 import { sequenceS } from 'fp-ts/lib/Apply'
 import { pipe } from 'fp-ts/lib/pipeable'
 
-import { Arc, Point, Rect } from './Shape'
+import { Arc, Ellipse, Point, Rect } from './Shape'
 
 /**
  * Represents the management of an `HTMLCanvasElement` as *reading* from the `HTMLCanvasElement`
  * and returning a type `A` wrapped in an `IO`. In other words, we can say that when we are
  * managing an `HTMLCanvasElement` we are yielding an `Html` effect.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 export interface Html<A> extends R.ReaderIO<HTMLCanvasElement, A> {}
 
@@ -86,7 +87,7 @@ export interface Html<A> extends R.ReaderIO<HTMLCanvasElement, A> {}
  * `CanvasRenderingContext2D` and returning a type `A` wrapped in an `IO`. In other words, we can
  * say that when we are managing a `CanvasRenderingContext2D` we are yielding an `Render` effect.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 export interface Render<A> extends R.ReaderIO<CanvasRenderingContext2D, A> {}
 
@@ -95,7 +96,7 @@ export interface Render<A> extends R.ReaderIO<CanvasRenderingContext2D, A> {}
  * returning a type `A` wrapped in an `IO`. In other words, we can say that when we are managing
  * a `CanvasGradient` we are yielding an `Gradient` effect.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 export interface Gradient<A> extends R.ReaderIO<CanvasGradient, A> {}
 
@@ -204,6 +205,15 @@ export type PatternRepetition = 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'
  * @since 1.0.0
  */
 export type TextAlign = 'left' | 'right' | 'center' | 'start' | 'end'
+
+/**
+ * The text baseline used when drawing text.
+ *
+ * @see [MDN Web Docs](https://mzl.la/2XG6KH1)
+ *
+ * @since 1.0.0
+ */
+export type TextBaseline = 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
 
 /**
  * The dimensions of a piece of text in the canvas.
@@ -390,6 +400,35 @@ export const setLineWidth: (width: number) => Render<CanvasRenderingContext2D> =
 }
 
 /**
+ * Sets the current line dash pattern used when stroking lines.
+ *
+ * @since 1.0.0
+ */
+export const setLineDash: (segments: ReadonlyArray<number>) => Render<CanvasRenderingContext2D> = (ss) => (
+  ctx
+) => () => {
+  ctx.setLineDash(RA.toArray(ss))
+  return ctx
+}
+
+/**
+ * Gets the current line dash pattern for the canvas context.
+ *
+ * @since 1.0.0
+ */
+export const getLineDash: Render<ReadonlyArray<number>> = (ctx) => () => RA.fromArray(ctx.getLineDash())
+
+/**
+ * Sets the current line dash offset, or "phase", for the canvas context.
+ *
+ * @since 1.0.0
+ */
+export const setLineDashOffset: (offset: number) => Render<CanvasRenderingContext2D> = (o) => (ctx) => () => {
+  ctx.lineDashOffset = o
+  return ctx
+}
+
+/**
  * Sets the current fill style for the canvas context.
  *
  * @since 1.0.0
@@ -503,6 +542,17 @@ export const setGlobalAlpha: (alpha: number) => Render<CanvasRenderingContext2D>
 }
 
 /**
+ * Sets the current image smoothing property for the canvas context. Determines whether scaled images are smoothed
+ * (`true`, default) or not (`false`).
+ *
+ * @since 1.0.0
+ */
+export const setImageSmoothingEnabled: (value: boolean) => Render<CanvasRenderingContext2D> = (v) => (ctx) => () => {
+  ctx.imageSmoothingEnabled = v
+  return ctx
+}
+
+/**
  * Begin a path on the canvas.
  *
  * @since 1.0.0
@@ -510,6 +560,21 @@ export const setGlobalAlpha: (alpha: number) => Render<CanvasRenderingContext2D>
 export const beginPath: Render<CanvasRenderingContext2D> = (ctx) => () => {
   ctx.beginPath()
   return ctx
+}
+
+/**
+ * Determines if the specified point is contained in the current path.
+ *
+ * @since 1.0.0
+ */
+export const isPointInPath: (point: Point, fillRule?: FillRule, path?: Path2D) => Render<boolean> = (p, rule, path) => (
+  ctx
+) => () => {
+  if (typeof path !== 'undefined') {
+    return ctx.isPointInPath(path, p.x, p.y, rule)
+  } else {
+    return typeof rule !== 'undefined' ? ctx.isPointInPath(p.x, p.y, rule) : ctx.isPointInPath(p.x, p.y)
+  }
 }
 
 /**
@@ -524,6 +589,15 @@ export const stroke: (path?: Path2D) => Render<CanvasRenderingContext2D> = (p) =
     ctx.stroke()
   }
   return ctx
+}
+
+/**
+ * Determines if the specified point is inside the area contained by the stroking of a path.
+ *
+ * @since 1.0.0
+ */
+export const isPointInStroke: (point: Point, path?: Path2D) => Render<boolean> = (p, path) => (ctx) => () => {
+  return typeof path !== 'undefined' ? ctx.isPointInStroke(path, p.x, p.y) : ctx.isPointInStroke(p.x, p.y)
 }
 
 /**
@@ -623,6 +697,32 @@ export const arc: (arc: Arc) => Render<CanvasRenderingContext2D> = (a) => (ctx) 
 }
 
 /**
+ * Render an arc that is automatically connected to the path's latest point.
+ *
+ * @since 1.0.0
+ */
+export const arcTo: (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  radius: number
+) => Render<CanvasRenderingContext2D> = (x1, y1, x2, y2, r) => (ctx) => () => {
+  ctx.arcTo(x1, y1, x2, y2, r)
+  return ctx
+}
+
+/**
+ * Render an ellipse.
+ *
+ * @since 1.0.0
+ */
+export const ellipse: (ellipse: Ellipse) => Render<CanvasRenderingContext2D> = (e) => (ctx) => () => {
+  ctx.ellipse(e.x, e.y, e.rx, e.ry, e.rotation, e.start, e.end, e.anticlockwise)
+  return ctx
+}
+
+/**
  * Render a rectangle.
  *
  * @since 1.0.0
@@ -712,6 +812,42 @@ export const transform: (
 }
 
 /**
+ * Resets the current transformation to the identity matrix, and then applies the transform specified
+ * to the current canvas context.
+ *
+ * @since 1.0.0
+ */
+export const setTransform: (
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number,
+  f: number
+) => Render<CanvasRenderingContext2D> = (a, b, c, d, e, f) => (ctx) => () => {
+  ctx.setTransform(a, b, c, d, e, f)
+  return ctx
+}
+
+/**
+ * Resets the current transformation to the identity matrix, and then applies the transform specified
+ * to the current canvas context.
+ *
+ * @since 1.0.0
+ */
+export const setTransformMatrix: (matrix: DOMMatrix) => Render<CanvasRenderingContext2D> = (matrix) => (ctx) => () => {
+  ctx.setTransform(matrix)
+  return ctx
+}
+
+/**
+ * Gets the current transformation matrix being applied to the canvas context.
+ *
+ * @since 1.0.0
+ */
+export const getTransform: Render<DOMMatrix> = (ctx) => () => ctx.getTransform()
+
+/**
  * Gets the current text alignment.
  *
  * @since 1.0.0
@@ -725,6 +861,25 @@ export const getTextAlign: Render<TextAlign> = (ctx) => () => ctx.textAlign
  */
 export const setTextAlign: (textAlign: TextAlign) => Render<CanvasRenderingContext2D> = (ta) => (ctx) => () => {
   ctx.textAlign = ta
+  return ctx
+}
+
+/**
+ * Gets the current text baseline.
+ *
+ * @since 1.0.0
+ */
+export const getTextBaseline: Render<TextBaseline> = (ctx) => () => ctx.textBaseline
+
+/**
+ * Sets the current text baseline.
+ *
+ * @since 1.0.0
+ */
+export const setTextBaseline: (textBaseline: TextBaseline) => Render<CanvasRenderingContext2D> = (tb) => (
+  ctx
+) => () => {
+  ctx.textBaseline = tb
   return ctx
 }
 
@@ -878,6 +1033,22 @@ export const createImageData: (sw: number, sh: number) => Render<ImageData> = (s
  */
 export const createImageDataCopy: (imageData: ImageData) => Render<ImageData> = (data) => (ctx) => () =>
   ctx.createImageData(data)
+
+/**
+ * Draws a focus ring around the current or given path, if the specified element is focused.
+ *
+ * @since 1.0.0
+ */
+export const drawFocusIfNeeded: (element: HTMLElement, path?: Path2D) => Render<CanvasRenderingContext2D> = (el, p) => (
+  ctx
+) => () => {
+  if (typeof p !== 'undefined') {
+    ctx.drawFocusIfNeeded(p, el)
+  } else {
+    ctx.drawFocusIfNeeded(el)
+  }
+  return ctx
+}
 
 /**
  * Render an image.

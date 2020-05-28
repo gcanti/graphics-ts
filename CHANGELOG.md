@@ -21,6 +21,13 @@ high state of flux, you're at risk of it changing without notice.
   - remove `free-canvas`
   - rename `canvas` module to `Canvas` (@IMax153)
     - inject the current `CanvasRenderingContext2D` into the `ReaderIO` wrapped by `withContext`, `fillPath`, and `strokePath` for convenience (@IMax153)
+    - add `getLineDash`, `setLineDash`, and `setLineDashOffset` (@IMax153)
+    - add `setImageSmoothingEnabled` (@IMax153)
+    - add `isPointInPath` and `isPointInStroke` (@IMax153)
+    - add `arcTo` and `ellipse` (@IMax153)
+    - add `getTransform`, `setTransform`, and `setTransformMatrix` (@IMax153)
+    - add `getTextBaseline` and `setTextBaseline` (@IMax153)
+    - add `drawFocusIfNeeded` (@IMax153)
   - rename `color` module to `Color` (@IMax153)
     - fix implementation of `toCss` (@IMax153)
     - fix `white` color
@@ -35,6 +42,7 @@ high state of flux, you're at risk of it changing without notice.
   - add `Shape` module (@IMax153)
     - move `path`, `closed`, `rect`, `arc`, `circle`, and `composite` to `Shape` module (@IMax153)
     - convert from classes to static interfaces with associated constructors for all `Shape`s (@IMax153)
+    - add `Ellipse` shape with associated `ellipse` constructor (@IMax153)
 
 # 0.5.0
 

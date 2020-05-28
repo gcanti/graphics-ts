@@ -13,7 +13,7 @@ import * as M from 'fp-ts/lib/Monoid'
  *
  * @since 1.0.0
  */
-export type Shape = Path | Rect | Arc | Composite
+export type Shape = Path | Rect | Arc | Ellipse | Composite
 
 /**
  * A single point consisting of `x` and `y` coordinates on a two-dimensional plane.
@@ -207,6 +207,83 @@ export const circle = (x: number, y: number, r: number): Arc => ({
   r,
   start: 0,
   end: Math.PI * 2
+})
+
+/**
+ * An elliptical arc centered at (`x`, `y`) with the radii radiusX and radiusY specified by `rx` and `ry`.
+ * The path starts at startAngle and ends at endAngle, specified by `start` and `end`, with the specified
+ * `rotation` and travels in the direction given by `anticlockwise` (defaulting to clockwise).
+ *
+ * @since 1.0.0
+ */
+export interface Ellipse {
+  readonly _tag: 'Ellipse'
+
+  /**
+   * The position of the center of the ellipse on the x-axis.
+   */
+  readonly x: number
+
+  /**
+   * The position of the center of the ellipse on the y-axis.
+   */
+  readonly y: number
+
+  /**
+   * The major-axis radius of the ellipse.
+   */
+  readonly rx: number
+
+  /**
+   * The minor-axis radius of the ellipse.
+   */
+  readonly ry: number
+
+  /**
+   * The starting angle of the arc.
+   */
+  readonly start: number
+
+  /**
+   * The ending angle of the arc.
+   */
+  readonly end: number
+
+  /**
+   * The rotation of the ellipse (specified in radians).
+   */
+  readonly rotation: number
+
+  /**
+   * If `true`, draws the `Ellipse` in a counter-clockwise direction. Defaults to `false` (clockwise).
+   */
+  readonly anticlockwise: boolean
+}
+
+/**
+ * Constructs an `Ellipse` shape.
+ *
+ * @since 1.0.0
+ */
+export const ellipse = (
+  x: number,
+  y: number,
+  rx: number,
+  ry: number,
+  rotation: number,
+  start: number,
+  end: number,
+  anticlockwise: boolean = false
+): Ellipse => ({
+  _tag: 'Ellipse',
+  x,
+  y,
+  rx,
+  ry,
+  rotation,
+  start,
+  end,
+  anticlockwise
 })
 
 /**
