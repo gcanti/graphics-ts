@@ -17,22 +17,21 @@ high state of flux, you're at risk of it changing without notice.
 
 - **Breaking Change**
 
-  - upgrade to `fp-ts@2.x.x` and latest TypeScript (3.9.2) (@IMax153)
+  - upgrade to `fp-ts@2.x.x` and latest TypeScript (3.9.3) (@IMax153)
   - remove `free-canvas`
   - rename `canvas` module to `Canvas` (@IMax153)
-    - inject the current `CanvasRenderingContext2D` into the `IO` wrapped by `withContext`, `fillPath`, and `strokePath` for convenience (@IMax153)
+    - inject the current `CanvasRenderingContext2D` into the `ReaderIO` wrapped by `withContext`, `fillPath`, and `strokePath` for convenience (@IMax153)
   - rename `color` module to `Color` (@IMax153)
     - fix implementation of `toCss` (@IMax153)
     - fix `white` color
   - rename `drawing` module to `Drawing` (@IMax153)
     - convert from classes to static interfaces with associated constructors for all `Drawings`s
     - fixed implementation of `Clipped` drawings (@IMax153)
+    - add `renderTo` helper for executing a `Render` effect on a given canvas (@IMax153)
   - rename `font` module to `Font` (@IMax153)
     - convert from classes to static interfaces with associated constructors for `Font` and `FontOptions`
-    - add `Show` instance for `FontOptions` (`ShowFontOptions`) (@IMax153)
-    - add convenience function `showFontOptions` (@IMax153)
-    - add `Show` instance for `Font` (`ShowFont`) (@IMax153)
-    - add convenience function `showFont` (@IMax153)
+    - add `Show` instance for `FontOptions` (`showFontOptions`) (@IMax153)
+    - add `Show` instance for `Font` (`showFont`) (@IMax153)
   - add `Shape` module (@IMax153)
     - move `path`, `closed`, `rect`, `arc`, `circle`, and `composite` to `Shape` module (@IMax153)
     - convert from classes to static interfaces with associated constructors for all `Shape`s (@IMax153)

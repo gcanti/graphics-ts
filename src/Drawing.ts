@@ -690,3 +690,12 @@ export const render: (drawing: Drawing) => C.Render<CanvasRenderingContext2D> = 
 
   return go(drawing)
 }
+
+/**
+ * Executes a `Render` effect for a canvas with the specified `canvasId`, or `onCanvasNotFound()` if a canvas with
+ * the specified `canvasId` does not exist.
+ *
+ * @since 1.0.0
+ */
+export const renderTo = (canvasId: string, onCanvasNotFound: () => IO.IO<void>) => <A>(r: C.Render<A>): IO.IO<void> =>
+  pipe(C.getCanvasElementById(canvasId), IO.chain(O.fold(onCanvasNotFound, flow(C.getContext2D, IO.chain(r)))))

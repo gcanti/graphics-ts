@@ -10,6 +10,7 @@ import * as C from '../src/Color'
 import * as D from '../src/Drawing'
 import * as F from '../src/Font'
 import * as S from '../src/Shape'
+import { constVoid } from 'fp-ts/lib/function'
 
 describe('Drawing', () => {
   describe('fillStyle', () => {
@@ -524,6 +525,69 @@ describe('Drawing', () => {
       testCtx.restore()
 
       assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+  })
+
+  describe('renderTo', () => {
+    const CANVAS_ID = 'canvas'
+    const TEST_CANVAS_ID = 'test-canvas'
+    const CANVAS_WIDTH = 400
+    const CANVAS_HEIGHT = 600
+
+    let ctx: CanvasRenderingContext2D
+    let testCtx: CanvasRenderingContext2D
+
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <canvas
+          id="${CANVAS_ID}"
+          width="${CANVAS_WIDTH}"
+          height="${CANVAS_HEIGHT}"
+        />
+        <canvas
+          id="${TEST_CANVAS_ID}"
+          width="${CANVAS_WIDTH}"
+          height="${CANVAS_HEIGHT}"
+        />
+      `
+      const canvas = document.getElementById(CANVAS_ID) as HTMLCanvasElement
+      ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+      const testCanvas = document.getElementById(TEST_CANVAS_ID) as HTMLCanvasElement
+      testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D
+    })
+
+    it('should render a Drawing to a canvas that exists', () => {
+      const x = 10
+      const y = 20
+      const width = 100
+      const height = 200
+      const drawing = D.fill(S.rect(x, y, width, height), D.fillStyle(C.black))
+
+      // Test
+      D.renderTo(CANVAS_ID, IO.of(constVoid))(D.render(drawing))()
+
+      // Actual
+      testCtx.save()
+      testCtx.fillStyle = pipe(C.black, C.toCss)
+      testCtx.beginPath()
+      testCtx.rect(x, y, width, height)
+      testCtx.fill()
+      testCtx.restore()
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+
+    it('should execute onCanvasNotFound if the canvas does not exist', () => {
+      const x = 10
+      const y = 20
+      const width = 100
+      const height = 200
+      const drawing = D.fill(S.rect(x, y, width, height), D.fillStyle(C.black))
+      const onCanvasNotFound = jest.fn()
+
+      D.renderTo('canvas-not-exists', IO.of(onCanvasNotFound))(D.render(drawing))()
+
+      assert.strictEqual(onCanvasNotFound.mock.calls.length, 1)
     })
   })
 })
