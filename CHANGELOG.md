@@ -28,6 +28,7 @@ high state of flux, you're at risk of it changing without notice.
     - add `getTransform`, `setTransform`, and `setTransformMatrix` (@IMax153)
     - add `getTextBaseline` and `setTextBaseline` (@IMax153)
     - add `drawFocusIfNeeded` (@IMax153)
+    - add `bind` (@IMax153)
   - rename `color` module to `Color` (@IMax153)
     - fix implementation of `toCss` (@IMax153)
     - fix `white` color

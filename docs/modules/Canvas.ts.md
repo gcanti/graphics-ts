@@ -73,6 +73,7 @@ Added in v1.0.0
 - [TextMetrics (interface)](#textmetrics-interface)
 - [FillRule (type alias)](#fillrule-type-alias)
 - [GlobalCompositeOperation (type alias)](#globalcompositeoperation-type-alias)
+- [Handler (type alias)](#handler-type-alias)
 - [ImageSource (type alias)](#imagesource-type-alias)
 - [LineCap (type alias)](#linecap-type-alias)
 - [LineJoin (type alias)](#linejoin-type-alias)
@@ -84,6 +85,7 @@ Added in v1.0.0
 - [arcTo](#arcto)
 - [beginPath](#beginpath)
 - [bezierCurveTo](#beziercurveto)
+- [bind](#bind)
 - [clearRect](#clearrect)
 - [clip](#clip)
 - [closePath](#closepath)
@@ -359,6 +361,18 @@ export type GlobalCompositeOperation =
 
 Added in v1.0.0
 
+# Handler (type alias)
+
+Represents an event handler that can be bound to an `HTMLCanvasElement`.
+
+**Signature**
+
+```ts
+export type Handler<E extends Event> = (e: E) => void
+```
+
+Added in v1.0.0
+
 # ImageSource (type alias)
 
 An element to draw into the HTML canvas context.
@@ -500,6 +514,114 @@ export declare const bezierCurveTo: (
   x: number,
   y: number
 ) => Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
+# bind
+
+Binds an event handler to the canvas element.
+
+**Signature**
+
+```ts
+export declare const bind: <K extends
+  | 'copy'
+  | 'fullscreenchange'
+  | 'fullscreenerror'
+  | 'abort'
+  | 'animationcancel'
+  | 'animationend'
+  | 'animationiteration'
+  | 'animationstart'
+  | 'auxclick'
+  | 'blur'
+  | 'cancel'
+  | 'canplay'
+  | 'canplaythrough'
+  | 'change'
+  | 'click'
+  | 'close'
+  | 'contextmenu'
+  | 'cuechange'
+  | 'dblclick'
+  | 'drag'
+  | 'dragend'
+  | 'dragenter'
+  | 'dragexit'
+  | 'dragleave'
+  | 'dragover'
+  | 'dragstart'
+  | 'drop'
+  | 'durationchange'
+  | 'emptied'
+  | 'ended'
+  | 'error'
+  | 'focus'
+  | 'focusin'
+  | 'focusout'
+  | 'gotpointercapture'
+  | 'input'
+  | 'invalid'
+  | 'keydown'
+  | 'keypress'
+  | 'keyup'
+  | 'load'
+  | 'loadeddata'
+  | 'loadedmetadata'
+  | 'loadend'
+  | 'loadstart'
+  | 'lostpointercapture'
+  | 'mousedown'
+  | 'mouseenter'
+  | 'mouseleave'
+  | 'mousemove'
+  | 'mouseout'
+  | 'mouseover'
+  | 'mouseup'
+  | 'pause'
+  | 'play'
+  | 'playing'
+  | 'pointercancel'
+  | 'pointerdown'
+  | 'pointerenter'
+  | 'pointerleave'
+  | 'pointermove'
+  | 'pointerout'
+  | 'pointerover'
+  | 'pointerup'
+  | 'progress'
+  | 'ratechange'
+  | 'reset'
+  | 'resize'
+  | 'scroll'
+  | 'securitypolicyviolation'
+  | 'seeked'
+  | 'seeking'
+  | 'select'
+  | 'selectionchange'
+  | 'selectstart'
+  | 'stalled'
+  | 'submit'
+  | 'suspend'
+  | 'timeupdate'
+  | 'toggle'
+  | 'touchcancel'
+  | 'touchend'
+  | 'touchmove'
+  | 'touchstart'
+  | 'transitioncancel'
+  | 'transitionend'
+  | 'transitionrun'
+  | 'transitionstart'
+  | 'volumechange'
+  | 'waiting'
+  | 'wheel'
+  | 'cut'
+  | 'paste'>(
+  type: K,
+  f: Handler<HTMLElementEventMap[K]>
+) => Html<HTMLCanvasElement>
 ```
 
 Added in v1.0.0

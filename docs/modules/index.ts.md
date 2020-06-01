@@ -16,6 +16,7 @@ Added in v1.0.0
 - [color](#color)
 - [drawing](#drawing)
 - [font](#font)
+- [shape](#shape)
 
 ---
 
@@ -55,6 +56,16 @@ Added in v1.0.0
 
 ```ts
 export declare const font: typeof font
+```
+
+Added in v1.0.0
+
+# shape
+
+**Signature**
+
+```ts
+export declare const shape: typeof shape
 ```
 
 Added in v1.0.0

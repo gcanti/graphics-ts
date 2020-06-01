@@ -154,6 +154,13 @@ export type GlobalCompositeOperation =
   | 'xor'
 
 /**
+ * Represents an event handler that can be bound to an `HTMLCanvasElement`.
+ *
+ * @since 1.0.0
+ */
+export type Handler<E extends Event> = (e: E) => void
+
+/**
  * An element to draw into the HTML canvas context.
  *
  * @see [MDN Web Docs](https://mzl.la/3bKwLu6)
@@ -1195,3 +1202,16 @@ export const withContext: <A>(f: Render<A>) => Render<A> = (f) =>
  */
 export const renderTo = (canvasId: string, onCanvasNotFound: () => IO.IO<void>) => <A>(r: Render<A>): IO.IO<void> =>
   pipe(getCanvasElementById(canvasId), IO.chain(O.fold(onCanvasNotFound, flow(getContext2D, IO.chain(r)))))
+
+/**
+ * Binds an event handler to the canvas element.
+ *
+ * @since 1.0.0
+ */
+export const bind: <K extends keyof HTMLElementEventMap>(
+  type: K,
+  f: Handler<HTMLElementEventMap[K]>
+) => Html<HTMLCanvasElement> = (t, f) => (c) => () => {
+  c.addEventListener(t, f)
+  return c
+}
