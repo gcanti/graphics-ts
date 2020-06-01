@@ -3,10 +3,12 @@ import * as R from 'fp-ts-contrib/lib/ReaderIO'
 import * as IO from 'fp-ts/lib/IO'
 import * as O from 'fp-ts/lib/Option'
 import * as RA from 'fp-ts/lib/ReadonlyArray'
+import { constVoid } from 'fp-ts/lib/function'
 import { pipe } from 'fp-ts/lib/pipeable'
 
 import * as C from '../src/Canvas'
 import * as Color from '../src/Color'
+import * as D from '../src/Drawing'
 import * as F from '../src/Font'
 import * as S from '../src/Shape'
 import { assertCalledWith } from './utils'
@@ -1691,6 +1693,81 @@ describe('Canvas', () => {
       assertCalledWith(ctx.restore as jest.Mock)
 
       assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+  })
+
+  describe('renderTo', () => {
+    const CANVAS_ID = 'canvas'
+    const TEST_CANVAS_ID = 'test-canvas'
+    const CANVAS_WIDTH = 400
+    const CANVAS_HEIGHT = 600
+
+    let ctx: CanvasRenderingContext2D
+    let testCtx: CanvasRenderingContext2D
+
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <canvas
+          id="${CANVAS_ID}"
+          width="${CANVAS_WIDTH}"
+          height="${CANVAS_HEIGHT}"
+        />
+        <canvas
+          id="${TEST_CANVAS_ID}"
+          width="${CANVAS_WIDTH}"
+          height="${CANVAS_HEIGHT}"
+        />
+      `
+      const canvas = document.getElementById(CANVAS_ID) as HTMLCanvasElement
+      ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+      const testCanvas = document.getElementById(TEST_CANVAS_ID) as HTMLCanvasElement
+      testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D
+    })
+
+    it('should render a Drawing to a canvas that exists', () => {
+      const x = 10
+      const y = 20
+      const width = 100
+      const height = 200
+      const drawing = D.fill(S.rect(x, y, width, height), D.fillStyle(Color.black))
+
+      // Test
+      C.renderTo(CANVAS_ID, IO.of(constVoid))(D.render(drawing))()
+
+      // Actual
+      testCtx.save()
+      testCtx.fillStyle = pipe(Color.black, Color.toCss)
+      testCtx.beginPath()
+      testCtx.rect(x, y, width, height)
+      testCtx.fill()
+      testCtx.restore()
+
+      assert.deepStrictEqual(ctx.__getEvents(), testCtx.__getEvents())
+    })
+
+    it('should execute onCanvasNotFound if the canvas does not exist', () => {
+      const x = 10
+      const y = 20
+      const width = 100
+      const height = 200
+      const drawing = D.fill(S.rect(x, y, width, height), D.fillStyle(Color.black))
+      const onCanvasNotFound = jest.fn()
+
+      C.renderTo('canvas-not-exists', IO.of(onCanvasNotFound))(D.render(drawing))()
+
+      assert.strictEqual(onCanvasNotFound.mock.calls.length, 1)
+    })
+  })
+
+  describe('bind', () => {
+    it('should bind an event handler to the canvas', () => {
+      const mockClickHandler = jest.fn()
+
+      pipe(canvas, C.bind('click', mockClickHandler))()
+
+      canvas.click()
+
+      assert.strictEqual(mockClickHandler.mock.calls.length, 1)
     })
   })
 })
