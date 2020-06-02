@@ -1697,33 +1697,6 @@ describe('Canvas', () => {
   })
 
   describe('renderTo', () => {
-    const CANVAS_ID = 'canvas'
-    const TEST_CANVAS_ID = 'test-canvas'
-    const CANVAS_WIDTH = 400
-    const CANVAS_HEIGHT = 600
-
-    let ctx: CanvasRenderingContext2D
-    let testCtx: CanvasRenderingContext2D
-
-    beforeEach(() => {
-      document.body.innerHTML = `
-        <canvas
-          id="${CANVAS_ID}"
-          width="${CANVAS_WIDTH}"
-          height="${CANVAS_HEIGHT}"
-        />
-        <canvas
-          id="${TEST_CANVAS_ID}"
-          width="${CANVAS_WIDTH}"
-          height="${CANVAS_HEIGHT}"
-        />
-      `
-      const canvas = document.getElementById(CANVAS_ID) as HTMLCanvasElement
-      ctx = canvas.getContext('2d') as CanvasRenderingContext2D
-      const testCanvas = document.getElementById(TEST_CANVAS_ID) as HTMLCanvasElement
-      testCtx = testCanvas.getContext('2d') as CanvasRenderingContext2D
-    })
-
     it('should render a Drawing to a canvas that exists', () => {
       const x = 10
       const y = 20
