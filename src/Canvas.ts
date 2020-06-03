@@ -599,7 +599,7 @@ export const setTextBaseline: (textBaseline: TextBaseline) => Render<CanvasRende
  * @since 1.0.0
  */
 export const arc: (arc: Arc) => Render<CanvasRenderingContext2D> = (a) => (ctx) => () => {
-  ctx.arc(a.x, a.y, a.r, a.start, a.end)
+  ctx.arc(a.x, a.y, a.r, a.start, a.end, a.anticlockwise)
   return ctx
 }
 

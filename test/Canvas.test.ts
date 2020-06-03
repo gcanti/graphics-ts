@@ -341,7 +341,7 @@ describe('Canvas', () => {
       testCtx.arc(arc.x, arc.y, arc.r, arc.start, arc.end)
       testCtx.stroke()
 
-      assertCalledWith(ctx.arc as jest.Mock, arc.x, arc.y, arc.r, arc.start, arc.end)
+      assertCalledWith(ctx.arc as jest.Mock, arc.x, arc.y, arc.r, arc.start, arc.end, arc.anticlockwise)
 
       assert.deepStrictEqual(ctx.__getDrawCalls(), testCtx.__getDrawCalls())
     })
