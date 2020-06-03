@@ -341,7 +341,7 @@ describe('Drawing', () => {
     })
 
     it('should render a filled drawing', () => {
-      const shape = S.ellipse(10, 20, 2, 5, 45, 180, 0, true)
+      const shape = S.ellipse(10, 20, 2, 5, S.degrees(45), S.degrees(180), S.degrees(0), true)
       const drawing = D.fill(shape, D.fillStyle(Color.white))
 
       // Test
@@ -445,7 +445,7 @@ describe('Drawing', () => {
     it('should render a scaled drawing', () => {
       const scaleX = 5
       const scaleY = 5
-      const shape = S.arc(10, 20, 5, 100, 200)
+      const shape = S.arc(10, 20, 5, S.degrees(100), S.degrees(200))
       const drawing = D.scale(scaleX, scaleY, D.outline(shape, D.outlineColor(Color.white)))
 
       // Test

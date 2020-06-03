@@ -331,7 +331,7 @@ describe('Canvas', () => {
 
   describe('arc', () => {
     it('should render an arc to the canvas', () => {
-      const arc = S.arc(100, 75, 50, 0, 2 * Math.PI)
+      const arc = S.arc(100, 75, 50, S.radians(0), S.radians(2 * Math.PI))
 
       // Test
       render(C.strokePath(C.arc(arc)))()
@@ -844,7 +844,11 @@ describe('Canvas', () => {
       const anticlockwise = true
 
       // Test
-      render(C.strokePath(C.ellipse(S.ellipse(x, y, rx, ry, rotation, start, end, anticlockwise))))()
+      render(
+        C.strokePath(
+          C.ellipse(S.ellipse(x, y, rx, ry, S.radians(rotation), S.radians(start), S.radians(end), anticlockwise))
+        )
+      )()
 
       // Actual
       testCtx.beginPath()

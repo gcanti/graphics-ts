@@ -16,6 +16,70 @@ import * as M from 'fp-ts/lib/Monoid'
 export type Shape = Arc | Composite | Ellipse | Path | Rect
 
 /**
+ * Represents an angle specified in either degrees or radians.
+ *
+ * @since 1.0.0
+ */
+export type Angle = Degrees | Radians
+
+/**
+ * Represents an angle specified in degrees.
+ *
+ * @since 1.0.0
+ */
+export interface Degrees {
+  readonly _tag: 'Degrees'
+
+  /**
+   * The angle in degrees.
+   */
+  readonly degrees: number
+}
+
+/**
+ * Represents an angle specified in radians.
+ *
+ * @since 1.0.0
+ */
+export interface Radians {
+  readonly _tag: 'Radians'
+
+  /**
+   * The angle in radians.
+   */
+  readonly radians: number
+}
+
+/**
+ * Constructs an angle specified in degrees.
+ *
+ * @since 1.0.0
+ */
+export const degrees = (degrees: number): Degrees => ({ _tag: 'Degrees', degrees })
+
+/**
+ * Constructs an angle specified in degrees.
+ *
+ * @since 1.0.0
+ */
+export const radians = (radians: number): Radians => ({ _tag: 'Radians', radians })
+
+/**
+ * Converts an angle into radians for use with the canvas.
+ *
+ * @since 1.0.0
+ */
+export const angle = (angle: Angle): number => {
+  switch (angle._tag) {
+    case 'Degrees':
+      return angle.degrees * (Math.PI / 180)
+
+    case 'Radians':
+      return angle.radians
+  }
+}
+
+/**
  * A single point consisting of `x` and `y` coordinates on a two-dimensional plane.
  *
  * @since 1.0.0
@@ -40,7 +104,8 @@ export interface Point {
 export const point = (x: number, y: number): Point => ({ x, y })
 
 /**
- * An arc with center coordinates `x` and `y`, radius `r`, and starting and ending angles `start` and `end`.
+ * An arc with center coordinates `x` and `y`, radius `r`, starting and ending angles `start` and `end`,
+ * and travels in the direction given by `anticlockwise` (defaulting to clockwise)
  *
  * @since 1.0.0
  */
@@ -71,6 +136,11 @@ export interface Arc {
    * The ending angle of the arc.
    */
   readonly end: number
+
+  /**
+   * If `true`, draws the `Arc` in a counter-clockwise direction. Defaults to `false` (clockwise).
+   */
+  readonly anticlockwise: boolean
 }
 
 /**
@@ -78,13 +148,21 @@ export interface Arc {
  *
  * @since 1.0.0
  */
-export const arc = (x: number, y: number, r: number, start: number, end: number): Arc => ({
+export const arc = (
+  x: number,
+  y: number,
+  r: number,
+  start: Angle,
+  end: Angle,
+  anticlockwise: boolean = false
+): Arc => ({
   _tag: 'Arc',
   x,
   y,
   r,
-  start,
-  end
+  start: angle(start),
+  end: angle(end),
+  anticlockwise
 })
 
 /**
@@ -97,8 +175,9 @@ export const circle = (x: number, y: number, r: number): Arc => ({
   x,
   y,
   r,
-  start: 0,
-  end: Math.PI * 2
+  start: angle(radians(0)),
+  end: angle(radians(Math.PI * 2)),
+  anticlockwise: false
 })
 
 /**
@@ -166,7 +245,7 @@ export interface Ellipse {
   readonly end: number
 
   /**
-   * The rotation of the ellipse (specified in radians).
+   * The rotation of the ellipse.
    */
   readonly rotation: number
 
@@ -186,9 +265,9 @@ export const ellipse = (
   y: number,
   rx: number,
   ry: number,
-  rotation: number,
-  start: number,
-  end: number,
+  rotation: Angle,
+  start: Angle,
+  end: Angle,
   anticlockwise: boolean = false
 ): Ellipse => ({
   _tag: 'Ellipse',
@@ -196,9 +275,9 @@ export const ellipse = (
   y,
   rx,
   ry,
-  rotation,
-  start,
-  end,
+  rotation: angle(rotation),
+  start: angle(start),
+  end: angle(end),
   anticlockwise
 })
 

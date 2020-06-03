@@ -45,6 +45,7 @@ high state of flux, you're at risk of it changing without notice.
     - move `path`, `closed`, `rect`, `arc`, `circle`, and `composite` to `Shape` module (@IMax153)
     - convert from classes to static interfaces with associated constructors for all `Shape`s (@IMax153)
     - add `Ellipse` shape with associated `ellipse` constructor (@IMax153)
+    - add `degrees`, `radians`, and `angle` constructors for working with `Angle`s (@IMax153)
 
 # 0.5.0
 

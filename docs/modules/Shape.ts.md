@@ -16,26 +16,33 @@ Added in v1.0.0
 
 - [Arc (interface)](#arc-interface)
 - [Composite (interface)](#composite-interface)
+- [Degrees (interface)](#degrees-interface)
 - [Ellipse (interface)](#ellipse-interface)
 - [Path (interface)](#path-interface)
 - [Point (interface)](#point-interface)
+- [Radians (interface)](#radians-interface)
 - [Rect (interface)](#rect-interface)
+- [Angle (type alias)](#angle-type-alias)
 - [Shape (type alias)](#shape-type-alias)
+- [angle](#angle)
 - [arc](#arc)
 - [circle](#circle)
 - [closed](#closed)
 - [composite](#composite)
+- [degrees](#degrees)
 - [ellipse](#ellipse)
 - [monoidPath](#monoidpath)
 - [path](#path)
 - [point](#point)
+- [radians](#radians)
 - [rect](#rect)
 
 ---
 
 # Arc (interface)
 
-An arc with center coordinates `x` and `y`, radius `r`, and starting and ending angles `start` and `end`.
+An arc with center coordinates `x` and `y`, radius `r`, starting and ending angles `start` and `end`,
+and travels in the direction given by `anticlockwise` (defaulting to clockwise)
 
 **Signature**
 
@@ -67,6 +74,11 @@ export interface Arc {
    * The ending angle of the arc.
    */
   readonly end: number
+
+  /**
+   * If `true`, draws the `Arc` in a counter-clockwise direction. Defaults to `false` (clockwise).
+   */
+  readonly anticlockwise: boolean
 }
 ```
 
@@ -86,6 +98,25 @@ export interface Composite {
    * The list of shapes that compose the composite shape.
    */
   readonly shapes: ReadonlyArray<Shape>
+}
+```
+
+Added in v1.0.0
+
+# Degrees (interface)
+
+Represents an angle specified in degrees.
+
+**Signature**
+
+```ts
+export interface Degrees {
+  readonly _tag: 'Degrees'
+
+  /**
+   * The angle in degrees.
+   */
+  readonly degrees: number
 }
 ```
 
@@ -134,7 +165,7 @@ export interface Ellipse {
   readonly end: number
 
   /**
-   * The rotation of the ellipse (specified in radians).
+   * The rotation of the ellipse.
    */
   readonly rotation: number
 
@@ -193,6 +224,25 @@ export interface Point {
 
 Added in v1.0.0
 
+# Radians (interface)
+
+Represents an angle specified in radians.
+
+**Signature**
+
+```ts
+export interface Radians {
+  readonly _tag: 'Radians'
+
+  /**
+   * The angle in radians.
+   */
+  readonly radians: number
+}
+```
+
+Added in v1.0.0
+
 # Rect (interface)
 
 Represents a rectangle with top-left corner coordinates at `x` and `y`.
@@ -227,6 +277,18 @@ export interface Rect {
 
 Added in v1.0.0
 
+# Angle (type alias)
+
+Represents an angle specified in either degrees or radians.
+
+**Signature**
+
+```ts
+export type Angle = Degrees | Radians
+```
+
+Added in v1.0.0
+
 # Shape (type alias)
 
 Represents a shape that can be drawn.
@@ -239,6 +301,18 @@ export type Shape = Arc | Composite | Ellipse | Path | Rect
 
 Added in v1.0.0
 
+# angle
+
+Converts an angle into radians for use with the canvas.
+
+**Signature**
+
+```ts
+export declare const angle: (angle: Angle) => number
+```
+
+Added in v1.0.0
+
 # arc
 
 Constructs an `Arc` shape.
@@ -246,7 +320,7 @@ Constructs an `Arc` shape.
 **Signature**
 
 ```ts
-export declare const arc: (x: number, y: number, r: number, start: number, end: number) => Arc
+export declare const arc: (x: number, y: number, r: number, start: Angle, end: Angle, anticlockwise?: boolean) => Arc
 ```
 
 Added in v1.0.0
@@ -290,6 +364,18 @@ export declare const composite: (shapes: readonly Shape[]) => Composite
 
 Added in v1.0.0
 
+# degrees
+
+Constructs an angle specified in degrees.
+
+**Signature**
+
+```ts
+export declare const degrees: (degrees: number) => Degrees
+```
+
+Added in v1.0.0
+
 # ellipse
 
 Constructs an `Ellipse` shape.
@@ -302,9 +388,9 @@ export declare const ellipse: (
   y: number,
   rx: number,
   ry: number,
-  rotation: number,
-  start: number,
-  end: number,
+  rotation: Angle,
+  start: Angle,
+  end: Angle,
   anticlockwise?: boolean
 ) => Ellipse
 ```
@@ -346,6 +432,18 @@ Constructs a `Point` from x and y coordinates.
 
 ```ts
 export declare const point: (x: number, y: number) => Point
+```
+
+Added in v1.0.0
+
+# radians
+
+Constructs an angle specified in degrees.
+
+**Signature**
+
+```ts
+export declare const radians: (radians: number) => Radians
 ```
 
 Added in v1.0.0

@@ -12,11 +12,55 @@ describe('Shape', () => {
     })
   })
 
+  describe('degrees', () => {
+    it('should construct an angle in degrees', () => {
+      const degrees = S.degrees(180)
+
+      assert.deepStrictEqual(degrees, { _tag: 'Degrees', degrees: 180 })
+    })
+  })
+
+  describe('radians', () => {
+    it('should construct an angle in radians', () => {
+      const radians = S.radians(Math.PI)
+
+      assert.deepStrictEqual(radians, { _tag: 'Radians', radians: Math.PI })
+    })
+  })
+
+  describe('angle', () => {
+    it('should convert an angle specified in degrees or radians to radians', () => {
+      const degrees = S.degrees(180)
+      const radians = S.radians(Math.PI)
+
+      assert.strictEqual(S.angle(degrees), Math.PI)
+      assert.strictEqual(S.angle(radians), Math.PI)
+    })
+  })
+
   describe('arc', () => {
     it('should construct an arc', () => {
-      const arc = S.arc(10, 20, 5, 50, 100)
+      const clockwiseArc = S.arc(10, 20, 5, S.degrees(90), S.degrees(180))
+      const anticlockwiseArc = S.arc(10, 20, 5, S.degrees(90), S.degrees(180), true)
 
-      assert.deepStrictEqual(arc, { _tag: 'Arc', x: 10, y: 20, r: 5, start: 50, end: 100 })
+      assert.deepStrictEqual(clockwiseArc, {
+        _tag: 'Arc',
+        x: 10,
+        y: 20,
+        r: 5,
+        start: Math.PI / 2,
+        end: Math.PI,
+        anticlockwise: false
+      })
+      assert.deepStrictEqual(anticlockwiseArc, {
+        _tag: 'Arc',
+        x: 10,
+        y: 20,
+        r: 5,
+        start: Math.PI / 2,
+        end: Math.PI,
+        anticlockwise: true
+      })
     })
   })
 
@@ -24,7 +68,15 @@ describe('Shape', () => {
     it('should construct a circle', () => {
       const circle = S.circle(10, 20, 5)
 
-      assert.deepStrictEqual(circle, { _tag: 'Arc', x: 10, y: 20, r: 5, start: 0, end: Math.PI * 2 })
+      assert.deepStrictEqual(circle, {
+        _tag: 'Arc',
+        x: 10,
+        y: 20,
+        r: 5,
+        start: 0,
+        end: Math.PI * 2,
+        anticlockwise: false
+      })
     })
   })
 
@@ -38,7 +90,7 @@ describe('Shape', () => {
       })
       const path = S.monoidPath.concat(firstPath, secondPath)
       const rect = S.rect(10, 20, 100, 200)
-      const arc = S.arc(10, 20, 5, 50, 100)
+      const arc = S.arc(10, 20, 5, S.degrees(90), S.degrees(180))
       const circle = S.circle(10, 20, 5)
 
       const composite = S.composite([path, rect, arc, circle])
@@ -59,8 +111,8 @@ describe('Shape', () => {
             ]
           },
           { _tag: 'Rect', x: 10, y: 20, width: 100, height: 200 },
-          { _tag: 'Arc', x: 10, y: 20, r: 5, start: 50, end: 100 },
-          { _tag: 'Arc', x: 10, y: 20, r: 5, start: 0, end: Math.PI * 2 }
+          { _tag: 'Arc', x: 10, y: 20, r: 5, start: Math.PI / 2, end: Math.PI, anticlockwise: false },
+          { _tag: 'Arc', x: 10, y: 20, r: 5, start: 0, end: Math.PI * 2, anticlockwise: false }
         ]
       })
     })
@@ -68,8 +120,8 @@ describe('Shape', () => {
 
   describe('ellipse', () => {
     it('should construct an ellipse', () => {
-      const clockwiseEllipse = S.ellipse(10, 20, 2, 5, 0, 45, 60)
-      const anticlockwiseEllipse = S.ellipse(10, 20, 2, 5, 0, 45, 60, true)
+      const clockwiseEllipse = S.ellipse(10, 20, 2, 5, S.degrees(0), S.degrees(45), S.degrees(60))
+      const anticlockwiseEllipse = S.ellipse(10, 20, 2, 5, S.degrees(0), S.degrees(45), S.degrees(60), true)
 
       assert.deepStrictEqual(clockwiseEllipse, {
         _tag: 'Ellipse',
@@ -78,10 +130,11 @@ describe('Shape', () => {
         rx: 2,
         ry: 5,
         rotation: 0,
-        start: 45,
-        end: 60,
+        start: Math.PI / 4,
+        end: Math.PI / 3,
         anticlockwise: false
       })
+
       assert.deepStrictEqual(anticlockwiseEllipse, {
         _tag: 'Ellipse',
         x: 10,
@@ -89,8 +142,8 @@ describe('Shape', () => {
         rx: 2,
         ry: 5,
         rotation: 0,
-        start: 45,
-        end: 60,
+        start: Math.PI / 4,
+        end: Math.PI / 3,
         anticlockwise: true
       })
     })
