@@ -1,140 +1,90 @@
-// adapted from https://github.com/purescript-contrib/purescript-drawing/blob/master/test/Main.purs
+/**
+ * Adapted from https://github.com/purescript-contrib/purescript-drawing/blob/master/test/Main.purs
+ */
+import { error } from 'fp-ts/lib/Console'
+import * as IO from 'fp-ts/lib/IO'
+import * as M from 'fp-ts/lib/Monoid'
+import * as O from 'fp-ts/lib/Option'
+import * as RA from 'fp-ts/lib/ReadonlyArray'
+import { flow } from 'fp-ts/lib/function'
+import { pipe } from 'fp-ts/lib/pipeable'
 
-import {
-  shadowColor,
-  shadowBlur,
-  withShadow,
-  translate,
-  scale,
-  Drawing,
-  monoidDrawing,
-  fillColor,
-  closed,
-  fill,
-  rotate,
-  render
-} from '../src/drawing'
-import { unsafeGetCanvasElementById, unsafeGetContext2D } from '../src/canvas'
-import { hsla, black } from '../src/color'
-import { array } from 'fp-ts/lib/Array'
-import { fold } from 'fp-ts/lib/Monoid'
+import * as Color from '../src/Color'
+import * as C from '../src/Canvas'
+import * as D from '../src/Drawing'
+import * as S from '../src/Shape'
 
-const closedArray = closed(array)
+const CANVAS_ONE_ID = 'canvas1'
+const CANVAS_TWO_ID = 'canvas2'
+const SCALE = 0.375
 
-export function ioSnowflake() {
-  const canvas = unsafeGetCanvasElementById('canvas1')
-  const ctx = unsafeGetContext2D(canvas)
+const closedPath = S.closed(RA.readonlyArray)
 
-  const pentagon = [0, 1, 2, 3, 4, 5].map(i => {
-    const theta = Math.PI / 2.5 * i
-    return { x: Math.sin(theta), y: Math.cos(theta) }
-  })
+const colors: ReadonlyArray<Color.Color> = [
+  Color.hsla(60, 0.6, 0.5, 1),
+  Color.hsla(55, 0.65, 0.55, 1),
+  Color.hsla(30, 1, 0.55, 1),
+  Color.hsla(345, 0.62, 0.45, 1),
+  Color.hsla(305, 0.7, 0.28, 1),
+  Color.hsla(268, 1, 0.18, 1),
+  Color.hsla(240, 1, 0.01, 1)
+]
 
-  const s = 0.375
+const pentagon: S.Path = pipe(
+  RA.range(0, 5),
+  RA.map((n) => {
+    const theta = (Math.PI / 2.5) * n
+    return S.point(Math.sin(theta), Math.cos(theta))
+  }),
+  closedPath
+)
 
-  const colors = [
-    hsla(60, 60, 0.5, 1),
-    hsla(55, 65, 0.55, 1),
-    hsla(30, 100, 0.55, 1),
-    hsla(345, 62, 0.45, 1),
-    hsla(305, 70, 0.28, 1),
-    hsla(268, 100, 0.18, 1),
-    hsla(240, 100, 0.01, 1)
-  ]
-
-  const shadow = shadowColor(black).concat(shadowBlur(10))
-  const drawing = withShadow(shadow, translate(300, 300, scale(150, 150, go(6))))
-
-  function go(n: number): Drawing {
-    if (n === 0) {
-      return monoidDrawing.empty
-    }
-    const first = fill(closedArray(pentagon), fillColor(colors[n]))
-    const next = scale(s, s, go(n - 1))
-    const drawings = [first].concat(
-      [0, 1, 2, 3, 4].map(i => {
-        return rotate(Math.PI / 2.5 * (i + 0.5), translate(0, Math.cos(Math.PI / 5) * (1 + s), next))
-      })
-    )
-    return fold(monoidDrawing)(drawings)
+const makeDrawing = (n: number): D.Drawing => {
+  if (n === 0) {
+    return D.monoidDrawing.empty
   }
 
-  return render(drawing, ctx)
+  const first = D.fill(pentagon, D.fillStyle(colors[n]))
+  const next = D.scale(SCALE, SCALE, makeDrawing(n - 1))
+  const drawings = RA.cons(
+    first,
+    pipe(
+      RA.range(0, 4),
+      RA.map((n) => D.rotate((Math.PI / 2.5) * (n + 0.5), D.translate(0, Math.cos(Math.PI / 5) * (1 + SCALE), next)))
+    )
+  )
+
+  return M.fold(D.monoidDrawing)(drawings)
 }
 
-console.time('ioSnowflake')
-ioSnowflake().run()
-console.timeEnd('ioSnowflake')
+const snowflake: C.Render<CanvasRenderingContext2D> = D.render(
+  D.withShadow(
+    M.fold(D.monoidShadow)([D.shadowColor(Color.black), D.shadowBlur(10)]),
+    D.translate(300, 300, D.scale(150, 150, makeDrawing(6)))
+  )
+)
 
-import * as f from '../src/free-canvas'
-import { toCss } from '../src/color'
+/* tslint:disable no-console */
+console.time('snowflake')
+C.renderTo(CANVAS_ONE_ID, () => error(`[ERROR]: Unable to find canvas with id ${CANVAS_ONE_ID}`))(snowflake)()
+console.timeEnd('snowflake')
+/* tslint:enable no-console */
 
-export function freeSnowflake() {
-  const canvas = unsafeGetCanvasElementById('canvas2')
-  const ctx = unsafeGetContext2D(canvas)
+/**
+ * Example of a clipped canvas from [MDN Web Docs](https://mzl.la/3e0mKKx).
+ */
+const clippedRect: C.Render<CanvasRenderingContext2D> = D.render(
+  D.clipped(
+    S.circle(100, 75, 50),
+    D.many([
+      D.fill(S.rect(0, 0, 300, 150), D.fillStyle(Color.hsl(240, 1, 0.5))),
+      D.fill(S.rect(0, 0, 100, 100), D.fillStyle(Color.hsl(0, 1, 0.5)))
+    ])
+  )
+)
 
-  const pentagon = [0, 1, 2, 3, 4, 5].map(i => {
-    const theta = Math.PI / 2.5 * i
-    return { x: Math.sin(theta), y: Math.cos(theta) }
-  })
-
-  const s = 0.375
-
-  const colors = [
-    hsla(60, 60, 0.5, 1),
-    hsla(55, 65, 0.55, 1),
-    hsla(30, 100, 0.55, 1),
-    hsla(345, 62, 0.45, 1),
-    hsla(305, 70, 0.28, 1),
-    hsla(268, 100, 0.18, 1),
-    hsla(240, 100, 0.01, 1)
-  ]
-
-  const drawings = go(6)
-
-  function go(n: number): Array<f.Drawing<undefined>> {
-    const first = f.withContext(
-      f
-        .setFillStyle(toCss(colors[n]))
-        .chain(() => f.beginPath())
-        .chain(() => f.moveTo(pentagon[0].x, pentagon[0].y))
-        .chain(() => f.lineTo(pentagon[1].x, pentagon[1].y))
-        .chain(() => f.lineTo(pentagon[2].x, pentagon[2].y))
-        .chain(() => f.lineTo(pentagon[3].x, pentagon[3].y))
-        .chain(() => f.lineTo(pentagon[4].x, pentagon[4].y))
-        .chain(() => f.lineTo(pentagon[5].x, pentagon[5].y))
-        .chain(() => f.closePath())
-        .chain(() => f.fill())
-    )
-    if (n === 1) {
-      return [first]
-    }
-    const next = go(n - 1).map(d => f.withContext(f.scale(s, s).chain(() => d)))
-    const flakes = array.chain(next, x =>
-      [0, 1, 2, 3, 4].map(i => {
-        return f.withContext(
-          f
-            .rotate(Math.PI / 2.5 * (i + 0.5))
-            .chain(() => f.withContext(f.translate(0, Math.cos(Math.PI / 5) * (1 + s)).chain(() => x)))
-        )
-      })
-    )
-    return [first].concat(flakes)
-  }
-
-  drawings.forEach(drawing => {
-    f.run(
-      f
-        .setShadowColor(toCss(black))
-        .chain(() => f.setShadowBlur(10))
-        .chain(() =>
-          f.withContext(f.translate(300, 300).chain(() => f.withContext(f.scale(150, 150).chain(() => drawing))))
-        ),
-      ctx
-    )
-  })
-}
-
-console.time('freeSnowflake')
-freeSnowflake()
-console.timeEnd('freeSnowflake')
+/* tslint:disable no-console */
+console.time('clippedRect')
+C.renderTo(CANVAS_TWO_ID, () => error(`[ERROR]: Unable to find canvas with id ${CANVAS_TWO_ID}`))(clippedRect)()
+console.timeEnd('clippedRect')
+/* tslint:enable no-console */

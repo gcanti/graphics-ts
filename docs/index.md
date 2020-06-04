@@ -1,3 +1,8 @@
+---
+title: Home
+nav_order: 1
+---
+
 ## Functional bindings for the HTML Canvas API
 
 **Inspired by**
@@ -11,10 +16,10 @@
 To install the stable version:
 
 ```
-npm install graphics-ts fp-ts fp-ts-contrib
+npm install graphics-ts fp-ts
 ```
 
-Note: `fp-ts` and `fp-ts-contrib` are peer dependencies for `graphics-ts`
+Note: `fp-ts` is a peer dependency for `graphics-ts`
 
 # Documentation
 
@@ -30,6 +35,6 @@ npm start
 open example/test.html
 ```
 
-<img alt="snowflake" src="./example/snowflake.png" style="display: block; width: 400px; margin-bottom: 1em;">
+<img alt="snowflake" src="./snowflake.png" style="display: block; width: 400px; margin-bottom: 1em;">
 
 Adapted from https://github.com/purescript-contrib/purescript-drawing/blob/master/test/Main.purs
