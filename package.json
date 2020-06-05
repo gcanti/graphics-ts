@@ -1,6 +1,6 @@
 {
   "name": "graphics-ts",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "A porting of purescript-{canvas, free-canvas, drawing} featuring fp-ts",
   "files": [
     "lib",
