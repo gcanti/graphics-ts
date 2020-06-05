@@ -19,10 +19,11 @@
     "test": "npm run lint && npm run prettier && npm run jest-clear-cache && npm run jest",
     "clean": "rimraf lib/* es6/*",
     "prebuild": "npm run clean",
-    "build": "tsc -p ./tsconfig.build.json && tsc -p ./tsconfig.build-es6.json",
+    "build": "tsc -p ./tsconfig.build.json && tsc -p ./tsconfig.build-es6.json && npm run import-path-rewrite",
     "postbuild": "prettier --write \"./{lib,es6}/**/*.ts\"",
     "start": "webpack-dev-server --config=example/webpack.config.js",
-    "docs": "docs-ts"
+    "docs": "docs-ts",
+    "import-path-rewrite": "import-path-rewrite"
   },
   "repository": {
     "type": "git",
@@ -47,6 +48,7 @@
     "fp-ts-contrib": "^0.1.15",
     "glob": "^7.1.6",
     "html-webpack-plugin": "^4.3.0",
+    "import-path-rewrite": "github:gcanti/import-path-rewrite",
     "jest": "^26.0.1",
     "jest-canvas-mock": "^2.2.0",
     "prettier": "^2.0.5",
