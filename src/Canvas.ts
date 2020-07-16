@@ -65,11 +65,16 @@ import { pipe } from 'fp-ts/lib/pipeable'
 
 import { Arc, Ellipse, Point, Rect } from './Shape'
 
+// -------------------------------------------------------------------------------------
+// model
+// -------------------------------------------------------------------------------------
+
 /**
  * Represents the management of a `CanvasGradient` as *reading* from the `CanvasGradient` and
  * returning a type `A` wrapped in an `IO`. In other words, we can say that when we are managing
  * a `CanvasGradient` we are yielding an `Gradient` effect.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Gradient<A> extends R.ReaderIO<CanvasGradient, A> {}
@@ -79,6 +84,7 @@ export interface Gradient<A> extends R.ReaderIO<CanvasGradient, A> {}
  * and returning a type `A` wrapped in an `IO`. In other words, we can say that when we are
  * managing an `HTMLCanvasElement` we are yielding an `Html` effect.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Html<A> extends R.ReaderIO<HTMLCanvasElement, A> {}
@@ -88,6 +94,7 @@ export interface Html<A> extends R.ReaderIO<HTMLCanvasElement, A> {}
  * `CanvasRenderingContext2D` and returning a type `A` wrapped in an `IO`. In other words, we can
  * say that when we are managing a `CanvasRenderingContext2D` we are yielding an `Render` effect.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Render<A> extends R.ReaderIO<CanvasRenderingContext2D, A> {}
@@ -95,6 +102,7 @@ export interface Render<A> extends R.ReaderIO<CanvasRenderingContext2D, A> {}
 /**
  * Represents the dimensions of the HTML canvas.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface CanvasDimensions {
@@ -114,6 +122,7 @@ export interface CanvasDimensions {
  *
  * @see [MDN Web Docs](https://mzl.la/2zaDdNu)
  *
+ * @category model
  * @since 1.0.0
  */
 export type FillRule = 'evenodd' | 'nonzero'
@@ -123,6 +132,7 @@ export type FillRule = 'evenodd' | 'nonzero'
  *
  * @see [MDN Web Docs](https://mzl.la/36gbsz7)
  *
+ * @category model
  * @since 1.0.0
  */
 export type GlobalCompositeOperation =
@@ -154,17 +164,11 @@ export type GlobalCompositeOperation =
   | 'xor'
 
 /**
- * Represents an event handler that can be bound to an `HTMLCanvasElement`.
- *
- * @since 1.0.0
- */
-export type Handler<E extends Event> = (e: E) => void
-
-/**
  * An element to draw into the HTML canvas context.
  *
  * @see [MDN Web Docs](https://mzl.la/3bKwLu6)
  *
+ * @category model
  * @since 1.0.0
  */
 export type ImageSource = HTMLCanvasElement | HTMLImageElement | HTMLVideoElement
@@ -174,6 +178,7 @@ export type ImageSource = HTMLCanvasElement | HTMLImageElement | HTMLVideoElemen
  *
  * @see [MDN Web Docs](https://mzl.la/2zOVZtS)
  *
+ * @category model
  * @since 1.0.0
  */
 export type LineCap = 'butt' | 'round' | 'square'
@@ -183,6 +188,7 @@ export type LineCap = 'butt' | 'round' | 'square'
  *
  * @see [MDN Web Docs](https://mzl.la/3cMHqFU)
  *
+ * @category model
  * @since 1.0.0
  */
 export type LineJoin = 'bevel' | 'miter' | 'round'
@@ -192,6 +198,7 @@ export type LineJoin = 'bevel' | 'miter' | 'round'
  *
  * @see [MDN Web Docs](https://mzl.la/3bN4nHJ)
  *
+ * @category model
  * @since 1.0.0
  */
 export type PatternRepetition = 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y'
@@ -201,6 +208,7 @@ export type PatternRepetition = 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y'
  *
  * @see [MDN Web Docs](https://mzl.la/2TkO2TY)
  *
+ * @category model
  * @since 1.0.0
  */
 export type TextAlign = 'center' | 'end' | 'left' | 'right' | 'start'
@@ -210,6 +218,7 @@ export type TextAlign = 'center' | 'end' | 'left' | 'right' | 'start'
  *
  * @see [MDN Web Docs](https://mzl.la/2XG6KH1)
  *
+ * @category model
  * @since 1.0.0
  */
 export type TextBaseline = 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' | 'middle' | 'top'
@@ -219,6 +228,7 @@ export type TextBaseline = 'alphabetic' | 'bottom' | 'hanging' | 'ideographic' |
  *
  * @see [MDN Web Docs](https://mzl.la/3g0OCQG)
  *
+ * @category model
  * @since 1.0.0
  */
 export interface TextMetrics {
@@ -294,13 +304,14 @@ export interface TextMetrics {
   readonly width: number
 }
 
-// ==================
-// HTMLCanvasElement
-// ==================
+// -------------------------------------------------------------------------------------
+// constructors
+// -------------------------------------------------------------------------------------
 
 /**
  * **[UNSAFE]** Gets a canvas element by id.
  *
+ * @category constructors
  * @since 1.0.0
  */
 export const unsafeGetCanvasElementById: (id: string) => HTMLCanvasElement = (id) =>
@@ -309,6 +320,7 @@ export const unsafeGetCanvasElementById: (id: string) => HTMLCanvasElement = (id
 /**
  * **[UNSAFE]** Gets the 2D graphics context for a canvas element.
  *
+ * @category constructors
  * @since 1.0.0
  */
 export const unsafeGetContext2D: (canvas: HTMLCanvasElement) => CanvasRenderingContext2D = (c) =>
@@ -318,6 +330,7 @@ export const unsafeGetContext2D: (canvas: HTMLCanvasElement) => CanvasRenderingC
  * Gets an canvas element by id, or `None` if the element does not exist or is not an
  * instance of `HTMLCanvasElement`.
  *
+ * @category constructors
  * @since 1.0.0
  */
 export const getCanvasElementById: (id: string) => IO.IO<O.Option<HTMLCanvasElement>> = (id) => () => {
@@ -325,9 +338,14 @@ export const getCanvasElementById: (id: string) => IO.IO<O.Option<HTMLCanvasElem
   return canvas instanceof HTMLCanvasElement ? O.some(canvas) : O.none
 }
 
+// -------------------------------------------------------------------------------------
+// combinators
+// -------------------------------------------------------------------------------------
+
 /**
  * Gets the 2D graphics context for a canvas element.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const getContext2D: Html<CanvasRenderingContext2D> = (c) => IO.of(unsafeGetContext2D(c))
@@ -335,6 +353,7 @@ export const getContext2D: Html<CanvasRenderingContext2D> = (c) => IO.of(unsafeG
 /**
  * Gets the canvas width in pixels.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const getWidth: Html<number> = (c) => () => c.width
@@ -342,6 +361,7 @@ export const getWidth: Html<number> = (c) => () => c.width
 /**
  * Sets the width of the canvas in pixels.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setWidth: (width: number) => Html<HTMLCanvasElement> = (w) => (c) => () => {
@@ -352,6 +372,7 @@ export const setWidth: (width: number) => Html<HTMLCanvasElement> = (w) => (c) =
 /**
  * Gets the canvas height in pixels.
  *
+ *  @category combinators
  * @since 1.0.0
  */
 export const getHeight: Html<number> = (c) => () => c.height
@@ -359,6 +380,7 @@ export const getHeight: Html<number> = (c) => () => c.height
 /**
  * Sets the height of the canvas in pixels.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setHeight: (height: number) => Html<HTMLCanvasElement> = (h) => (c) => () => {
@@ -369,6 +391,7 @@ export const setHeight: (height: number) => Html<HTMLCanvasElement> = (h) => (c)
 /**
  * Gets the dimensions of the canvas in pixels.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const getDimensions: Html<CanvasDimensions> = (c) =>
@@ -377,6 +400,7 @@ export const getDimensions: Html<CanvasDimensions> = (c) =>
 /**
  * Sets the dimensions of the canvas in pixels.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setDimensions: (dimensions: CanvasDimensions) => Html<HTMLCanvasElement> = (d) =>
@@ -388,17 +412,15 @@ export const setDimensions: (dimensions: CanvasDimensions) => Html<HTMLCanvasEle
 /**
  * Create a data URL for the canvas.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const toDataURL: Html<string> = (c) => () => c.toDataURL()
 
-// =========================
-// CanvasRenderingContext2D
-// =========================
-
 /**
  * Sets the current fill style for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setFillStyle: (style: string | CanvasGradient | CanvasPattern) => Render<CanvasRenderingContext2D> = (
@@ -411,6 +433,7 @@ export const setFillStyle: (style: string | CanvasGradient | CanvasPattern) => R
 /**
  * Gets the current font.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const getFont: Render<string> = (ctx) => () => ctx.font
@@ -418,6 +441,7 @@ export const getFont: Render<string> = (ctx) => () => ctx.font
 /**
  * Sets the current font.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setFont: (font: string) => Render<CanvasRenderingContext2D> = (f) => (ctx) => () => {
@@ -428,6 +452,7 @@ export const setFont: (font: string) => Render<CanvasRenderingContext2D> = (f) =
 /**
  * Sets the current global alpha for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setGlobalAlpha: (alpha: number) => Render<CanvasRenderingContext2D> = (a) => (ctx) => () => {
@@ -438,6 +463,7 @@ export const setGlobalAlpha: (alpha: number) => Render<CanvasRenderingContext2D>
 /**
  * Sets the current global composite operation type for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setGlobalCompositeOperation: (
@@ -451,6 +477,7 @@ export const setGlobalCompositeOperation: (
  * Sets the current image smoothing property for the canvas context. Determines whether scaled images are smoothed
  * (`true`, default) or not (`false`).
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setImageSmoothingEnabled: (value: boolean) => Render<CanvasRenderingContext2D> = (v) => (ctx) => () => {
@@ -461,6 +488,7 @@ export const setImageSmoothingEnabled: (value: boolean) => Render<CanvasRenderin
 /**
  * Sets the current line cap type for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setLineCap: (cap: LineCap) => Render<CanvasRenderingContext2D> = (c) => (ctx) => () => {
@@ -471,6 +499,7 @@ export const setLineCap: (cap: LineCap) => Render<CanvasRenderingContext2D> = (c
 /**
  * Sets the current line dash offset, or "phase", for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setLineDashOffset: (offset: number) => Render<CanvasRenderingContext2D> = (o) => (ctx) => () => {
@@ -481,6 +510,7 @@ export const setLineDashOffset: (offset: number) => Render<CanvasRenderingContex
 /**
  * Sets the current line join type for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setLineJoin: (join: LineJoin) => Render<CanvasRenderingContext2D> = (j) => (ctx) => () => {
@@ -491,6 +521,7 @@ export const setLineJoin: (join: LineJoin) => Render<CanvasRenderingContext2D> =
 /**
  * Sets the current line width for the canvas context in pixels.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setLineWidth: (width: number) => Render<CanvasRenderingContext2D> = (w) => (ctx) => () => {
@@ -501,6 +532,7 @@ export const setLineWidth: (width: number) => Render<CanvasRenderingContext2D> =
 /**
  * Sets the current miter limit for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setMiterLimit: (limit: number) => Render<CanvasRenderingContext2D> = (l) => (ctx) => () => {
@@ -511,7 +543,8 @@ export const setMiterLimit: (limit: number) => Render<CanvasRenderingContext2D> 
 /**
  * Sets the current shadow blur radius for the canvas context.
  *
- *  @since 1.0.0
+ * @category combinators
+ * @since 1.0.0
  */
 export const setShadowBlur: (blur: number) => Render<CanvasRenderingContext2D> = (b) => (ctx) => () => {
   ctx.shadowBlur = b
@@ -520,7 +553,9 @@ export const setShadowBlur: (blur: number) => Render<CanvasRenderingContext2D> =
 
 /**
  * Sets the current shadow color for the canvas context.
- *  @since 1.0.0
+ *
+ * @category combinators
+ * @since 1.0.0
  */
 export const setShadowColor: (color: string) => Render<CanvasRenderingContext2D> = (c) => (ctx) => () => {
   ctx.shadowColor = c
@@ -530,6 +565,7 @@ export const setShadowColor: (color: string) => Render<CanvasRenderingContext2D>
 /**
  * Sets the current shadow x-offset for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setShadowOffsetX: (offsetX: number) => Render<CanvasRenderingContext2D> = (ox) => (ctx) => () => {
@@ -540,6 +576,7 @@ export const setShadowOffsetX: (offsetX: number) => Render<CanvasRenderingContex
 /**
  * Sets the current shadow y-offset for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setShadowOffsetY: (offsetY: number) => Render<CanvasRenderingContext2D> = (oy) => (ctx) => () => {
@@ -550,6 +587,7 @@ export const setShadowOffsetY: (offsetY: number) => Render<CanvasRenderingContex
 /**
  * Sets the current stroke style for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setStrokeStyle: (style: string) => Render<CanvasRenderingContext2D> = (s) => (ctx) => () => {
@@ -560,6 +598,7 @@ export const setStrokeStyle: (style: string) => Render<CanvasRenderingContext2D>
 /**
  * Gets the current text alignment.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const getTextAlign: Render<TextAlign> = (ctx) => () => ctx.textAlign
@@ -567,6 +606,7 @@ export const getTextAlign: Render<TextAlign> = (ctx) => () => ctx.textAlign
 /**
  * Sets the current text alignment.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setTextAlign: (textAlign: TextAlign) => Render<CanvasRenderingContext2D> = (ta) => (ctx) => () => {
@@ -577,6 +617,7 @@ export const setTextAlign: (textAlign: TextAlign) => Render<CanvasRenderingConte
 /**
  * Gets the current text baseline.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const getTextBaseline: Render<TextBaseline> = (ctx) => () => ctx.textBaseline
@@ -584,6 +625,7 @@ export const getTextBaseline: Render<TextBaseline> = (ctx) => () => ctx.textBase
 /**
  * Sets the current text baseline.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setTextBaseline: (textBaseline: TextBaseline) => Render<CanvasRenderingContext2D> = (tb) => (
@@ -596,6 +638,7 @@ export const setTextBaseline: (textBaseline: TextBaseline) => Render<CanvasRende
 /**
  * Render an arc.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const arc: (arc: Arc) => Render<CanvasRenderingContext2D> = (a) => (ctx) => () => {
@@ -606,6 +649,7 @@ export const arc: (arc: Arc) => Render<CanvasRenderingContext2D> = (a) => (ctx) 
 /**
  * Render an arc that is automatically connected to the path's latest point.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const arcTo: (
@@ -622,6 +666,7 @@ export const arcTo: (
 /**
  * Begin a path on the canvas.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const beginPath: Render<CanvasRenderingContext2D> = (ctx) => () => {
@@ -632,6 +677,7 @@ export const beginPath: Render<CanvasRenderingContext2D> = (ctx) => () => {
 /**
  * Draw a cubic Bézier curve.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const bezierCurveTo: (
@@ -649,6 +695,7 @@ export const bezierCurveTo: (
 /**
  * Set the pixels in the specified rectangle back to transparent black.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const clearRect: (rect: Rect) => Render<CanvasRenderingContext2D> = (r) => (ctx) => () => {
@@ -659,6 +706,7 @@ export const clearRect: (rect: Rect) => Render<CanvasRenderingContext2D> = (r) =
 /**
  * Clip the current path on the canvas.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const clip: (fillRule?: FillRule, path?: Path2D) => Render<CanvasRenderingContext2D> = (f, p) => (ctx) => () => {
@@ -675,6 +723,7 @@ export const clip: (fillRule?: FillRule, path?: Path2D) => Render<CanvasRenderin
 /**
  * Closes the current canvas path.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const closePath: Render<CanvasRenderingContext2D> = (ctx) => () => {
@@ -685,6 +734,7 @@ export const closePath: Render<CanvasRenderingContext2D> = (ctx) => () => {
 /**
  * Gets `ImageData` for the specified rectangle.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const createImageData: (sw: number, sh: number) => Render<ImageData> = (sw, sh) => (ctx) => () =>
@@ -693,6 +743,7 @@ export const createImageData: (sw: number, sh: number) => Render<ImageData> = (s
 /**
  * Creates a copy of an existing `ImageData` object.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const createImageDataCopy: (imageData: ImageData) => Render<ImageData> = (data) => (ctx) => () =>
@@ -701,6 +752,7 @@ export const createImageDataCopy: (imageData: ImageData) => Render<ImageData> = 
 /**
  * Creates a linear `CanvasGradient` object.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const createLinearGradient: (x0: number, y0: number, x1: number, y1: number) => Render<CanvasGradient> = (
@@ -713,6 +765,7 @@ export const createLinearGradient: (x0: number, y0: number, x1: number, y1: numb
 /**
  * Creates a new canvas pattern (repeatable image).
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const createPattern: (
@@ -723,6 +776,7 @@ export const createPattern: (
 /**
  * Creates a radial `CanvasGradient` object.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const createRadialGradient: (
@@ -738,6 +792,7 @@ export const createRadialGradient: (
 /**
  * Draws a focus ring around the current or given path, if the specified element is focused.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const drawFocusIfNeeded: (element: HTMLElement, path?: Path2D) => Render<CanvasRenderingContext2D> = (el, p) => (
@@ -754,6 +809,7 @@ export const drawFocusIfNeeded: (element: HTMLElement, path?: Path2D) => Render<
 /**
  * Render an image.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const drawImage: (
@@ -768,6 +824,7 @@ export const drawImage: (
 /**
  * Draws an image to the canvas.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const drawImageScale: (
@@ -784,6 +841,7 @@ export const drawImageScale: (
 /**
  * Draws an image to the canvas.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const drawImageFull: (
@@ -804,6 +862,7 @@ export const drawImageFull: (
 /**
  * Render an ellipse.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const ellipse: (ellipse: Ellipse) => Render<CanvasRenderingContext2D> = (e) => (ctx) => () => {
@@ -814,6 +873,7 @@ export const ellipse: (ellipse: Ellipse) => Render<CanvasRenderingContext2D> = (
 /**
  * Fill the current path on the canvas.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const fill: (fillRule?: FillRule, path?: Path2D) => Render<CanvasRenderingContext2D> = (f, p) => (ctx) => () => {
@@ -830,6 +890,7 @@ export const fill: (fillRule?: FillRule, path?: Path2D) => Render<CanvasRenderin
 /**
  * Render a filled rectangle.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const fillRect: (rect: Rect) => Render<CanvasRenderingContext2D> = (r) => (ctx) => () => {
@@ -840,6 +901,7 @@ export const fillRect: (rect: Rect) => Render<CanvasRenderingContext2D> = (r) =>
 /**
  * Render filled text.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const fillText: (text: string, x: number, y: number, maxWidth?: number) => Render<CanvasRenderingContext2D> = (
@@ -859,6 +921,7 @@ export const fillText: (text: string, x: number, y: number, maxWidth?: number) =
 /**
  * Gets the image data for the specified portion of the canvas.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const getImageData: (rect: Rect) => Render<ImageData> = (r) => (ctx) => () =>
@@ -867,6 +930,7 @@ export const getImageData: (rect: Rect) => Render<ImageData> = (r) => (ctx) => (
 /**
  * Gets the current line dash pattern for the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const getLineDash: Render<ReadonlyArray<number>> = (ctx) => () => RA.fromArray(ctx.getLineDash())
@@ -874,6 +938,7 @@ export const getLineDash: Render<ReadonlyArray<number>> = (ctx) => () => RA.from
 /**
  * Gets the current transformation matrix being applied to the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const getTransform: Render<DOMMatrix> = (ctx) => () => ctx.getTransform()
@@ -881,6 +946,7 @@ export const getTransform: Render<DOMMatrix> = (ctx) => () => ctx.getTransform()
 /**
  * Determines if the specified point is contained in the current path.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const isPointInPath: (point: Point, fillRule?: FillRule, path?: Path2D) => Render<boolean> = (p, rule, path) => (
@@ -896,6 +962,7 @@ export const isPointInPath: (point: Point, fillRule?: FillRule, path?: Path2D) =
 /**
  * Determines if the specified point is inside the area contained by the stroking of a path.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const isPointInStroke: (point: Point, path?: Path2D) => Render<boolean> = (p, path) => (ctx) => () => {
@@ -905,6 +972,7 @@ export const isPointInStroke: (point: Point, path?: Path2D) => Render<boolean> =
 /**
  * Move the canvas path to the specified point while drawing a line segment.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const lineTo: (point: Point) => Render<CanvasRenderingContext2D> = (p) => (ctx) => () => {
@@ -915,6 +983,7 @@ export const lineTo: (point: Point) => Render<CanvasRenderingContext2D> = (p) =>
 /**
  * Get the text measurements for the specified text.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const measureText: (text: string) => Render<TextMetrics> = (t) => (ctx) => () => ctx.measureText(t)
@@ -922,6 +991,7 @@ export const measureText: (text: string) => Render<TextMetrics> = (t) => (ctx) =
 /**
  * Move the canvas path to the specified point without drawing a line segment.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const moveTo: (point: Point) => Render<CanvasRenderingContext2D> = (p) => (ctx) => () => {
@@ -932,6 +1002,7 @@ export const moveTo: (point: Point) => Render<CanvasRenderingContext2D> = (p) =>
 /**
  * Sets the image data for the specified portion of the canvas.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const putImageData: (imageData: ImageData, dx: number, dy: number) => Render<CanvasRenderingContext2D> = (
@@ -946,6 +1017,7 @@ export const putImageData: (imageData: ImageData, dx: number, dy: number) => Ren
 /**
  * Sets the image data for the specified portion of the canvas.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const putImageDataFull: (
@@ -962,8 +1034,9 @@ export const putImageDataFull: (
 }
 
 /**
- * Draws a quadratic Bézier curve.d
+ * Draws a quadratic Bézier curve.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const quadraticCurveTo: (cpx: number, cpy: number, x: number, y: number) => Render<CanvasRenderingContext2D> = (
@@ -979,6 +1052,7 @@ export const quadraticCurveTo: (cpx: number, cpy: number, x: number, y: number) 
 /**
  * Render a rectangle.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const rect: (rect: Rect) => Render<CanvasRenderingContext2D> = (r) => (ctx) => () => {
@@ -989,6 +1063,7 @@ export const rect: (rect: Rect) => Render<CanvasRenderingContext2D> = (r) => (ct
 /**
  * Restore the previous canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const restore: Render<CanvasRenderingContext2D> = (ctx) => () => {
@@ -999,6 +1074,7 @@ export const restore: Render<CanvasRenderingContext2D> = (ctx) => () => {
 /**
  * Apply rotation to the current canvas context transform.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const rotate: (angle: number) => Render<CanvasRenderingContext2D> = (a) => (ctx) => () => {
@@ -1009,6 +1085,7 @@ export const rotate: (angle: number) => Render<CanvasRenderingContext2D> = (a) =
 /**
  * Save the current canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const save: Render<CanvasRenderingContext2D> = (ctx) => () => {
@@ -1019,6 +1096,7 @@ export const save: Render<CanvasRenderingContext2D> = (ctx) => () => {
 /**
  * Apply scale to the current canvas context transform.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const scale: (scaleX: number, scaleY: number) => Render<CanvasRenderingContext2D> = (x, y) => (ctx) => () => {
@@ -1029,6 +1107,7 @@ export const scale: (scaleX: number, scaleY: number) => Render<CanvasRenderingCo
 /**
  * Sets the current line dash pattern used when stroking lines.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setLineDash: (segments: ReadonlyArray<number>) => Render<CanvasRenderingContext2D> = (ss) => (
@@ -1042,6 +1121,7 @@ export const setLineDash: (segments: ReadonlyArray<number>) => Render<CanvasRend
  * Resets the current transformation to the identity matrix, and then applies the transform specified
  * to the current canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setTransform: (
@@ -1060,6 +1140,7 @@ export const setTransform: (
  * Resets the current transformation to the identity matrix, and then applies the transform specified
  * to the current canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const setTransformMatrix: (matrix: DOMMatrix) => Render<CanvasRenderingContext2D> = (matrix) => (ctx) => () => {
@@ -1070,6 +1151,7 @@ export const setTransformMatrix: (matrix: DOMMatrix) => Render<CanvasRenderingCo
 /**
  * Stroke the current path on the canvas.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const stroke: (path?: Path2D) => Render<CanvasRenderingContext2D> = (p) => (ctx) => () => {
@@ -1084,6 +1166,7 @@ export const stroke: (path?: Path2D) => Render<CanvasRenderingContext2D> = (p) =
 /**
  * Render a stroked rectangle.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const strokeRect: (r: Rect) => Render<CanvasRenderingContext2D> = (r) => (ctx) => () => {
@@ -1094,6 +1177,7 @@ export const strokeRect: (r: Rect) => Render<CanvasRenderingContext2D> = (r) => 
 /**
  * Render stroked text.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const strokeText: (text: string, x: number, y: number, maxWidth?: number) => Render<CanvasRenderingContext2D> = (
@@ -1113,6 +1197,7 @@ export const strokeText: (text: string, x: number, y: number, maxWidth?: number)
 /**
  * Apply the specified transformation matrix to the canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const transform: (
@@ -1130,6 +1215,7 @@ export const transform: (
 /**
  * Translate the current canvas context transform.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const translate: (translateX: number, translateY: number) => Render<CanvasRenderingContext2D> = (x, y) => (
@@ -1139,13 +1225,10 @@ export const translate: (translateX: number, translateY: number) => Render<Canva
   return ctx
 }
 
-// ===============
-// CanvasGradient
-// ===============
-
 /**
  * Add a single color stop to a `CanvasGradient` object.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const addColorStop: (offset: number, color: string) => Gradient<CanvasGradient> = (o, c) => (g) => () => {
@@ -1153,13 +1236,10 @@ export const addColorStop: (offset: number, color: string) => Gradient<CanvasGra
   return g
 }
 
-// ==========
-// Utilities
-// ==========
-
 /**
  * Convenience function for drawing a filled path.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const fillPath: <A>(f: Render<A>) => Render<A> = (f) =>
@@ -1172,6 +1252,7 @@ export const fillPath: <A>(f: Render<A>) => Render<A> = (f) =>
 /**
  * Convenience function for drawing a stroked path.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const strokePath: <A>(f: Render<A>) => Render<A> = (f) =>
@@ -1185,6 +1266,7 @@ export const strokePath: <A>(f: Render<A>) => Render<A> = (f) =>
  * A convenience function which allows for running an action while preserving the existing
  * canvas context.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const withContext: <A>(f: Render<A>) => Render<A> = (f) =>
@@ -1195,17 +1277,9 @@ export const withContext: <A>(f: Render<A>) => Render<A> = (f) =>
   )
 
 /**
- * Executes a `Render` effect for a canvas with the specified `canvasId`, or `onCanvasNotFound()` if a canvas with
- * the specified `canvasId` does not exist.
- *
- * @since 1.0.0
- */
-export const renderTo = (canvasId: string, onCanvasNotFound: () => IO.IO<void>) => <A>(r: Render<A>): IO.IO<void> =>
-  pipe(getCanvasElementById(canvasId), IO.chain(O.fold(onCanvasNotFound, flow(getContext2D, IO.chain(r)))))
-
-/**
  * Binds an event handler to the canvas element.
  *
+ * @category combinators
  * @since 1.1.0
  */
 export const bind = <K extends keyof HTMLElementEventMap, A>(
@@ -1215,3 +1289,16 @@ export const bind = <K extends keyof HTMLElementEventMap, A>(
   ctx.canvas.addEventListener(type, (e) => f(e)(ctx)())
   return ctx
 }
+
+// -------------------------------------------------------------------------------------
+// utils
+// -------------------------------------------------------------------------------------
+
+/**
+ * Executes a `Render` effect for a canvas with the specified `canvasId`, or `onCanvasNotFound()` if a canvas with
+ * the specified `canvasId` does not exist.
+ *
+ * @since 1.0.0
+ */
+export const renderTo = (canvasId: string, onCanvasNotFound: () => IO.IO<void>) => <A>(r: Render<A>): IO.IO<void> =>
+  pipe(getCanvasElementById(canvasId), IO.chain(O.fold(onCanvasNotFound, flow(getContext2D, IO.chain(r)))))
