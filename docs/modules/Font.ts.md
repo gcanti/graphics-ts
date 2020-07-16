@@ -4,7 +4,7 @@ nav_order: 4
 parent: Modules
 ---
 
-# Font overview
+## Font overview
 
 Added in v1.0.0
 
@@ -12,17 +12,82 @@ Added in v1.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [Font (interface)](#font-interface)
-- [FontOptions (interface)](#fontoptions-interface)
-- [FontFamily (type alias)](#fontfamily-type-alias)
-- [font](#font)
-- [fontOptions](#fontoptions)
-- [showFont](#showfont)
-- [showFontOptions](#showfontoptions)
+- [constructors](#constructors)
+  - [font](#font)
+  - [fontOptions](#fontoptions)
+- [instances](#instances)
+  - [showFont](#showfont)
+  - [showFontOptions](#showfontoptions)
+- [model](#model)
+  - [Font (interface)](#font-interface)
+  - [FontFamily (type alias)](#fontfamily-type-alias)
+  - [FontOptions (interface)](#fontoptions-interface)
 
 ---
 
-# Font (interface)
+# constructors
+
+## font
+
+Constructs a new `Font`.
+
+**Signature**
+
+```ts
+export declare const font: (fontFamily: string, size: number, options?: FontOptions) => Font
+```
+
+Added in v1.0.0
+
+## fontOptions
+
+Constructs a new `FontOptions` object.
+
+**Signature**
+
+```ts
+export declare const fontOptions: ({
+  style,
+  variant,
+  weight,
+}: {
+  readonly style?: string
+  readonly variant?: string
+  readonly weight?: string
+}) => FontOptions
+```
+
+Added in v1.0.0
+
+# instances
+
+## showFont
+
+The `Show` instance for `Font`.
+
+**Signature**
+
+```ts
+export declare const showFont: S.Show<Font>
+```
+
+Added in v1.0.0
+
+## showFontOptions
+
+The `Show` instance for `FontOptions`.
+
+**Signature**
+
+```ts
+export declare const showFontOptions: S.Show<FontOptions>
+```
+
+Added in v1.0.0
+
+# model
+
+## Font (interface)
 
 Represents the `font` CSS property.
 
@@ -54,7 +119,22 @@ export interface Font {
 
 Added in v1.0.0
 
-# FontOptions (interface)
+## FontFamily (type alias)
+
+Represents the `font-family` CSS property.
+
+The `font-family` CSS property specifies a prioritized list of one or more
+font family names and/or generic family names for the selected element.
+
+**Signature**
+
+```ts
+export type FontFamily = string
+```
+
+Added in v1.0.0
+
+## FontOptions (interface)
 
 Represents optional values for modifying the style of a font.
 
@@ -85,77 +165,6 @@ export interface FontOptions {
    */
   readonly weight: O.Option<string>
 }
-```
-
-Added in v1.0.0
-
-# FontFamily (type alias)
-
-Represents the `font-family` CSS property.
-
-The `font-family` CSS property specifies a prioritized list of one or more
-font family names and/or generic family names for the selected element.
-
-**Signature**
-
-```ts
-export type FontFamily = string
-```
-
-Added in v1.0.0
-
-# font
-
-Constructs a new `Font`.
-
-**Signature**
-
-```ts
-export declare const font: (fontFamily: string, size: number, options?: FontOptions) => Font
-```
-
-Added in v1.0.0
-
-# fontOptions
-
-Constructs a new `FontOptions` object.
-
-**Signature**
-
-```ts
-export declare const fontOptions: ({
-  style,
-  variant,
-  weight,
-}: {
-  readonly style?: string
-  readonly variant?: string
-  readonly weight?: string
-}) => FontOptions
-```
-
-Added in v1.0.0
-
-# showFont
-
-The `Show` instance for `Font`.
-
-**Signature**
-
-```ts
-export declare const showFont: S.Show<Font>
-```
-
-Added in v1.0.0
-
-# showFontOptions
-
-The `Show` instance for `FontOptions`.
-
-**Signature**
-
-```ts
-export declare const showFontOptions: S.Show<FontOptions>
 ```
 
 Added in v1.0.0

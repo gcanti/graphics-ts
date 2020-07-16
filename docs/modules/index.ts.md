@@ -4,7 +4,7 @@ nav_order: 5
 parent: Modules
 ---
 
-# index overview
+## index overview
 
 Added in v1.0.0
 
@@ -12,15 +12,18 @@ Added in v1.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [canvas](#canvas)
-- [color](#color)
-- [drawing](#drawing)
-- [font](#font)
-- [shape](#shape)
+- [utils](#utils)
+  - [canvas](#canvas)
+  - [color](#color)
+  - [drawing](#drawing)
+  - [font](#font)
+  - [shape](#shape)
 
 ---
 
-# canvas
+# utils
+
+## canvas
 
 **Signature**
 
@@ -30,7 +33,7 @@ export declare const canvas: typeof canvas
 
 Added in v1.0.0
 
-# color
+## color
 
 **Signature**
 
@@ -40,7 +43,7 @@ export declare const color: typeof color
 
 Added in v1.0.0
 
-# drawing
+## drawing
 
 **Signature**
 
@@ -50,7 +53,7 @@ export declare const drawing: typeof drawing
 
 Added in v1.0.0
 
-# font
+## font
 
 **Signature**
 
@@ -60,7 +63,7 @@ export declare const font: typeof font
 
 Added in v1.0.0
 
-# shape
+## shape
 
 **Signature**
 

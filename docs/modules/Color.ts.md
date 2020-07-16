@@ -4,9 +4,7 @@ nav_order: 2
 parent: Modules
 ---
 
-# Color overview
-
-Adapted from https://github.com/sharkdp/purescript-colors.
+## Color overview
 
 Added in v1.0.0
 
@@ -14,19 +12,108 @@ Added in v1.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [Hex (interface)](#hex-interface)
-- [Hsla (interface)](#hsla-interface)
-- [Color (type alias)](#color-type-alias)
-- [black](#black)
-- [hex](#hex)
-- [hsl](#hsl)
-- [hsla](#hsla)
-- [toCss](#tocss)
-- [white](#white)
+- [constructors](#constructors)
+  - [black](#black)
+  - [hex](#hex)
+  - [hsl](#hsl)
+  - [hsla](#hsla)
+  - [white](#white)
+- [destructors](#destructors)
+  - [toCss](#tocss)
+- [model](#model)
+  - [Color (type alias)](#color-type-alias)
+  - [Hex (interface)](#hex-interface)
+  - [Hsla (interface)](#hsla-interface)
 
 ---
 
-# Hex (interface)
+# constructors
+
+## black
+
+**Signature**
+
+```ts
+export declare const black: Color
+```
+
+Added in v1.0.0
+
+## hex
+
+Constructs a `Color` using a hexadecimal value.
+
+**Signature**
+
+```ts
+export declare const hex: (value: string) => Hex
+```
+
+Added in v1.0.0
+
+## hsl
+
+Constructs a fully opaque `Color` using the specified hue, saturation, and lightness.
+
+**Signature**
+
+```ts
+export declare const hsl: (h: number, s: number, l: number) => Color
+```
+
+Added in v1.0.0
+
+## hsla
+
+Constructs a `Color` using the specified hue, saturation, lightness, and alpha.
+
+**Signature**
+
+```ts
+export declare const hsla: (h: number, s: number, l: number, a: number) => Hsla
+```
+
+Added in v1.0.0
+
+## white
+
+**Signature**
+
+```ts
+export declare const white: Color
+```
+
+Added in v1.0.0
+
+# destructors
+
+## toCss
+
+Converts a `Color` into a valid CSS string.
+
+**Signature**
+
+```ts
+export declare const toCss: (color: Color) => string
+```
+
+Added in v1.0.0
+
+# model
+
+## Color (type alias)
+
+Adapted from https://github.com/sharkdp/purescript-colors.
+
+**Signature**
+
+```ts
+export type Color = Hex | Hsla
+```
+
+Added in v1.0.0
+
+## Hex (interface)
 
 Represents a color using a hexadecimal value.
 
@@ -45,7 +132,7 @@ export interface Hex {
 
 Added in v1.0.0
 
-# Hsla (interface)
+## Hsla (interface)
 
 Represents a color using the HSL cylindrical-coordinate system.
 
@@ -78,86 +165,6 @@ export interface Hsla {
    */
   readonly a: number
 }
-```
-
-Added in v1.0.0
-
-# Color (type alias)
-
-Adapted from https://github.com/sharkdp/purescript-colors.
-
-**Signature**
-
-```ts
-export type Color = Hex | Hsla
-```
-
-Added in v1.0.0
-
-# black
-
-**Signature**
-
-```ts
-export declare const black: Color
-```
-
-Added in v1.0.0
-
-# hex
-
-Constructs a `Color` using a hexadecimal value.
-
-**Signature**
-
-```ts
-export declare const hex: (value: string) => Hex
-```
-
-Added in v1.0.0
-
-# hsl
-
-Constructs a fully opaque `Color` using the specified hue, saturation, and lightness.
-
-**Signature**
-
-```ts
-export declare const hsl: (h: number, s: number, l: number) => Color
-```
-
-Added in v1.0.0
-
-# hsla
-
-Constructs a `Color` using the specified hue, saturation, lightness, and alpha.
-
-**Signature**
-
-```ts
-export declare const hsla: (h: number, s: number, l: number, a: number) => Hsla
-```
-
-Added in v1.0.0
-
-# toCss
-
-Converts a `Color` into a valid CSS string.
-
-**Signature**
-
-```ts
-export declare const toCss: (color: Color) => string
-```
-
-Added in v1.0.0
-
-# white
-
-**Signature**
-
-```ts
-export declare const white: Color
 ```
 
 Added in v1.0.0

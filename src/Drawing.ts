@@ -678,6 +678,7 @@ export const render: (drawing: Drawing) => C.Render<CanvasRenderingContext2D> = 
 /**
  * Gets a `Monoid` instance for `FillStyle`.
  *
+ * @category instances
  * @since 1.0.0
  */
 export const monoidFillStyle = M.getStructMonoid<FillStyle>({
@@ -705,6 +706,7 @@ export const monoidFillStyle = M.getStructMonoid<FillStyle>({
  *   }
  * )
  *
+ * @category instances
  * @since 1.0.0
  */
 export const monoidOutlineStyle = M.getStructMonoid<OutlineStyle>({
@@ -715,6 +717,7 @@ export const monoidOutlineStyle = M.getStructMonoid<OutlineStyle>({
 /**
  * Gets a `Monoid` instance for `Shadow`.
  *
+ * @category instances
  * @since 1.0.0
  */
 export const monoidShadow = M.getStructMonoid<Shadow>({
@@ -726,6 +729,7 @@ export const monoidShadow = M.getStructMonoid<Shadow>({
 /**
  * Gets a `Monoid` instance for `Drawing`.
  *
+ * @category instances
  * @since 1.0.0
  */
 export const monoidDrawing: M.Monoid<Drawing> = {

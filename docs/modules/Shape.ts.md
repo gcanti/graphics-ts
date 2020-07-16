@@ -4,7 +4,7 @@ nav_order: 6
 parent: Modules
 ---
 
-# Shape overview
+## Shape overview
 
 Adapted from https://github.com/purescript-contrib/purescript-drawing
 
@@ -14,32 +14,212 @@ Added in v1.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [Arc (interface)](#arc-interface)
-- [Composite (interface)](#composite-interface)
-- [Degrees (interface)](#degrees-interface)
-- [Ellipse (interface)](#ellipse-interface)
-- [Path (interface)](#path-interface)
-- [Point (interface)](#point-interface)
-- [Radians (interface)](#radians-interface)
-- [Rect (interface)](#rect-interface)
-- [Angle (type alias)](#angle-type-alias)
-- [Shape (type alias)](#shape-type-alias)
-- [angle](#angle)
-- [arc](#arc)
-- [circle](#circle)
-- [closed](#closed)
-- [composite](#composite)
-- [degrees](#degrees)
-- [ellipse](#ellipse)
-- [monoidPath](#monoidpath)
-- [path](#path)
-- [point](#point)
-- [radians](#radians)
-- [rect](#rect)
+- [constructors](#constructors)
+  - [angle](#angle)
+  - [arc](#arc)
+  - [circle](#circle)
+  - [closed](#closed)
+  - [composite](#composite)
+  - [degrees](#degrees)
+  - [ellipse](#ellipse)
+  - [path](#path)
+  - [point](#point)
+  - [radians](#radians)
+  - [rect](#rect)
+- [instances](#instances)
+  - [monoidPath](#monoidpath)
+- [model](#model)
+  - [Angle (type alias)](#angle-type-alias)
+  - [Arc (interface)](#arc-interface)
+  - [Composite (interface)](#composite-interface)
+  - [Degrees (interface)](#degrees-interface)
+  - [Ellipse (interface)](#ellipse-interface)
+  - [Path (interface)](#path-interface)
+  - [Point (interface)](#point-interface)
+  - [Radians (interface)](#radians-interface)
+  - [Rect (interface)](#rect-interface)
+  - [Shape (type alias)](#shape-type-alias)
 
 ---
 
-# Arc (interface)
+# constructors
+
+## angle
+
+Converts an angle into radians for use with the canvas.
+
+**Signature**
+
+```ts
+export declare const angle: (angle: Angle) => number
+```
+
+Added in v1.0.0
+
+## arc
+
+Constructs an `Arc` shape.
+
+**Signature**
+
+```ts
+export declare const arc: (x: number, y: number, r: number, start: Angle, end: Angle, anticlockwise?: boolean) => Arc
+```
+
+Added in v1.0.0
+
+## circle
+
+Constructs an `Arc` that forms a circle shape.
+
+**Signature**
+
+```ts
+export declare const circle: (x: number, y: number, r: number) => Arc
+```
+
+Added in v1.0.0
+
+## closed
+
+Constructs a closed `Path` shape from a `Foldable` of `Point`s.
+
+**Signature**
+
+```ts
+export declare function closed<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Path
+export declare function closed<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Path
+export declare function closed<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
+export declare function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path
+```
+
+Added in v1.0.0
+
+## composite
+
+Constructs a `Composite` shape.
+
+**Signature**
+
+```ts
+export declare const composite: (shapes: readonly Shape[]) => Composite
+```
+
+Added in v1.0.0
+
+## degrees
+
+Constructs an angle specified in degrees.
+
+**Signature**
+
+```ts
+export declare const degrees: (degrees: number) => Degrees
+```
+
+Added in v1.0.0
+
+## ellipse
+
+Constructs an `Ellipse` shape.
+
+**Signature**
+
+```ts
+export declare const ellipse: (
+  x: number,
+  y: number,
+  rx: number,
+  ry: number,
+  rotation: Angle,
+  start: Angle,
+  end: Angle,
+  anticlockwise?: boolean
+) => Ellipse
+```
+
+Added in v1.0.0
+
+## path
+
+Constructs an open `Path` shape from a `Foldable` of `Point`s.
+
+**Signature**
+
+```ts
+export declare function path<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Path
+export declare function path<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Path
+export declare function path<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
+export declare function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path
+```
+
+Added in v1.0.0
+
+## point
+
+Constructs a `Point` from x and y coordinates.
+
+**Signature**
+
+```ts
+export declare const point: (x: number, y: number) => Point
+```
+
+Added in v1.0.0
+
+## radians
+
+Constructs an angle specified in degrees.
+
+**Signature**
+
+```ts
+export declare const radians: (radians: number) => Radians
+```
+
+Added in v1.0.0
+
+## rect
+
+Constructs a `Rectangle` shape.
+
+**Signature**
+
+```ts
+export declare const rect: (x: number, y: number, width: number, height: number) => Rect
+```
+
+Added in v1.0.0
+
+# instances
+
+## monoidPath
+
+The `Monoid` instance for a `Path`.
+
+**Signature**
+
+```ts
+export declare const monoidPath: M.Monoid<Path>
+```
+
+Added in v1.0.0
+
+# model
+
+## Angle (type alias)
+
+Represents an angle specified in either degrees or radians.
+
+**Signature**
+
+```ts
+export type Angle = Degrees | Radians
+```
+
+Added in v1.0.0
+
+## Arc (interface)
 
 An arc with center coordinates `x` and `y`, radius `r`, starting and ending angles `start` and `end`,
 and travels in the direction given by `anticlockwise` (defaulting to clockwise)
@@ -84,7 +264,7 @@ export interface Arc {
 
 Added in v1.0.0
 
-# Composite (interface)
+## Composite (interface)
 
 Represents a shape that is composed of several other shapes.
 
@@ -103,7 +283,7 @@ export interface Composite {
 
 Added in v1.0.0
 
-# Degrees (interface)
+## Degrees (interface)
 
 Represents an angle specified in degrees.
 
@@ -122,7 +302,7 @@ export interface Degrees {
 
 Added in v1.0.0
 
-# Ellipse (interface)
+## Ellipse (interface)
 
 An elliptical arc centered at (`x`, `y`) with the radii radiusX and radiusY specified by `rx` and `ry`.
 The path starts at startAngle and ends at endAngle, specified by `start` and `end`, with the specified
@@ -178,7 +358,7 @@ export interface Ellipse {
 
 Added in v1.0.0
 
-# Path (interface)
+## Path (interface)
 
 A path is a list of points joined by line segments.
 
@@ -202,7 +382,7 @@ export interface Path {
 
 Added in v1.0.0
 
-# Point (interface)
+## Point (interface)
 
 A single point consisting of `x` and `y` coordinates on a two-dimensional plane.
 
@@ -224,7 +404,7 @@ export interface Point {
 
 Added in v1.0.0
 
-# Radians (interface)
+## Radians (interface)
 
 Represents an angle specified in radians.
 
@@ -243,7 +423,7 @@ export interface Radians {
 
 Added in v1.0.0
 
-# Rect (interface)
+## Rect (interface)
 
 Represents a rectangle with top-left corner coordinates at `x` and `y`.
 
@@ -277,19 +457,7 @@ export interface Rect {
 
 Added in v1.0.0
 
-# Angle (type alias)
-
-Represents an angle specified in either degrees or radians.
-
-**Signature**
-
-```ts
-export type Angle = Degrees | Radians
-```
-
-Added in v1.0.0
-
-# Shape (type alias)
+## Shape (type alias)
 
 Represents a shape that can be drawn.
 
@@ -297,165 +465,6 @@ Represents a shape that can be drawn.
 
 ```ts
 export type Shape = Arc | Composite | Ellipse | Path | Rect
-```
-
-Added in v1.0.0
-
-# angle
-
-Converts an angle into radians for use with the canvas.
-
-**Signature**
-
-```ts
-export declare const angle: (angle: Angle) => number
-```
-
-Added in v1.0.0
-
-# arc
-
-Constructs an `Arc` shape.
-
-**Signature**
-
-```ts
-export declare const arc: (x: number, y: number, r: number, start: Angle, end: Angle, anticlockwise?: boolean) => Arc
-```
-
-Added in v1.0.0
-
-# circle
-
-Constructs an `Arc` that forms a circle shape.
-
-**Signature**
-
-```ts
-export declare const circle: (x: number, y: number, r: number) => Arc
-```
-
-Added in v1.0.0
-
-# closed
-
-Constructs a closed `Path` shape from a `Foldable` of `Point`s.
-
-**Signature**
-
-```ts
-export declare function closed<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Path
-export declare function closed<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Path
-export declare function closed<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
-export declare function closed<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path
-```
-
-Added in v1.0.0
-
-# composite
-
-Constructs a `Composite` shape.
-
-**Signature**
-
-```ts
-export declare const composite: (shapes: readonly Shape[]) => Composite
-```
-
-Added in v1.0.0
-
-# degrees
-
-Constructs an angle specified in degrees.
-
-**Signature**
-
-```ts
-export declare const degrees: (degrees: number) => Degrees
-```
-
-Added in v1.0.0
-
-# ellipse
-
-Constructs an `Ellipse` shape.
-
-**Signature**
-
-```ts
-export declare const ellipse: (
-  x: number,
-  y: number,
-  rx: number,
-  ry: number,
-  rotation: Angle,
-  start: Angle,
-  end: Angle,
-  anticlockwise?: boolean
-) => Ellipse
-```
-
-Added in v1.0.0
-
-# monoidPath
-
-The `Monoid` instance for a `Path`.
-
-**Signature**
-
-```ts
-export declare const monoidPath: M.Monoid<Path>
-```
-
-Added in v1.0.0
-
-# path
-
-Constructs an open `Path` shape from a `Foldable` of `Point`s.
-
-**Signature**
-
-```ts
-export declare function path<F extends URIS3>(foldable: Foldable3<F>): <E, A>(fa: Kind3<F, E, A, Point>) => Path
-export declare function path<F extends URIS2>(foldable: Foldable2<F>): <A>(fa: Kind2<F, A, Point>) => Path
-export declare function path<F extends URIS>(foldable: Foldable1<F>): (fa: Kind<F, Point>) => Path
-export declare function path<F>(F: Foldable<F>): (fa: HKT<F, Point>) => Path
-```
-
-Added in v1.0.0
-
-# point
-
-Constructs a `Point` from x and y coordinates.
-
-**Signature**
-
-```ts
-export declare const point: (x: number, y: number) => Point
-```
-
-Added in v1.0.0
-
-# radians
-
-Constructs an angle specified in degrees.
-
-**Signature**
-
-```ts
-export declare const radians: (radians: number) => Radians
-```
-
-Added in v1.0.0
-
-# rect
-
-Constructs a `Rectangle` shape.
-
-**Signature**
-
-```ts
-export declare const rect: (x: number, y: number, width: number, height: number) => Rect
 ```
 
 Added in v1.0.0

@@ -4,7 +4,7 @@ nav_order: 3
 parent: Modules
 ---
 
-# Drawing overview
+## Drawing overview
 
 The `Drawing` module abstracts away the repetitive calls to the HTML Canvas API that are required
 when using the `Canvas` module directly and instead allows us to be more declarative with our code.
@@ -60,43 +60,325 @@ Added in v1.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [Clipped (interface)](#clipped-interface)
-- [Fill (interface)](#fill-interface)
-- [FillStyle (interface)](#fillstyle-interface)
-- [Many (interface)](#many-interface)
-- [Outline (interface)](#outline-interface)
-- [OutlineStyle (interface)](#outlinestyle-interface)
-- [Rotate (interface)](#rotate-interface)
-- [Scale (interface)](#scale-interface)
-- [Shadow (interface)](#shadow-interface)
-- [Text (interface)](#text-interface)
-- [Translate (interface)](#translate-interface)
-- [WithShadow (interface)](#withshadow-interface)
-- [Drawing (type alias)](#drawing-type-alias)
-- [clipped](#clipped)
-- [fill](#fill)
-- [fillStyle](#fillstyle)
-- [lineWidth](#linewidth)
-- [many](#many)
-- [monoidDrawing](#monoiddrawing)
-- [monoidFillStyle](#monoidfillstyle)
-- [monoidOutlineStyle](#monoidoutlinestyle)
-- [monoidShadow](#monoidshadow)
-- [outline](#outline)
-- [outlineColor](#outlinecolor)
-- [render](#render)
-- [rotate](#rotate)
-- [scale](#scale)
-- [shadowBlur](#shadowblur)
-- [shadowColor](#shadowcolor)
-- [shadowOffset](#shadowoffset)
-- [text](#text)
-- [translate](#translate)
-- [withShadow](#withshadow)
+- [combinators](#combinators)
+  - [render](#render)
+  - [renderShape](#rendershape)
+- [constructors](#constructors)
+  - [clipped](#clipped)
+  - [fill](#fill)
+  - [fillStyle](#fillstyle)
+  - [lineWidth](#linewidth)
+  - [many](#many)
+  - [outline](#outline)
+  - [outlineColor](#outlinecolor)
+  - [rotate](#rotate)
+  - [scale](#scale)
+  - [shadowBlur](#shadowblur)
+  - [shadowColor](#shadowcolor)
+  - [shadowOffset](#shadowoffset)
+  - [text](#text)
+  - [translate](#translate)
+  - [withShadow](#withshadow)
+- [instances](#instances)
+  - [monoidDrawing](#monoiddrawing)
+  - [monoidFillStyle](#monoidfillstyle)
+  - [monoidOutlineStyle](#monoidoutlinestyle)
+  - [monoidShadow](#monoidshadow)
+- [model](#model)
+  - [Clipped (interface)](#clipped-interface)
+  - [Drawing (type alias)](#drawing-type-alias)
+  - [Fill (interface)](#fill-interface)
+  - [FillStyle (interface)](#fillstyle-interface)
+  - [Many (interface)](#many-interface)
+  - [Outline (interface)](#outline-interface)
+  - [OutlineStyle (interface)](#outlinestyle-interface)
+  - [Rotate (interface)](#rotate-interface)
+  - [Scale (interface)](#scale-interface)
+  - [Shadow (interface)](#shadow-interface)
+  - [Text (interface)](#text-interface)
+  - [Translate (interface)](#translate-interface)
+  - [WithShadow (interface)](#withshadow-interface)
 
 ---
 
-# Clipped (interface)
+# combinators
+
+## render
+
+Renders a `Drawing`.
+
+**Signature**
+
+```ts
+export declare const render: (drawing: Drawing) => C.Render<CanvasRenderingContext2D>
+```
+
+Added in v1.0.0
+
+## renderShape
+
+Renders a `Shape`.
+
+**Signature**
+
+```ts
+export declare const renderShape: (shape: Shape) => C.Render<CanvasRenderingContext2D>
+```
+
+Added in v1.1.0
+
+# constructors
+
+## clipped
+
+Clips a `Drawing` using the specified `Shape`.
+
+**Signature**
+
+```ts
+export declare const clipped: (shape: Shape, drawing: Drawing) => Drawing
+```
+
+Added in v1.0.0
+
+## fill
+
+Constructs a `Drawing` from a `Fill` `Shape`.
+
+**Signature**
+
+```ts
+export declare const fill: (shape: Shape, style: FillStyle) => Drawing
+```
+
+Added in v1.0.0
+
+## fillStyle
+
+Constructs a `FillStyle`.
+
+**Signature**
+
+```ts
+export declare const fillStyle: (color: Color) => FillStyle
+```
+
+Added in v1.0.0
+
+## lineWidth
+
+Constructs an `OutlineStyle` from a line width.
+
+**Signature**
+
+```ts
+export declare const lineWidth: (lineWidth: number) => OutlineStyle
+```
+
+Added in v1.0.0
+
+## many
+
+Construct a single `Drawing` from a collection of `Many` `Drawing`s.
+
+**Signature**
+
+```ts
+export declare const many: (drawings: readonly Drawing[]) => Drawing
+```
+
+Added in v1.0.0
+
+## outline
+
+Constructs a `Drawing` from an `Outline` `Shape`.
+
+**Signature**
+
+```ts
+export declare const outline: (shape: Shape, style: OutlineStyle) => Drawing
+```
+
+Added in v1.0.0
+
+## outlineColor
+
+Constructs an `OutlineStyle` from a `Color`.
+
+**Signature**
+
+```ts
+export declare const outlineColor: (color: Color) => OutlineStyle
+```
+
+Added in v1.0.0
+
+## rotate
+
+Applies rotation to the transform of a `Drawing`.
+
+**Signature**
+
+```ts
+export declare const rotate: (angle: number, drawing: Drawing) => Drawing
+```
+
+Added in v1.0.0
+
+## scale
+
+Applies scale to the transform of a `Drawing`.
+
+**Signature**
+
+```ts
+export declare const scale: (scaleX: number, scaleY: number, drawing: Drawing) => Drawing
+```
+
+Added in v1.0.0
+
+## shadowBlur
+
+Constructs a `Shadow` from a blur radius.
+
+**Signature**
+
+```ts
+export declare const shadowBlur: (blurRadius: number) => Shadow
+```
+
+Added in v1.0.0
+
+## shadowColor
+
+Constructs a `Shadow` from a `Color`.
+
+**Signature**
+
+```ts
+export declare const shadowColor: (color: Color) => Shadow
+```
+
+Added in v1.0.0
+
+## shadowOffset
+
+Constructs a `Shadow` from an offset `Point`.
+
+**Signature**
+
+```ts
+export declare const shadowOffset: (offsetPoint: Point) => Shadow
+```
+
+Added in v1.0.0
+
+## text
+
+Constructs a `Drawing` from `Text`.
+
+**Signature**
+
+```ts
+export declare const text: (font: Font, x: number, y: number, style: FillStyle, text: string) => Drawing
+```
+
+Added in v1.0.0
+
+## translate
+
+Applies translation to the transform of a `Drawing`.
+
+**Signature**
+
+```ts
+export declare const translate: (translateX: number, translateY: number, drawing: Drawing) => Drawing
+```
+
+Added in v1.0.0
+
+## withShadow
+
+Applies `Shadow` to a `Drawing`.
+
+**Signature**
+
+```ts
+export declare const withShadow: (shadow: Shadow, drawing: Drawing) => Drawing
+```
+
+Added in v1.0.0
+
+# instances
+
+## monoidDrawing
+
+Gets a `Monoid` instance for `Drawing`.
+
+**Signature**
+
+```ts
+export declare const monoidDrawing: M.Monoid<Drawing>
+```
+
+Added in v1.0.0
+
+## monoidFillStyle
+
+Gets a `Monoid` instance for `FillStyle`.
+
+**Signature**
+
+```ts
+export declare const monoidFillStyle: M.Monoid<FillStyle>
+```
+
+Added in v1.0.0
+
+## monoidOutlineStyle
+
+Gets a `Monoid` instance for `OutlineStyle`.
+
+**Signature**
+
+```ts
+export declare const monoidOutlineStyle: M.Monoid<OutlineStyle>
+```
+
+**Example**
+
+```ts
+import * as O from 'fp-ts/lib/Option'
+import * as M from 'fp-ts/lib/Monoid'
+import * as Color from 'graphics-ts/lib/Color'
+import * as D from 'graphics-ts/lib/Drawing'
+
+assert.deepStrictEqual(
+  M.fold(D.monoidOutlineStyle)([D.outlineColor(Color.black), D.outlineColor(Color.white), D.lineWidth(5)]),
+  {
+    color: O.some(Color.black),
+    lineWidth: O.some(5),
+  }
+)
+```
+
+Added in v1.0.0
+
+## monoidShadow
+
+Gets a `Monoid` instance for `Shadow`.
+
+**Signature**
+
+```ts
+export declare const monoidShadow: M.Monoid<Shadow>
+```
+
+Added in v1.0.0
+
+# model
+
+## Clipped (interface)
 
 Represents a `Drawing` that has been clipped by a `Shape`.
 
@@ -120,7 +402,19 @@ export interface Clipped {
 
 Added in v1.0.0
 
-# Fill (interface)
+## Drawing (type alias)
+
+Represents a shape that can be drawn to the canvas.
+
+**Signature**
+
+```ts
+export type Drawing = Clipped | Fill | Outline | Many | Rotate | Scale | Text | Translate | WithShadow
+```
+
+Added in v1.0.0
+
+## Fill (interface)
 
 Represents a filled `Shape` that can be drawn to the canvas.
 
@@ -144,7 +438,7 @@ export interface Fill {
 
 Added in v1.0.0
 
-# FillStyle (interface)
+## FillStyle (interface)
 
 Represents the styles applied to a filled `Shape`.
 
@@ -161,7 +455,7 @@ export interface FillStyle {
 
 Added in v1.0.0
 
-# Many (interface)
+## Many (interface)
 
 Represents a collection of `Drawing`s that can be drawn to the canvas.
 
@@ -180,7 +474,7 @@ export interface Many {
 
 Added in v1.0.0
 
-# Outline (interface)
+## Outline (interface)
 
 Represents an outlined `Shape` that can be drawn to the canvas.
 
@@ -204,7 +498,7 @@ export interface Outline {
 
 Added in v1.0.0
 
-# OutlineStyle (interface)
+## OutlineStyle (interface)
 
 Represents the styles applied to an outlined `Shape`.
 
@@ -226,7 +520,7 @@ export interface OutlineStyle {
 
 Added in v1.0.0
 
-# Rotate (interface)
+## Rotate (interface)
 
 Represents a `Drawing` that has had its transform rotated.
 
@@ -250,7 +544,7 @@ export interface Rotate {
 
 Added in v1.0.0
 
-# Scale (interface)
+## Scale (interface)
 
 Represents a `Drawing` that has had scale applied to its transform.
 
@@ -279,7 +573,7 @@ export interface Scale {
 
 Added in v1.0.0
 
-# Shadow (interface)
+## Shadow (interface)
 
 Represents the shadow styles applied to a `Shape`.
 
@@ -306,7 +600,7 @@ export interface Shadow {
 
 Added in v1.0.0
 
-# Text (interface)
+## Text (interface)
 
 Represents text that can be drawn to the canvas.
 
@@ -345,7 +639,7 @@ export interface Text {
 
 Added in v1.0.0
 
-# Translate (interface)
+## Translate (interface)
 
 Represents a `Drawing` that has had its transform translated.
 
@@ -374,7 +668,7 @@ export interface Translate {
 
 Added in v1.0.0
 
-# WithShadow (interface)
+## WithShadow (interface)
 
 Represents a `Drawing` that has had a shadow applied to it.
 
@@ -394,275 +688,6 @@ export interface WithShadow {
    */
   readonly drawing: Drawing
 }
-```
-
-Added in v1.0.0
-
-# Drawing (type alias)
-
-Represents a shape that can be drawn to the canvas.
-
-**Signature**
-
-```ts
-export type Drawing = Clipped | Fill | Outline | Many | Rotate | Scale | Text | Translate | WithShadow
-```
-
-Added in v1.0.0
-
-# clipped
-
-Clips a `Drawing` using the specified `Shape`.
-
-**Signature**
-
-```ts
-export declare const clipped: (shape: Shape, drawing: Drawing) => Drawing
-```
-
-Added in v1.0.0
-
-# fill
-
-Constructs a `Drawing` from a `Fill` `Shape`.
-
-**Signature**
-
-```ts
-export declare const fill: (shape: Shape, style: FillStyle) => Drawing
-```
-
-Added in v1.0.0
-
-# fillStyle
-
-Constructs a `FillStyle`.
-
-**Signature**
-
-```ts
-export declare const fillStyle: (color: Color) => FillStyle
-```
-
-Added in v1.0.0
-
-# lineWidth
-
-Constructs an `OutlineStyle` from a line width.
-
-**Signature**
-
-```ts
-export declare const lineWidth: (lineWidth: number) => OutlineStyle
-```
-
-Added in v1.0.0
-
-# many
-
-Construct a single `Drawing` from a collection of `Many` `Drawing`s.
-
-**Signature**
-
-```ts
-export declare const many: (drawings: readonly Drawing[]) => Drawing
-```
-
-Added in v1.0.0
-
-# monoidDrawing
-
-Gets a `Monoid` instance for `Drawing`.
-
-**Signature**
-
-```ts
-export declare const monoidDrawing: M.Monoid<Drawing>
-```
-
-Added in v1.0.0
-
-# monoidFillStyle
-
-Gets a `Monoid` instance for `FillStyle`.
-
-**Signature**
-
-```ts
-export declare const monoidFillStyle: M.Monoid<FillStyle>
-```
-
-Added in v1.0.0
-
-# monoidOutlineStyle
-
-Gets a `Monoid` instance for `OutlineStyle`.
-
-**Signature**
-
-```ts
-export declare const monoidOutlineStyle: M.Monoid<OutlineStyle>
-```
-
-**Example**
-
-```ts
-import * as O from 'fp-ts/lib/Option'
-import * as M from 'fp-ts/lib/Monoid'
-import * as Color from 'graphics-ts/lib/Color'
-import * as D from 'graphics-ts/lib/Drawing'
-
-assert.deepStrictEqual(
-  M.fold(D.monoidOutlineStyle)([D.outlineColor(Color.black), D.outlineColor(Color.white), D.lineWidth(5)]),
-  {
-    color: O.some(Color.black),
-    lineWidth: O.some(5),
-  }
-)
-```
-
-Added in v1.0.0
-
-# monoidShadow
-
-Gets a `Monoid` instance for `Shadow`.
-
-**Signature**
-
-```ts
-export declare const monoidShadow: M.Monoid<Shadow>
-```
-
-Added in v1.0.0
-
-# outline
-
-Constructs a `Drawing` from an `Outline` `Shape`.
-
-**Signature**
-
-```ts
-export declare const outline: (shape: Shape, style: OutlineStyle) => Drawing
-```
-
-Added in v1.0.0
-
-# outlineColor
-
-Constructs an `OutlineStyle` from a `Color`.
-
-**Signature**
-
-```ts
-export declare const outlineColor: (color: Color) => OutlineStyle
-```
-
-Added in v1.0.0
-
-# render
-
-Renders a `Drawing`.
-
-**Signature**
-
-```ts
-export declare const render: (drawing: Drawing) => C.Render<CanvasRenderingContext2D>
-```
-
-Added in v1.0.0
-
-# rotate
-
-Applies rotation to the transform of a `Drawing`.
-
-**Signature**
-
-```ts
-export declare const rotate: (angle: number, drawing: Drawing) => Drawing
-```
-
-Added in v1.0.0
-
-# scale
-
-Applies scale to the transform of a `Drawing`.
-
-**Signature**
-
-```ts
-export declare const scale: (scaleX: number, scaleY: number, drawing: Drawing) => Drawing
-```
-
-Added in v1.0.0
-
-# shadowBlur
-
-Constructs a `Shadow` from a blur radius.
-
-**Signature**
-
-```ts
-export declare const shadowBlur: (blurRadius: number) => Shadow
-```
-
-Added in v1.0.0
-
-# shadowColor
-
-Constructs a `Shadow` from a `Color`.
-
-**Signature**
-
-```ts
-export declare const shadowColor: (color: Color) => Shadow
-```
-
-Added in v1.0.0
-
-# shadowOffset
-
-Constructs a `Shadow` from an offset `Point`.
-
-**Signature**
-
-```ts
-export declare const shadowOffset: (offsetPoint: Point) => Shadow
-```
-
-Added in v1.0.0
-
-# text
-
-Constructs a `Drawing` from `Text`.
-
-**Signature**
-
-```ts
-export declare const text: (font: Font, x: number, y: number, style: FillStyle, text: string) => Drawing
-```
-
-Added in v1.0.0
-
-# translate
-
-Applies translation to the transform of a `Drawing`.
-
-**Signature**
-
-```ts
-export declare const translate: (translateX: number, translateY: number, drawing: Drawing) => Drawing
-```
-
-Added in v1.0.0
-
-# withShadow
-
-Applies `Shadow` to a `Drawing`.
-
-**Signature**
-
-```ts
-export declare const withShadow: (shadow: Shadow, drawing: Drawing) => Drawing
 ```
 
 Added in v1.0.0
