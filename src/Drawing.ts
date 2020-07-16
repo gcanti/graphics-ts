@@ -69,176 +69,16 @@ const readonlyArrayMonoidDrawing = RA.getMonoid<Drawing>()
 const getFirstMonoidColor = O.getFirstMonoid<Color>()
 const getFirstMonoidNumber = O.getFirstMonoid<number>()
 const getFirstMonoidPoint = O.getFirstMonoid<Point>()
+const traverseReaderIO = RA.readonlyArray.traverse(R.readerIO)
 
-/**
- * Represents a shape that can be drawn to the canvas.
- *
- * @since 1.0.0
- */
-export type Drawing = Clipped | Fill | Outline | Many | Rotate | Scale | Text | Translate | WithShadow
-
-/**
- * Represents the styles applied to a filled `Shape`.
- *
- * @since 1.0.0
- */
-export interface FillStyle {
-  /**
-   * The fill color.
-   */
-  readonly color: O.Option<Color>
-}
-
-/**
- * Constructs a `FillStyle`.
- *
- * @since 1.0.0
- */
-export const fillStyle: (color: Color) => FillStyle = (c) => ({ color: O.some(c) })
-
-/**
- * Gets a `Monoid` instance for `FillStyle`.
- *
- * @since 1.0.0
- */
-export const monoidFillStyle = M.getStructMonoid<FillStyle>({
-  color: getFirstMonoidColor
-})
-
-/**
- * Represents the styles applied to an outlined `Shape`.
- *
- * @since 1.0.0
- */
-export interface OutlineStyle {
-  /**
-   * The outline color.
-   */
-  readonly color: O.Option<Color>
-
-  /**
-   * The outline line width.
-   */
-  readonly lineWidth: O.Option<number>
-}
-
-/**
- * Constructs an `OutlineStyle` from a `Color`.
- *
- * @since 1.0.0
- */
-export const outlineColor: (color: Color) => OutlineStyle = (c) => ({
-  color: O.some(c),
-  lineWidth: O.none
-})
-
-/**
- * Constructs an `OutlineStyle` from a line width.
- *
- * @since 1.0.0
- */
-export const lineWidth: (lineWidth: number) => OutlineStyle = (w) => ({
-  color: O.none,
-  lineWidth: O.some(w)
-})
-
-/**
- * Gets a `Monoid` instance for `OutlineStyle`.
- *
- * @example
- * import * as O from 'fp-ts/lib/Option'
- * import * as M from 'fp-ts/lib/Monoid'
- * import * as Color from 'graphics-ts/lib/Color'
- * import * as D from 'graphics-ts/lib/Drawing'
- *
- * assert.deepStrictEqual(
- *   M.fold(D.monoidOutlineStyle)([
- *     D.outlineColor(Color.black),
- *     D.outlineColor(Color.white),
- *     D.lineWidth(5)
- *   ]),
- *   {
- *     color: O.some(Color.black),
- *     lineWidth: O.some(5)
- *   }
- * )
- *
- * @since 1.0.0
- */
-export const monoidOutlineStyle = M.getStructMonoid<OutlineStyle>({
-  color: getFirstMonoidColor,
-  lineWidth: getFirstMonoidNumber
-})
-
-/**
- * Represents the shadow styles applied to a `Shape`.
- *
- * @since 1.0.0
- */
-export interface Shadow {
-  /**
-   * The shadow color.
-   */
-  readonly color: O.Option<Color>
-
-  /**
-   * The shadow blur radius.
-   */
-  readonly blur: O.Option<number>
-
-  /**
-   * The shadow offset.
-   */
-  readonly offset: O.Option<Point>
-}
-
-/**
- * Constructs a `Shadow` from a blur radius.
- *
- * @since 1.0.0
- */
-export const shadowBlur: (blurRadius: number) => Shadow = (b) => ({
-  color: O.none,
-  blur: O.some(b),
-  offset: O.none
-})
-
-/**
- * Constructs a `Shadow` from a `Color`.
- *
- * @since 1.0.0
- */
-export const shadowColor: (color: Color) => Shadow = (c) => ({
-  color: O.some(c),
-  blur: O.none,
-  offset: O.none
-})
-
-/**
- * Constructs a `Shadow` from an offset `Point`.
- *
- * @since 1.0.0
- */
-export const shadowOffset: (offsetPoint: Point) => Shadow = (o) => ({
-  color: O.none,
-  blur: O.none,
-  offset: O.some(o)
-})
-
-/**
- * Gets a `Monoid` instance for `Shadow`.
- *
- * @since 1.0.0
- */
-export const monoidShadow = M.getStructMonoid<Shadow>({
-  color: getFirstMonoidColor,
-  blur: getFirstMonoidNumber,
-  offset: getFirstMonoidPoint
-})
+// -------------------------------------------------------------------------------------
+// model
+// -------------------------------------------------------------------------------------
 
 /**
  * Represents a `Drawing` that has been clipped by a `Shape`.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Clipped {
@@ -256,19 +96,9 @@ export interface Clipped {
 }
 
 /**
- * Clips a `Drawing` using the specified `Shape`.
- *
- * @since 1.0.0
- */
-export const clipped: (shape: Shape, drawing: Drawing) => Drawing = (shape, drawing) => ({
-  _tag: 'Clipped',
-  shape,
-  drawing
-})
-
-/**
  * Represents a filled `Shape` that can be drawn to the canvas.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Fill {
@@ -286,36 +116,22 @@ export interface Fill {
 }
 
 /**
- * Constructs a `Drawing` from a `Fill` `Shape`.
+ * Represents the styles applied to a filled `Shape`.
  *
+ * @category model
  * @since 1.0.0
  */
-export const fill: (shape: Shape, style: FillStyle) => Drawing = (shape, style) => ({ _tag: 'Fill', shape, style })
-
-/**
- * Represents a collection of `Drawing`s that can be drawn to the canvas.
- *
- * @since 1.0.0
- */
-export interface Many {
-  readonly _tag: 'Many'
-
+export interface FillStyle {
   /**
-   * The collection of drawings.
+   * The fill color.
    */
-  readonly drawings: ReadonlyArray<Drawing>
+  readonly color: O.Option<Color>
 }
-
-/**
- * Construct a single `Drawing` from a collection of `Many` `Drawing`s.
- *
- * @since 1.0.0
- */
-export const many: (drawings: ReadonlyArray<Drawing>) => Drawing = (drawings) => ({ _tag: 'Many', drawings })
 
 /**
  * Represents an outlined `Shape` that can be drawn to the canvas.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Outline {
@@ -333,19 +149,42 @@ export interface Outline {
 }
 
 /**
- * Constructs a `Drawing` from an `Outline` `Shape`.
+ * Represents the styles applied to an outlined `Shape`.
  *
+ * @category model
  * @since 1.0.0
  */
-export const outline: (shape: Shape, style: OutlineStyle) => Drawing = (shape, style) => ({
-  _tag: 'Outline',
-  shape,
-  style
-})
+export interface OutlineStyle {
+  /**
+   * The outline color.
+   */
+  readonly color: O.Option<Color>
+
+  /**
+   * The outline line width.
+   */
+  readonly lineWidth: O.Option<number>
+}
+
+/**
+ * Represents a collection of `Drawing`s that can be drawn to the canvas.
+ *
+ * @category model
+ * @since 1.0.0
+ */
+export interface Many {
+  readonly _tag: 'Many'
+
+  /**
+   * The collection of drawings.
+   */
+  readonly drawings: ReadonlyArray<Drawing>
+}
 
 /**
  * Represents a `Drawing` that has had its transform rotated.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Rotate {
@@ -363,19 +202,9 @@ export interface Rotate {
 }
 
 /**
- * Applies rotation to the transform of a `Drawing`.
- *
- * @since 1.0.0
- */
-export const rotate: (angle: number, drawing: Drawing) => Drawing = (angle, drawing) => ({
-  _tag: 'Rotate',
-  angle,
-  drawing
-})
-
-/**
  * Represents a `Drawing` that has had scale applied to its transform.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Scale {
@@ -398,20 +227,9 @@ export interface Scale {
 }
 
 /**
- * Applies scale to the transform of a `Drawing`.
- *
- * @since 1.0.0
- */
-export const scale: (scaleX: number, scaleY: number, drawing: Drawing) => Drawing = (scaleX, scaleY, drawing) => ({
-  _tag: 'Scale',
-  scaleX,
-  scaleY,
-  drawing
-})
-
-/**
  * Represents text that can be drawn to the canvas.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Text {
@@ -444,28 +262,9 @@ export interface Text {
 }
 
 /**
- * Constructs a `Drawing` from `Text`.
- *
- * @since 1.0.0
- */
-export const text: (font: Font, x: number, y: number, style: FillStyle, text: string) => Drawing = (
-  font,
-  x,
-  y,
-  style,
-  text
-) => ({
-  _tag: 'Text',
-  font,
-  x,
-  y,
-  style,
-  text
-})
-
-/**
  * Represents a `Drawing` that has had its transform translated.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Translate {
@@ -488,24 +287,9 @@ export interface Translate {
 }
 
 /**
- * Applies translation to the transform of a `Drawing`.
- *
- * @since 1.0.0
- */
-export const translate: (translateX: number, translateY: number, drawing: Drawing) => Drawing = (
-  translateX,
-  translateY,
-  drawing
-) => ({
-  _tag: 'Translate',
-  translateX,
-  translateY,
-  drawing
-})
-
-/**
  * Represents a `Drawing` that has had a shadow applied to it.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface WithShadow {
@@ -523,8 +307,177 @@ export interface WithShadow {
 }
 
 /**
+ * Represents the shadow styles applied to a `Shape`.
+ *
+ * @category model
+ * @since 1.0.0
+ */
+export interface Shadow {
+  /**
+   * The shadow color.
+   */
+  readonly color: O.Option<Color>
+
+  /**
+   * The shadow blur radius.
+   */
+  readonly blur: O.Option<number>
+
+  /**
+   * The shadow offset.
+   */
+  readonly offset: O.Option<Point>
+}
+
+/**
+ * Represents a shape that can be drawn to the canvas.
+ *
+ * @category model
+ * @since 1.0.0
+ */
+export type Drawing = Clipped | Fill | Outline | Many | Rotate | Scale | Text | Translate | WithShadow
+
+// -------------------------------------------------------------------------------------
+// constructors
+// -------------------------------------------------------------------------------------
+
+/**
+ * Clips a `Drawing` using the specified `Shape`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const clipped: (shape: Shape, drawing: Drawing) => Drawing = (shape, drawing) => ({
+  _tag: 'Clipped',
+  shape,
+  drawing
+})
+
+/**
+ * Constructs a `Drawing` from a `Fill` `Shape`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const fill: (shape: Shape, style: FillStyle) => Drawing = (shape, style) => ({ _tag: 'Fill', shape, style })
+
+/**
+ * Constructs a `FillStyle`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const fillStyle: (color: Color) => FillStyle = (c) => ({ color: O.some(c) })
+
+/**
+ * Constructs a `Drawing` from an `Outline` `Shape`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const outline: (shape: Shape, style: OutlineStyle) => Drawing = (shape, style) => ({
+  _tag: 'Outline',
+  shape,
+  style
+})
+
+/**
+ * Constructs an `OutlineStyle` from a `Color`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const outlineColor: (color: Color) => OutlineStyle = (c) => ({
+  color: O.some(c),
+  lineWidth: O.none
+})
+
+/**
+ * Constructs an `OutlineStyle` from a line width.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const lineWidth: (lineWidth: number) => OutlineStyle = (w) => ({
+  color: O.none,
+  lineWidth: O.some(w)
+})
+
+/**
+ * Construct a single `Drawing` from a collection of `Many` `Drawing`s.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const many: (drawings: ReadonlyArray<Drawing>) => Drawing = (drawings) => ({ _tag: 'Many', drawings })
+
+/**
+ * Applies rotation to the transform of a `Drawing`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const rotate: (angle: number, drawing: Drawing) => Drawing = (angle, drawing) => ({
+  _tag: 'Rotate',
+  angle,
+  drawing
+})
+
+/**
+ * Applies scale to the transform of a `Drawing`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const scale: (scaleX: number, scaleY: number, drawing: Drawing) => Drawing = (scaleX, scaleY, drawing) => ({
+  _tag: 'Scale',
+  scaleX,
+  scaleY,
+  drawing
+})
+
+/**
+ * Constructs a `Drawing` from `Text`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const text: (font: Font, x: number, y: number, style: FillStyle, text: string) => Drawing = (
+  font,
+  x,
+  y,
+  style,
+  text
+) => ({
+  _tag: 'Text',
+  font,
+  x,
+  y,
+  style,
+  text
+})
+
+/**
+ * Applies translation to the transform of a `Drawing`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const translate: (translateX: number, translateY: number, drawing: Drawing) => Drawing = (
+  translateX,
+  translateY,
+  drawing
+) => ({
+  _tag: 'Translate',
+  translateX,
+  translateY,
+  drawing
+})
+
+/**
  * Applies `Shadow` to a `Drawing`.
  *
+ * @category constructors
  * @since 1.0.0
  */
 export const withShadow: (shadow: Shadow, drawing: Drawing) => Drawing = (shadow, drawing) => ({
@@ -534,23 +487,44 @@ export const withShadow: (shadow: Shadow, drawing: Drawing) => Drawing = (shadow
 })
 
 /**
- * Gets a `Monoid` instance for `Drawing`.
+ * Constructs a `Shadow` from a blur radius.
  *
+ * @category constructors
  * @since 1.0.0
  */
-export const monoidDrawing: M.Monoid<Drawing> = {
-  concat: (x, y) =>
-    x._tag === 'Many' && y._tag === 'Many'
-      ? many(M.fold(readonlyArrayMonoidDrawing)([x.drawings, y.drawings]))
-      : x._tag === 'Many'
-      ? many(M.fold(readonlyArrayMonoidDrawing)([x.drawings, [y]]))
-      : y._tag === 'Many'
-      ? many(M.fold(readonlyArrayMonoidDrawing)([[x], y.drawings]))
-      : many([x, y]),
-  empty: many(readonlyArrayMonoidDrawing.empty)
-}
+export const shadowBlur: (blurRadius: number) => Shadow = (b) => ({
+  color: O.none,
+  blur: O.some(b),
+  offset: O.none
+})
 
-const traverseReaderIO = RA.readonlyArray.traverse(R.readerIO)
+/**
+ * Constructs a `Shadow` from a `Color`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const shadowColor: (color: Color) => Shadow = (c) => ({
+  color: O.some(c),
+  blur: O.none,
+  offset: O.none
+})
+
+/**
+ * Constructs a `Shadow` from an offset `Point`.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const shadowOffset: (offsetPoint: Point) => Shadow = (o) => ({
+  color: O.none,
+  blur: O.none,
+  offset: O.some(o)
+})
+
+// -------------------------------------------------------------------------------------
+// combinators
+// -------------------------------------------------------------------------------------
 
 const applyStyle: <A>(
   fa: O.Option<A>,
@@ -564,6 +538,7 @@ const applyStyle: <A>(
 /**
  * Renders a `Shape`.
  *
+ * @category combinators
  * @since 1.1.0
  */
 export const renderShape: (shape: Shape) => C.Render<CanvasRenderingContext2D> = (shape) => {
@@ -602,6 +577,7 @@ export const renderShape: (shape: Shape) => C.Render<CanvasRenderingContext2D> =
 /**
  * Renders a `Drawing`.
  *
+ * @category combinators
  * @since 1.0.0
  */
 export const render: (drawing: Drawing) => C.Render<CanvasRenderingContext2D> = (drawing) => {
@@ -693,4 +669,73 @@ export const render: (drawing: Drawing) => C.Render<CanvasRenderingContext2D> = 
   }
 
   return go(drawing)
+}
+
+// -------------------------------------------------------------------------------------
+// instances
+// -------------------------------------------------------------------------------------
+
+/**
+ * Gets a `Monoid` instance for `FillStyle`.
+ *
+ * @since 1.0.0
+ */
+export const monoidFillStyle = M.getStructMonoid<FillStyle>({
+  color: getFirstMonoidColor
+})
+
+/**
+ * Gets a `Monoid` instance for `OutlineStyle`.
+ *
+ * @example
+ * import * as O from 'fp-ts/lib/Option'
+ * import * as M from 'fp-ts/lib/Monoid'
+ * import * as Color from 'graphics-ts/lib/Color'
+ * import * as D from 'graphics-ts/lib/Drawing'
+ *
+ * assert.deepStrictEqual(
+ *   M.fold(D.monoidOutlineStyle)([
+ *     D.outlineColor(Color.black),
+ *     D.outlineColor(Color.white),
+ *     D.lineWidth(5)
+ *   ]),
+ *   {
+ *     color: O.some(Color.black),
+ *     lineWidth: O.some(5)
+ *   }
+ * )
+ *
+ * @since 1.0.0
+ */
+export const monoidOutlineStyle = M.getStructMonoid<OutlineStyle>({
+  color: getFirstMonoidColor,
+  lineWidth: getFirstMonoidNumber
+})
+
+/**
+ * Gets a `Monoid` instance for `Shadow`.
+ *
+ * @since 1.0.0
+ */
+export const monoidShadow = M.getStructMonoid<Shadow>({
+  color: getFirstMonoidColor,
+  blur: getFirstMonoidNumber,
+  offset: getFirstMonoidPoint
+})
+
+/**
+ * Gets a `Monoid` instance for `Drawing`.
+ *
+ * @since 1.0.0
+ */
+export const monoidDrawing: M.Monoid<Drawing> = {
+  concat: (x, y) =>
+    x._tag === 'Many' && y._tag === 'Many'
+      ? many(M.fold(readonlyArrayMonoidDrawing)([x.drawings, y.drawings]))
+      : x._tag === 'Many'
+      ? many(M.fold(readonlyArrayMonoidDrawing)([x.drawings, [y]]))
+      : y._tag === 'Many'
+      ? many(M.fold(readonlyArrayMonoidDrawing)([[x], y.drawings]))
+      : many([x, y]),
+  empty: many(readonlyArrayMonoidDrawing.empty)
 }
