@@ -1,13 +1,11 @@
-/**
- * Adapted from https://github.com/sharkdp/purescript-colors.
- *
- * @since 1.0.0
- */
-export type Color = Hex | Hsla
+// -------------------------------------------------------------------------------------
+// model
+// -------------------------------------------------------------------------------------
 
 /**
  * Represents a color using a hexadecimal value.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Hex {
@@ -20,15 +18,9 @@ export interface Hex {
 }
 
 /**
- * Constructs a `Color` using a hexadecimal value.
- *
- * @since 1.0.0
- */
-export const hex: (value: string) => Hex = (value) => ({ _tag: 'Hex', value })
-
-/**
  * Represents a color using the HSL cylindrical-coordinate system.
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Hsla {
@@ -59,8 +51,29 @@ export interface Hsla {
 }
 
 /**
+ * Adapted from https://github.com/sharkdp/purescript-colors.
+ *
+ * @category model
+ * @since 1.0.0
+ */
+export type Color = Hex | Hsla
+
+// -------------------------------------------------------------------------------------
+// constructors
+// -------------------------------------------------------------------------------------
+
+/**
+ * Constructs a `Color` using a hexadecimal value.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const hex: (value: string) => Hex = (value) => ({ _tag: 'Hex', value })
+
+/**
  * Constructs a `Color` using the specified hue, saturation, lightness, and alpha.
  *
+ * @category constructors
  * @since 1.0.0
  */
 export const hsla: (h: number, s: number, l: number, a: number) => Hsla = (h, s, l, a) => ({ _tag: 'Hsla', h, s, l, a })
@@ -68,13 +81,31 @@ export const hsla: (h: number, s: number, l: number, a: number) => Hsla = (h, s,
 /**
  * Constructs a fully opaque `Color` using the specified hue, saturation, and lightness.
  *
+ * @category constructors
  * @since 1.0.0
  */
 export const hsl: (h: number, s: number, l: number) => Color = (h, s, l) => hsla(h, s, l, 1)
 
 /**
+ * @category constructors
+ * @since 1.0.0
+ */
+export const black: Color = hsl(0, 0, 0)
+
+/**
+ * @category constructors
+ * @since 1.0.0
+ */
+export const white: Color = hsl(360, 1, 1)
+
+// -------------------------------------------------------------------------------------
+// destructors
+// -------------------------------------------------------------------------------------
+
+/**
  * Converts a `Color` into a valid CSS string.
  *
+ * @category destructors
  * @since 1.0.0
  */
 export const toCss: (color: Color) => string = (c) => {
@@ -98,13 +129,3 @@ export const toCss: (color: Color) => string = (c) => {
     }
   }
 }
-
-/**
- * @since 1.0.0
- */
-export const black: Color = hsl(0, 0, 0)
-
-/**
- * @since 1.0.0
- */
-export const white: Color = hsl(360, 1, 1)
