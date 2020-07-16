@@ -13,12 +13,29 @@
 **Note**: Gaps between patch versions are faulty/broken releases. **Note**: A feature tagged as Experimental is in a
 high state of flux, you're at risk of it changing without notice.
 
+# 1.1.0
+
+- **Breaking Change**
+
+  - upgrade to latest `fp-ts` (2.7.0), latest `fp-ts-contrib` (0.1.17), and latest TypeScript (3.9.6) (@IMax153)
+  - update signature of `bind` in `Canvas` to return a `Render` effect (@IMax153)
+  - remove `Handler` type from `Canvas` (@IMax153)
+
+- **New Feature**
+
+  - export `renderShape` from `Drawing` (@IMax153)
+
+- **Polish**
+
+  - upgrade to latest `docs-ts` (0.5.1) and add `category` tags to all module exports (@IMax153)
+  - reorganize module structure to follow current convention in `fp-ts` (@IMax153)
+
 # 1.0.0
 
 - **Breaking Change**
 
   - upgrade to `fp-ts@2.x.x` and latest TypeScript (3.9.3) (@IMax153)
-  - remove `free-canvas`
+  - remove `free-canvas` (@IMax153)
   - rename `canvas` module to `Canvas` (@IMax153)
     - inject the current `CanvasRenderingContext2D` into the `ReaderIO` wrapped by `withContext`, `fillPath`, and `strokePath` for convenience (@IMax153)
     - add `getLineDash`, `setLineDash`, and `setLineDashOffset` (@IMax153)
@@ -31,14 +48,14 @@ high state of flux, you're at risk of it changing without notice.
     - add `bind` (@IMax153)
   - rename `color` module to `Color` (@IMax153)
     - fix implementation of `toCss` (@IMax153)
-    - fix `white` color
+    - fix `white` color (@IMax153)
     - add `hex` (@IMax153)
   - rename `drawing` module to `Drawing` (@IMax153)
-    - convert from classes to static interfaces with associated constructors for all `Drawings`s
+    - convert from classes to static interfaces with associated constructors for all `Drawings`s (@IMax153)
     - fixed implementation of `Clipped` drawings (@IMax153)
     - add `renderTo` helper for executing a `Render` effect on a given canvas (@IMax153)
   - rename `font` module to `Font` (@IMax153)
-    - convert from classes to static interfaces with associated constructors for `Font` and `FontOptions`
+    - convert from classes to static interfaces with associated constructors for `Font` and `FontOptions` (@IMax153)
     - add `Show` instance for `FontOptions` (`showFontOptions`) (@IMax153)
     - add `Show` instance for `Font` (`showFont`) (@IMax153)
   - add `Shape` module (@IMax153)
