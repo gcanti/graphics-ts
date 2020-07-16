@@ -1740,7 +1740,7 @@ describe('Canvas', () => {
     it('should bind an event handler to the canvas', () => {
       const mockClickHandler = jest.fn()
 
-      pipe(canvas, C.bind('click', mockClickHandler))()
+      render(C.bind('click', () => IO.of(mockClickHandler)))()
 
       canvas.click()
 

@@ -1206,12 +1206,12 @@ export const renderTo = (canvasId: string, onCanvasNotFound: () => IO.IO<void>) 
 /**
  * Binds an event handler to the canvas element.
  *
- * @since 1.0.0
+ * @since 1.1.0
  */
-export const bind: <K extends keyof HTMLElementEventMap>(
+export const bind = <K extends keyof HTMLElementEventMap, A>(
   type: K,
-  f: Handler<HTMLElementEventMap[K]>
-) => Html<HTMLCanvasElement> = (t, f) => (c) => () => {
-  c.addEventListener(t, f)
-  return c
+  f: (e: HTMLElementEventMap[K]) => Render<A>
+): Render<CanvasRenderingContext2D> => (ctx) => () => {
+  ctx.canvas.addEventListener(type, (e) => f(e)(ctx)())
+  return ctx
 }
