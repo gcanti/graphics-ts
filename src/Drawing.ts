@@ -561,7 +561,12 @@ const applyStyle: <A>(
     O.fold(() => IO.of, f)
   )
 
-const renderShape: (shape: Shape) => C.Render<CanvasRenderingContext2D> = (shape) => {
+/**
+ * Renders a `Shape`.
+ *
+ * @since 1.1.0
+ */
+export const renderShape: (shape: Shape) => C.Render<CanvasRenderingContext2D> = (shape) => {
   switch (shape._tag) {
     case 'Arc':
       return C.arc(shape)
