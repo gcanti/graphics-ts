@@ -37,8 +37,8 @@
   "homepage": "https://github.com/gcanti/graphics-ts",
   "dependencies": {},
   "peerDependencies": {
-    "fp-ts": "^2.6.1",
-    "fp-ts-contrib": "^0.1.15"
+    "fp-ts": "^2.7.0",
+    "fp-ts-contrib": "^0.1.17"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",
@@ -59,7 +59,7 @@
     "tslint": "^6.1.2",
     "tslint-config-standard": "^9.0.0",
     "tslint-immutable": "^6.0.1",
-    "typescript": "^3.9.3",
+    "typescript": "^3.9.6",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"
