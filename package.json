@@ -43,9 +43,9 @@
   "devDependencies": {
     "@types/jest": "^25.2.3",
     "@types/node": "^14.0.1",
-    "docs-ts": "^0.4.0",
-    "fp-ts": "^2.6.1",
-    "fp-ts-contrib": "^0.1.15",
+    "docs-ts": "^0.5.1",
+    "fp-ts": "^2.7.0",
+    "fp-ts-contrib": "^0.1.17",
     "glob": "^7.1.6",
     "html-webpack-plugin": "^4.3.0",
     "import-path-rewrite": "github:gcanti/import-path-rewrite",
