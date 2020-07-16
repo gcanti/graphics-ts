@@ -10,12 +10,17 @@ import { monoidString } from 'fp-ts/lib/Monoid'
 import { intercalate } from 'fp-ts/lib/Foldable'
 import { pipe } from 'fp-ts/lib/pipeable'
 
+// -------------------------------------------------------------------------------------
+// model
+// -------------------------------------------------------------------------------------
+
 /**
  * Represents the `font-family` CSS property.
  *
  * The `font-family` CSS property specifies a prioritized list of one or more
  * font family names and/or generic family names for the selected element.
  *
+ * @category model
  * @since 1.0.0
  */
 export type FontFamily = string
@@ -25,6 +30,7 @@ export type FontFamily = string
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/font
  *
+ * @category model
  * @since 1.0.0
  */
 export interface FontOptions {
@@ -53,38 +59,11 @@ export interface FontOptions {
 }
 
 /**
- * Constructs a new `FontOptions` object.
- *
- * @since 1.0.0
- */
-export const fontOptions = ({
-  style,
-  variant,
-  weight
-}: {
-  readonly style?: string
-  readonly variant?: string
-  readonly weight?: string
-}): FontOptions => ({
-  style: O.fromNullable(style),
-  variant: O.fromNullable(variant),
-  weight: O.fromNullable(weight)
-})
-
-/**
- * The `Show` instance for `FontOptions`.
- *
- * @since 1.0.0
- */
-export const showFontOptions: S.Show<FontOptions> = {
-  show: (o) => intercalate(monoidString, RR.readonlyRecord)(' ', RR.compact(RR.fromRecord(o)))
-}
-
-/**
  * Represents the `font` CSS property.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/font
  *
+ * @category model
  * @since 1.0.0
  */
 export interface Font {
@@ -109,9 +88,34 @@ export interface Font {
   readonly fontOptions: FontOptions
 }
 
+// -------------------------------------------------------------------------------------
+// constructors
+// -------------------------------------------------------------------------------------
+
+/**
+ * Constructs a new `FontOptions` object.
+ *
+ * @category constructors
+ * @since 1.0.0
+ */
+export const fontOptions = ({
+  style,
+  variant,
+  weight
+}: {
+  readonly style?: string
+  readonly variant?: string
+  readonly weight?: string
+}): FontOptions => ({
+  style: O.fromNullable(style),
+  variant: O.fromNullable(variant),
+  weight: O.fromNullable(weight)
+})
+
 /**
  * Constructs a new `Font`.
  *
+ * @category constructors
  * @since 1.0.0
  */
 export const font = (fontFamily: FontFamily, size: number, options?: FontOptions): Font => ({
@@ -120,9 +124,24 @@ export const font = (fontFamily: FontFamily, size: number, options?: FontOptions
   fontOptions: typeof options === 'object' ? options : fontOptions({})
 })
 
+// -------------------------------------------------------------------------------------
+// instances
+// -------------------------------------------------------------------------------------
+
+/**
+ * The `Show` instance for `FontOptions`.
+ *
+ * @category instances
+ * @since 1.0.0
+ */
+export const showFontOptions: S.Show<FontOptions> = {
+  show: (o) => intercalate(monoidString, RR.readonlyRecord)(' ', RR.compact(RR.fromRecord(o)))
+}
+
 /**
  * The `Show` instance for `Font`.
  *
+ * @category instances
  * @since 1.0.0
  */
 export const showFont: S.Show<Font> = {
