@@ -15,20 +15,19 @@ high state of flux, you're at risk of it changing without notice.
 
 # 1.1.0
 
-- **Breaking Change**
-
-  - upgrade to latest `fp-ts` (2.7.0), latest `fp-ts-contrib` (0.1.17), and latest TypeScript (3.9.6) (@IMax153)
-  - update signature of `bind` in `Canvas` to return a `Render` effect (@IMax153)
-  - remove `Handler` type from `Canvas` (@IMax153)
-
 - **New Feature**
 
+  - add `bindWithContext` to `Canvas` module (@IMax153)
   - export `renderShape` from `Drawing` (@IMax153)
 
 - **Polish**
 
-  - upgrade to latest `docs-ts` (0.5.1) and add `category` tags to all module exports (@IMax153)
+  - deprecate `bind` and `Handler` in `Canvas` module (@IMax153)
   - reorganize module structure to follow current convention in `fp-ts` (@IMax153)
+
+- **Documentation**
+
+  - upgrade to latest `docs-ts` (0.5.1) and add `category` tags to all module exports (@IMax153)
 
 # 1.0.0
 

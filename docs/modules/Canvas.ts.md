@@ -72,7 +72,7 @@ Added in v1.0.0
   - [arcTo](#arcto)
   - [beginPath](#beginpath)
   - [bezierCurveTo](#beziercurveto)
-  - [bind](#bind)
+  - [bindWithContext](#bindwithcontext)
   - [clearRect](#clearrect)
   - [clip](#clip)
   - [closePath](#closepath)
@@ -144,6 +144,7 @@ Added in v1.0.0
   - [transform](#transform)
   - [translate](#translate)
   - [withContext](#withcontext)
+  - [~~bind~~](#bind)
 - [constructors](#constructors)
   - [getCanvasElementById](#getcanvaselementbyid)
   - [unsafeGetCanvasElementById](#unsafegetcanvaselementbyid)
@@ -162,6 +163,7 @@ Added in v1.0.0
   - [TextAlign (type alias)](#textalign-type-alias)
   - [TextBaseline (type alias)](#textbaseline-type-alias)
   - [TextMetrics (interface)](#textmetrics-interface)
+  - [~~Handler~~ (type alias)](#handler-type-alias)
 - [utils](#utils)
   - [renderTo](#renderto)
 
@@ -242,14 +244,14 @@ export declare const bezierCurveTo: (
 
 Added in v1.0.0
 
-## bind
+## bindWithContext
 
 Binds an event handler to the canvas element.
 
 **Signature**
 
 ```ts
-export declare const bind: <
+export declare const bindWithContext: <
   K extends
     | 'copy'
     | 'fullscreenchange'
@@ -1278,6 +1280,114 @@ export declare const withContext: <A>(f: Render<A>) => Render<A>
 
 Added in v1.0.0
 
+## ~~bind~~
+
+Binds an event handler to the canvas element.
+
+**Signature**
+
+```ts
+export declare const bind: <K extends
+  | 'copy'
+  | 'fullscreenchange'
+  | 'fullscreenerror'
+  | 'abort'
+  | 'animationcancel'
+  | 'animationend'
+  | 'animationiteration'
+  | 'animationstart'
+  | 'auxclick'
+  | 'blur'
+  | 'cancel'
+  | 'canplay'
+  | 'canplaythrough'
+  | 'change'
+  | 'click'
+  | 'close'
+  | 'contextmenu'
+  | 'cuechange'
+  | 'dblclick'
+  | 'drag'
+  | 'dragend'
+  | 'dragenter'
+  | 'dragexit'
+  | 'dragleave'
+  | 'dragover'
+  | 'dragstart'
+  | 'drop'
+  | 'durationchange'
+  | 'emptied'
+  | 'ended'
+  | 'error'
+  | 'focus'
+  | 'focusin'
+  | 'focusout'
+  | 'gotpointercapture'
+  | 'input'
+  | 'invalid'
+  | 'keydown'
+  | 'keypress'
+  | 'keyup'
+  | 'load'
+  | 'loadeddata'
+  | 'loadedmetadata'
+  | 'loadend'
+  | 'loadstart'
+  | 'lostpointercapture'
+  | 'mousedown'
+  | 'mouseenter'
+  | 'mouseleave'
+  | 'mousemove'
+  | 'mouseout'
+  | 'mouseover'
+  | 'mouseup'
+  | 'pause'
+  | 'play'
+  | 'playing'
+  | 'pointercancel'
+  | 'pointerdown'
+  | 'pointerenter'
+  | 'pointerleave'
+  | 'pointermove'
+  | 'pointerout'
+  | 'pointerover'
+  | 'pointerup'
+  | 'progress'
+  | 'ratechange'
+  | 'reset'
+  | 'resize'
+  | 'scroll'
+  | 'securitypolicyviolation'
+  | 'seeked'
+  | 'seeking'
+  | 'select'
+  | 'selectionchange'
+  | 'selectstart'
+  | 'stalled'
+  | 'submit'
+  | 'suspend'
+  | 'timeupdate'
+  | 'toggle'
+  | 'touchcancel'
+  | 'touchend'
+  | 'touchmove'
+  | 'touchstart'
+  | 'transitioncancel'
+  | 'transitionend'
+  | 'transitionrun'
+  | 'transitionstart'
+  | 'volumechange'
+  | 'waiting'
+  | 'wheel'
+  | 'cut'
+  | 'paste'>(
+  type: K,
+  f: Handler<HTMLElementEventMap[K]>
+) => Html<HTMLCanvasElement>
+```
+
+Added in v1.0.0
+
 # constructors
 
 ## getCanvasElementById
@@ -1584,6 +1694,18 @@ export interface TextMetrics {
    */
   readonly width: number
 }
+```
+
+Added in v1.0.0
+
+## ~~Handler~~ (type alias)
+
+Represents an event handler that can be bound to an `HTMLCanvasElement`.
+
+**Signature**
+
+```ts
+export type Handler<E extends Event> = (e: E) => void
 ```
 
 Added in v1.0.0

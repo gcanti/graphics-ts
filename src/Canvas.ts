@@ -168,6 +168,7 @@ export type GlobalCompositeOperation =
  * Represents an event handler that can be bound to an `HTMLCanvasElement`.
  *
  * @deprecated since 1.1.0
+ * @category model
  * @since 1.0.0
  */
 export type Handler<E extends Event> = (e: E) => void
@@ -1290,6 +1291,7 @@ export const withContext: <A>(f: Render<A>) => Render<A> = (f) =>
  * Binds an event handler to the canvas element.
  *
  * @deprecated since 1.1.0
+ * @category combinators
  * @since 1.0.0
  */
 export const bind: <K extends keyof HTMLElementEventMap>(
