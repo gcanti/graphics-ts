@@ -37,15 +37,15 @@
   "homepage": "https://github.com/gcanti/graphics-ts",
   "dependencies": {},
   "peerDependencies": {
-    "fp-ts": "^2.7.0",
-    "fp-ts-contrib": "^0.1.17"
+    "fp-ts": "^2.6.1",
+    "fp-ts-contrib": "^0.1.15"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",
     "@types/node": "^14.0.1",
     "docs-ts": "^0.5.1",
-    "fp-ts": "^2.7.0",
-    "fp-ts-contrib": "^0.1.17",
+    "fp-ts": "^2.6.1",
+    "fp-ts-contrib": "^0.1.15",
     "glob": "^7.1.6",
     "html-webpack-plugin": "^4.3.0",
     "import-path-rewrite": "github:gcanti/import-path-rewrite",
@@ -59,7 +59,7 @@
     "tslint": "^6.1.2",
     "tslint-config-standard": "^9.0.0",
     "tslint-immutable": "^6.0.1",
-    "typescript": "^3.9.6",
+    "typescript": "^3.9.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.11.0"
