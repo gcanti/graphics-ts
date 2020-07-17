@@ -1740,6 +1740,7 @@ describe('Canvas', () => {
     it('should bind an event handler to the canvas', () => {
       const mockClickHandler = jest.fn()
 
+      // tslint:disable-next-line: deprecation
       pipe(canvas, C.bind('click', mockClickHandler))()
 
       canvas.click()

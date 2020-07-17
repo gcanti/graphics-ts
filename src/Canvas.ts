@@ -1296,6 +1296,7 @@ export const withContext: <A>(f: Render<A>) => Render<A> = (f) =>
  */
 export const bind: <K extends keyof HTMLElementEventMap>(
   type: K,
+  // tslint:disable-next-line: deprecation
   f: Handler<HTMLElementEventMap[K]>
 ) => Html<HTMLCanvasElement> = (t, f) => (c) => () => {
   c.addEventListener(t, f)
