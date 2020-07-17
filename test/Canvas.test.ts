@@ -1740,7 +1740,19 @@ describe('Canvas', () => {
     it('should bind an event handler to the canvas', () => {
       const mockClickHandler = jest.fn()
 
-      render(C.bind('click', () => IO.of(mockClickHandler)))()
+      pipe(canvas, C.bind('click', mockClickHandler))()
+
+      canvas.click()
+
+      assert.strictEqual(mockClickHandler.mock.calls.length, 1)
+    })
+  })
+
+  describe('bindWithContext', () => {
+    it('should bind an event handler to the canvas in the Render context', () => {
+      const mockClickHandler = jest.fn()
+
+      render(C.bindWithContext('click', () => IO.of(mockClickHandler)))()
 
       canvas.click()
 
